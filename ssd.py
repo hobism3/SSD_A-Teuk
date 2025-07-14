@@ -1,6 +1,6 @@
 import sys
 
-INITIAL_VALUE = '00000000'
+INITIAL_VALUE = '0x00000000'
 SSD_NAND_FILE_PATH = './ssd_nand.txt'
 SSD_OUTPUT_FILE_PATH = './ssd_output.txt'
 
@@ -8,12 +8,17 @@ SSD_OUTPUT_FILE_PATH = './ssd_output.txt'
 class SSD:
     def __init__(self):
         self.initialize_ssd_nand()
+        self.initialize_ssd_output()
 
     def initialize_ssd_nand(self) -> None:
         f = open(SSD_NAND_FILE_PATH, 'w')
         for i in range(100):
             f.writelines(f'{i:02d} {INITIAL_VALUE}\n')
         f.close()
+
+    def initialize_ssd_output(self) -> None:
+        with open(SSD_OUTPUT_FILE_PATH, 'w', encoding='utf-8') as f:
+            f.write('')
 
     def validate_address(self, input):
         if input is None:
@@ -28,9 +33,15 @@ class SSD:
     def validate_value(self, input):
         if input is None:
             return False
-        if len(input) != 8:
+        if len(input) != 10:
             return False
-        return True
+        if not input.startswith('0x') and not input.startswith('0X'):
+            return False
+        try:
+            int(input[2:], 16)  # '0x' 뺀 나머지 부분만 16진수 변환 시도
+            return True
+        except ValueError:
+            return False
 
     def read(self):
         pass
