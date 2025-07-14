@@ -84,21 +84,21 @@ def main():
         if len(args) != 3:
             print('W need 3 arguments: W <address> <value>')
             sys.exit(1)
-        address = int(args[1])
-        value = int(args[2], 8)
+        address = args[1]
+        value = args[2]
 
     elif mode == 'R':
         if len(args) != 2:
             print('R need 2 arguments: R <address>')
             sys.exit(1)
-        address = int(args[1])
+        address = args[1]
     else:
         print('Supported modes: W (write), R (read)')
         sys.exit(1)
 
     ssd = SSD()
     if mode == 'W':
-        ssd.write(address, f'{value:08x}')
+        ssd.write(address, value)
     elif mode == 'R':
         ssd.read(address)
 
