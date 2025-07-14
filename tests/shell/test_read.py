@@ -1,7 +1,7 @@
 import pytest
 from pytest_mock import MockerFixture
 
-from shell.shell import Shell
+from shell import Shell
 
 SHELL_INPUT = 'builtins.input'
 
@@ -10,7 +10,7 @@ def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     ssd = mocker.Mock()
     ssd.read.return_value = '0x00000001'
 
-    mocker.patch(SHELL_INPUT, side_effect=['read 0', 'exit'])
+    mocker.patch(SHELL_INPUT, side_effect=['read 03', 'exit'])
 
     shell = Shell(ssd)
     shell.run()
@@ -18,9 +18,7 @@ def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     captured = capsys.readouterr()
     output = captured.out
 
-    assert '[Read] LBA: 0' in output
-    assert '0x00000001' in output
-    assert '[Read] Done' in output
+    assert '[Read] LBA 03: 0x00000001' in output
 
 
 def test_shell_read_invalid_input(capsys: pytest.CaptureFixture, mocker: MockerFixture):
