@@ -1,3 +1,5 @@
+import subprocess
+
 from ssd import SSD
 
 
@@ -199,3 +201,27 @@ def test_ssd_read_written_value_pass():
     with open('ssd_output.txt') as f:
         actual_value = f.read()
     assert actual_value == input_value
+
+
+def test_ssd_read_initial_value_w_command():
+    command = 'python ssd.py R 0'
+    expected_value = '00000000'
+    subprocess.run(command)
+
+    with open('ssd_output.txt') as f:
+        actual_value = f.read()
+    assert actual_value == expected_value
+
+    command = 'python ssd.py R 2'
+    subprocess.run(command)
+
+    with open('ssd_output.txt') as f:
+        actual_value = f.read()
+    assert actual_value == expected_value
+
+    command = 'python ssd.py R 99'
+    subprocess.run(command)
+
+    with open('ssd_output.txt') as f:
+        actual_value = f.read()
+    assert actual_value == expected_value
