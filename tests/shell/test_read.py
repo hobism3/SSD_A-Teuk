@@ -1,7 +1,7 @@
 import pytest
 from pytest_mock import MockerFixture
 
-from shell.shell import Shell
+from shell import Shell
 
 SHELL_INPUT = 'builtins.input'
 
