@@ -6,10 +6,10 @@ from ssd import SSD
 def test_ssd_initial_nand_value_check():
     with open('ssd_nand.txt') as f:
         actual_value_lines = f.readlines()
-    assert actual_value_lines[0] == '00 00000000'
-    assert actual_value_lines[1] == '01 00000000'
-    assert actual_value_lines[2] == '02 00000000'
-    assert actual_value_lines[-1] == '99 00000000'
+    assert actual_value_lines[0].strip() == '00 00000000'
+    assert actual_value_lines[1].strip() == '01 00000000'
+    assert actual_value_lines[2].strip() == '02 00000000'
+    assert actual_value_lines[-1].strip() == '99 00000000'
 
 
 def test_ssd_read_initial_value_check():
@@ -19,19 +19,19 @@ def test_ssd_read_initial_value_check():
 
     ssd.read(input_address)
     with open('ssd_output.txt') as f:
-        actual_value = f.readlines()
+        actual_value = f.readlines()[0].strip()
 
     assert actual_value == expected_value
     input_address = '02'
     ssd.read(input_address)
     with open('ssd_output.txt') as f:
-        actual_value = f.readlines()
+        actual_value = f.readlines()[0].strip()
 
     assert actual_value == expected_value
     input_address = '99'
     ssd.read(input_address)
     with open('ssd_output.txt') as f:
-        actual_value = f.readlines()
+        actual_value = f.readlines()[0].strip()
 
     assert actual_value == expected_value
 
@@ -44,19 +44,19 @@ def test_ssd_write_pass():
     ssd.write(input_address, input_value)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
     input_address = '02'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
     input_address = '99'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
 
@@ -68,31 +68,32 @@ def test_ssd_write_pass_check_value():
     ssd.write(input_address, input_value)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
     with open('ssd_nand.txt') as f:
         actual_value = f.readlines()
-    assert actual_value[0] == '00 00000001'
+    assert actual_value[0].strip() == '00 00000001'
 
     input_address = '02'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
     with open('ssd_nand.txt') as f:
         actual_value = f.readlines()
-    assert actual_value[2] == '00 00000001'
+    assert actual_value[2].strip() == '00 00000001'
 
     input_address = '99'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
+
     with open('ssd_nand.txt') as f:
         actual_value = f.readlines()
-    assert actual_value[99] == '00 00000001'
+    assert actual_value[99].strip() == '00 00000001'
 
 
 def test_ssd_write_fail_wrong_address():
@@ -103,19 +104,19 @@ def test_ssd_write_fail_wrong_address():
     ssd.write(input_address, input_value)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
     input_address = '0220'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
     input_address = '0990'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
 
@@ -127,7 +128,7 @@ def test_ssd_write_fail_no_value():
     ssd.write(input_address, input_value)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
 
@@ -139,7 +140,7 @@ def test_ssd_write_fail_no_address():
     ssd.write(input_address, input_value)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
 
@@ -151,7 +152,7 @@ def test_ssd_write_fail_no_both():
     ssd.write(input_address, input_value)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
 
@@ -163,14 +164,14 @@ def test_ssd_write_fail_wrong_value():
     ssd.write(input_address, input_value)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
     input_value = 'FFFFFF0'
     ssd.write(input_address, input_value)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
 
@@ -183,7 +184,7 @@ def test_ssd_read_written_value_pass():
     ssd.read(input_address)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == input_value
 
     input_address = '02'
@@ -191,7 +192,7 @@ def test_ssd_read_written_value_pass():
     ssd.read(input_address)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == input_value
 
     input_address = '99'
@@ -199,29 +200,29 @@ def test_ssd_read_written_value_pass():
     ssd.read(input_address)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == input_value
 
 
 def test_ssd_read_initial_value_w_command():
     command = 'python ssd.py R 0'
-    expected_value = '00000000'
+    expected_value = '0x00000000'
     subprocess.run(command)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
     command = 'python ssd.py R 2'
     subprocess.run(command)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
 
     command = 'python ssd.py R 99'
     subprocess.run(command)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.read()
+        actual_value = f.readlines()[0].strip()
     assert actual_value == expected_value
