@@ -13,8 +13,10 @@ class InvalidInputError(Exception):
 
 class SSD:
     def __init__(self):
-        self.initialize_ssd_nand()
-        self.initialize_ssd_output()
+        if not os.path.exists(SSD_NAND_FILE_PATH):
+            print('Initialize')
+            self.initialize_ssd_nand()
+            self.initialize_ssd_output()
 
     def initialize_ssd_nand(self) -> None:
         with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
@@ -38,6 +40,8 @@ class SSD:
         if input is None:
             return False
         if not input.startswith('0x') and not input.startswith('0X'):
+            return False
+        if len(input) == 0 or len(input) > 10:
             return False
         try:
             int(input[2:], 16)
