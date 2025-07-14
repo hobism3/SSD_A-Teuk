@@ -1,5 +1,5 @@
 class Shell:
-    def init(self, ssd=None):
+    def __init__(self, ssd=None):
         self._ssd = ssd
 
     def run(self):
@@ -18,8 +18,7 @@ class Shell:
                         lba = int(parts[1])
                         data = parts[2]
                         print(f'[Write] LBA: {lba}, Data: {data}')
-                        ## Write 동작
-                        ## --------
+                        self._ssd.write(lba, data)
                         print('[Write] Done')
                     except ValueError:
                         print('[Write] ERROR')
@@ -31,8 +30,7 @@ class Shell:
                     try:
                         lba = int(parts[1])
                         print(f'[Read] LBA: {lba}')
-                        ## Read 동작
-                        ## --------
+                        self._ssd.read(lba)
                         print('[Read] Done')
                     except ValueError:
                         print('[Read] ERROR')
