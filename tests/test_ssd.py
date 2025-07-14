@@ -5,7 +5,7 @@ from ssd import SSD
 
 def test_ssd_initial_nand_value_check():
     with open('ssd_nand.txt') as f:
-        actual_value_lines = f.readline()
+        actual_value_lines = f.readlines()
     assert actual_value_lines[0] == '00 00000000'
     assert actual_value_lines[1] == '01 00000000'
     assert actual_value_lines[2] == '02 00000000'
@@ -19,19 +19,19 @@ def test_ssd_read_initial_value_check():
 
     ssd.read(input_address)
     with open('ssd_output.txt') as f:
-        actual_value = f.readline()
+        actual_value = f.readlines()
 
     assert actual_value == expected_value
     input_address = '02'
     ssd.read(input_address)
     with open('ssd_output.txt') as f:
-        actual_value = f.readline()
+        actual_value = f.readlines()
 
     assert actual_value == expected_value
     input_address = '99'
     ssd.read(input_address)
     with open('ssd_output.txt') as f:
-        actual_value = f.readline()
+        actual_value = f.readlines()
 
     assert actual_value == expected_value
 
@@ -72,7 +72,7 @@ def test_ssd_write_pass_check_value():
     assert actual_value == expected_value
 
     with open('ssd_nand.txt') as f:
-        actual_value = f.readline()
+        actual_value = f.readlines()
     assert actual_value[0] == '00 00000001'
 
     input_address = '02'
@@ -82,7 +82,7 @@ def test_ssd_write_pass_check_value():
     assert actual_value == expected_value
 
     with open('ssd_nand.txt') as f:
-        actual_value = f.readline()
+        actual_value = f.readlines()
     assert actual_value[2] == '00 00000001'
 
     input_address = '99'
@@ -91,7 +91,7 @@ def test_ssd_write_pass_check_value():
         actual_value = f.read()
     assert actual_value == expected_value
     with open('ssd_nand.txt') as f:
-        actual_value = f.readline()
+        actual_value = f.readlines()
     assert actual_value[99] == '00 00000001'
 
 
