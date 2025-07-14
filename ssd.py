@@ -25,8 +25,7 @@ class SSD:
             return False
         if not input.isdigit():
             return False
-        num = int(input)
-        if num < 0 or num > 99:
+        if int(input) < 0 or int(input) > 99:
             return False
         return True
 
@@ -38,7 +37,7 @@ class SSD:
         if not input.startswith('0x') and not input.startswith('0X'):
             return False
         try:
-            int(input[2:], 16)  # '0x' 뺀 나머지 부분만 16진수 변환 시도
+            int(input[2:], 16)
             return True
         except ValueError:
             return False
@@ -51,7 +50,6 @@ class SSD:
             f.write('ERROR')
 
     def write(self, line_number, new_content):
-        print('START WRITE')
         if not self.validate_address(line_number):
             self.report_error()
             return
@@ -59,18 +57,14 @@ class SSD:
             self.report_error()
             return
         line_number = int(line_number)
-        if new_content is None:
-            self.report_error()
-            return
+
         with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
             lines = f.readlines()
 
         lines[line_number] = f'{line_number:02d} {new_content}\n'
-        print(lines)
         with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
             f.writelines(lines)
 
-        print(f'Write Success! {line_number:02d}:{new_content}')
         with open(SSD_OUTPUT_FILE_PATH, 'w', encoding='utf-8') as f:
             f.write('')
 
@@ -91,7 +85,7 @@ def main():
             print('W need 3 arguments: W <address> <value>')
             sys.exit(1)
         address = int(args[1])
-        value = int(args[2], 8)  # 16진수 처리
+        value = int(args[2], 8)
 
     elif mode == 'R':
         if len(args) != 2:
