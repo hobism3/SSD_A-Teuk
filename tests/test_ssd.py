@@ -106,13 +106,13 @@ def test_ssd_write_fail_wrong_address():
         actual_value = f.read()
     assert actual_value == expected_value
 
-    input_address = '020'
+    input_address = '0220'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
         actual_value = f.read()
     assert actual_value == expected_value
 
-    input_address = '099'
+    input_address = '0990'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
         actual_value = f.read()
