@@ -45,7 +45,8 @@ class SSD:
     def read(self):
         pass
 
-    def report_error(self):
+    @staticmethod
+    def report_error():
         with open(SSD_OUTPUT_FILE_PATH, 'w', encoding='utf-8') as f:
             f.write('ERROR')
 
@@ -76,6 +77,7 @@ def main():
         print('How to use:')
         print('  Write: python ssd.py W <adress> <value>')
         print('  Read: python ssd.py R <address>')
+        SSD.report_error()
         sys.exit(1)
 
     mode = args[0].upper()
@@ -83,6 +85,7 @@ def main():
     if mode == 'W':
         if len(args) != 3:
             print('W need 3 arguments: W <address> <value>')
+            SSD.report_error()
             sys.exit(1)
         address = args[1]
         value = args[2]
@@ -90,10 +93,12 @@ def main():
     elif mode == 'R':
         if len(args) != 2:
             print('R need 2 arguments: R <address>')
+            SSD.report_error()
             sys.exit(1)
         address = args[1]
     else:
         print('Supported modes: W (write), R (read)')
+        SSD.report_error()
         sys.exit(1)
 
     ssd = SSD()
