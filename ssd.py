@@ -1,8 +1,10 @@
+import os
 import sys
 
 INITIAL_VALUE = '0x00000000'
-SSD_NAND_FILE_PATH = './ssd_nand.txt'
-SSD_OUTPUT_FILE_PATH = './ssd_output.txt'
+OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
+SSD_OUTPUT_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_output.txt')
+SSD_NAND_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_nand.txt')
 
 
 class SSD:
