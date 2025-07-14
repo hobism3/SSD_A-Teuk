@@ -8,15 +8,15 @@ def test_ssd_initial_nand_value_check():
     ssd.read('00')
     with open('ssd_nand.txt') as f:
         actual_value_lines = f.readlines()
-    assert actual_value_lines[0].strip() == '00 00000000'
-    assert actual_value_lines[1].strip() == '01 00000000'
-    assert actual_value_lines[2].strip() == '02 00000000'
-    assert actual_value_lines[-1].strip() == '99 00000000'
+    assert actual_value_lines[0].strip() == '00 0x00000000'
+    assert actual_value_lines[1].strip() == '01 0x00000000'
+    assert actual_value_lines[2].strip() == '02 0x00000000'
+    assert actual_value_lines[-1].strip() == '99 0x00000000'
 
 
 def test_ssd_read_initial_value_check():
     input_address = '00'
-    expected_value = '00000000'
+    expected_value = '0x00000000'
     ssd = SSD()
 
     ssd.read(input_address)
@@ -40,7 +40,7 @@ def test_ssd_read_initial_value_check():
 
 def test_ssd_write_pass():
     input_address = '00'
-    input_value = '00000001'
+    input_value = '0x00000001'
     ssd = SSD()
     ssd.write(input_address, input_value)
 
@@ -63,7 +63,7 @@ def test_ssd_write_pass():
 
 def test_ssd_write_pass_check_value():
     input_address = '00'
-    input_value = '00000001'
+    input_value = '0x00000001'
     ssd = SSD()
     ssd.write(input_address, input_value)
 
@@ -73,7 +73,7 @@ def test_ssd_write_pass_check_value():
 
     with open('ssd_nand.txt') as f:
         actual_value = f.readlines()
-    assert actual_value[0].strip() == '00 00000001'
+    assert actual_value[0].strip() == '00 0x00000001'
 
     input_address = '02'
     ssd.write(input_address, input_value)
@@ -83,7 +83,7 @@ def test_ssd_write_pass_check_value():
 
     with open('ssd_nand.txt') as f:
         actual_value = f.readlines()
-    assert actual_value[2].strip() == '02 00000001'
+    assert actual_value[2].strip() == '02 0x00000001'
 
     input_address = '99'
     ssd.write(input_address, input_value)
@@ -93,12 +93,12 @@ def test_ssd_write_pass_check_value():
 
     with open('ssd_nand.txt') as f:
         actual_value = f.readlines()
-    assert actual_value[99].strip() == '99 00000001'
+    assert actual_value[99].strip() == '99 0x00000001'
 
 
 def test_ssd_write_fail_wrong_address():
     input_address = '100'
-    input_value = '00000001'
+    input_value = '0x00000001'
     expected_value = 'ERROR'
     ssd = SSD()
     ssd.write(input_address, input_value)
@@ -134,7 +134,7 @@ def test_ssd_write_fail_no_value():
 
 def test_ssd_write_fail_no_address():
     input_address = None
-    input_value = '00000001'
+    input_value = '0x00000001'
     expected_value = 'ERROR'
     ssd = SSD()
     ssd.write(input_address, input_value)
@@ -158,7 +158,7 @@ def test_ssd_write_fail_no_both():
 
 def test_ssd_write_fail_wrong_value():
     input_address = '00'
-    input_value = '000000010'
+    input_value = '0x000000010'
     expected_value = 'ERROR'
     ssd = SSD()
     ssd.write(input_address, input_value)
@@ -177,7 +177,7 @@ def test_ssd_write_fail_wrong_value():
 
 def test_ssd_read_written_value_pass():
     input_address = '00'
-    input_value = '00000001'
+    input_value = '0x00000001'
     ssd = SSD()
 
     ssd.write(input_address, input_value)
