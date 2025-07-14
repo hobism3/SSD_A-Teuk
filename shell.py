@@ -17,7 +17,21 @@ class Shell:
                     try:
                         lba = int(parts[1])
                         data = parts[2]
-                        print(f'[Write] LBA: {lba}, Data: {data}')
+
+                        # LBA 범위 검사 (0~99)
+                        if not (0 <= lba < 100):
+                            print('[Write] ERROR')
+                            continue
+
+                        # 데이터 형식 검사: '0x'로 시작하고, 뒤에 정확히 8자리 16진수인지 확인
+                        if not (
+                            data.startswith('0x')
+                            and len(data) == 10
+                            and all(c in '0123456789abcdefABCDEF' for c in data[2:])
+                        ):
+                            print('[Write] ERROR')
+                            continue
+
                         self._ssd.write(lba, data)
                         print('[Write] Done')
                     except ValueError:
