@@ -3,15 +3,16 @@ from pytest_mock import MockerFixture
 
 from shell.shell import Shell
 
+SHELL_INPUT = 'builtins.input'
+
 
 def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     ssd = mocker.Mock()
-    ssd.read.side_effect = ['0x00000001']
+    ssd.read.return_value = '0x00000001'
 
-    mocker.patch('builtins.input', side_effect=['read 0', 'exit'])
+    mocker.patch(SHELL_INPUT, side_effect=['read 0', 'exit'])
 
-    shell = Shell()
-    shell.init(ssd)
+    shell = Shell(ssd)
     shell.run()
 
     captured = capsys.readouterr()
@@ -25,10 +26,9 @@ def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
 def test_shell_read_invalid_input(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     ssd = mocker.Mock()
 
-    mocker.patch('builtins.input', side_effect=['read 0 0 0', 'exit'])
+    mocker.patch(SHELL_INPUT, side_effect=['read 0 0 0', 'exit'])
 
-    shell = Shell()
-    shell.init(ssd)
+    shell = Shell(ssd)
     shell.run()
 
     captured = capsys.readouterr()
@@ -41,10 +41,9 @@ def test_shell_read_exception(capsys: pytest.CaptureFixture, mocker: MockerFixtu
     ssd = mocker.Mock()
     ssd.read.side_effect = [ValueError]
 
-    mocker.patch('builtins.input', side_effect=['read 0', 'exit'])
+    mocker.patch(SHELL_INPUT, side_effect=['read 0', 'exit'])
 
-    shell = Shell()
-    shell.init(ssd)
+    shell = Shell(ssd)
     shell.run()
 
     captured = capsys.readouterr()
