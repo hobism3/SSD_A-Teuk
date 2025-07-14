@@ -4,6 +4,8 @@ from ssd import SSD
 
 
 def test_ssd_initial_nand_value_check():
+    ssd = SSD()
+    ssd.read('00')
     with open('ssd_nand.txt') as f:
         actual_value_lines = f.readlines()
     assert actual_value_lines[0].strip() == '00 00000000'
