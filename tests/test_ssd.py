@@ -39,37 +39,35 @@ def test_ssd_read_initial_value_check():
 def test_ssd_write_pass():
     input_address = '00'
     input_value = '00000001'
-    expected_value = ''
     ssd = SSD()
     ssd.write(input_address, input_value)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+        actual_value = f.readlines()
+    assert not actual_value
 
     input_address = '02'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+        actual_value = f.readlines()
+    assert not actual_value
 
     input_address = '99'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+        actual_value = f.readlines()
+    assert not actual_value
 
 
 def test_ssd_write_pass_check_value():
     input_address = '00'
     input_value = '00000001'
-    expected_value = ''
     ssd = SSD()
     ssd.write(input_address, input_value)
 
     with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+        actual_value = f.readlines()
+    assert not actual_value
 
     with open('ssd_nand.txt') as f:
         actual_value = f.readlines()
@@ -78,22 +76,22 @@ def test_ssd_write_pass_check_value():
     input_address = '02'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+        actual_value = f.readlines()
+    assert not actual_value
 
     with open('ssd_nand.txt') as f:
         actual_value = f.readlines()
-    assert actual_value[2].strip() == '00 00000001'
+    assert actual_value[2].strip() == '02 00000001'
 
     input_address = '99'
     ssd.write(input_address, input_value)
     with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+        actual_value = f.readlines()
+    assert not actual_value
 
     with open('ssd_nand.txt') as f:
         actual_value = f.readlines()
-    assert actual_value[99].strip() == '00 00000001'
+    assert actual_value[99].strip() == '99 00000001'
 
 
 def test_ssd_write_fail_wrong_address():
