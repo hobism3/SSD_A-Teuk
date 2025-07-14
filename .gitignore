@@ -1,3 +1,5 @@
 .venv
 .idea
+ssd_nand.txt
+ssd_output.txt
 __pycache__
