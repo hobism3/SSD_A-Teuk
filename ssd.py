@@ -42,8 +42,19 @@ class SSD:
         except ValueError:
             return False
 
-    def read(self):
-        pass
+    def read(self, input_address):
+        ret_value = ""
+        with open('./ssd_nand.txt', 'r') as f:
+            for line in f:
+                data = line.strip().split(' ')
+                ind = int(data[0])
+                value = data[1]
+
+                if int(input_address) == ind:
+                    ret_value = value
+
+        with open('./ssd_output.txt', 'w') as f:
+            f.write(f'{ret_value}')
 
     @staticmethod
     def report_error():
