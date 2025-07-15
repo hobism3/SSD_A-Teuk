@@ -27,11 +27,15 @@ class ShellCmd:
     FULLREAD = 'fullread'
     EXIT = 'exit'
     HELP = 'help'
+    PARTIALLBAWRITE_SHORT = '2_'
+    PARTIALLBAWRITE_LONG = '2_PartialLBAWrite'
 
 
 class ShellPrefix:
     READ = '[Read] '
     WRITE = '[Write] '
+    FULLREAD = '[Full Read] '
+    FULLWRITE = '[Full Write] '
 
 
 LBA_RANGE = range(100)

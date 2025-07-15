@@ -1,5 +1,8 @@
 from commands.base import ExitCommand, HelpCommand
+from commands.full_read import FullReadCommand
+from commands.full_write import FullWriteCommand
 from commands.read import ReadCommand
+from commands.script2 import PartialLBAWriteCommand
 from commands.write import WriteCommand
 from shell_constants import ShellCmd as Cmd
 from shell_constants import ShellMsg as Msg
@@ -13,6 +16,10 @@ class Shell:
             Cmd.READ: ReadCommand(),
             Cmd.EXIT: ExitCommand(),
             Cmd.HELP: HelpCommand(),
+            Cmd.FULLREAD: FullReadCommand(),
+            Cmd.FULLWRITE: FullWriteCommand(),
+            Cmd.PARTIALLBAWRITE_SHORT: PartialLBAWriteCommand(),
+            Cmd.PARTIALLBAWRITE_LONG: PartialLBAWriteCommand(),
         }
 
     def run(self):
