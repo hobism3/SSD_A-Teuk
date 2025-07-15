@@ -47,7 +47,7 @@ class SSD:
             self.report_error()
             return
         ret_value = ""
-        with open('./ssd_nand.txt', 'r') as f:
+        with open(SSD_NAND_FILE_PATH, 'r') as f:
             for line in f:
                 data = line.strip().split(' ')
                 ind = int(data[0])
@@ -56,7 +56,7 @@ class SSD:
                 if int(line_number) == ind:
                     ret_value = value
 
-        with open('./ssd_output.txt', 'w') as f:
+        with open(SSD_OUTPUT_FILE_PATH, 'w') as f:
             f.write(f'{ret_value}')
 
     @staticmethod
