@@ -27,14 +27,27 @@ class ShellCmd:
     FULLREAD = 'fullread'
     EXIT = 'exit'
     HELP = 'help'
+    SCRIPT_1_FULL = '1_fullwriteandreadcompare'
+    SCRIPT_2_FULL = '2_partiallbawrite'
+    SCRIPT_3_FULL = '3_writereadaging'
+    SCRIPT_1_SHORT = '1_'
+    SCRIPT_2_SHORT = '2_'
+    SCRIPT_3_SHORT = '3_'
 
 
 class ShellPrefix:
     READ = '[Read] '
     WRITE = '[Write] '
+    FULLWRITE = '[FullWrite] '
+    FULLREAD = '[FullRead] '
+    SCRIPT_1 = '[1_FullWriteAndReadCompare] '
+    SCRIPT_2 = '[2_PartialLBAWrite] '
+    SCRIPT_3 = '[3_WriteReadAging] '
 
 
 LBA_RANGE = range(100)
+MAX_LBA = 99
+SCRIPT_1_STEP = 5
 
 
 class Hex:
