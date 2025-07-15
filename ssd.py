@@ -42,18 +42,18 @@ class SSD:
         except ValueError:
             return False
 
-    def read(self, input_address):
-        ret_value = ""
-        if int(input_address) > 99 or int(input_address) < 0:
+    def read(self, line_number):
+        if not self.validate_address(line_number):
             self.report_error()
             return
+        ret_value = ""
         with open('./ssd_nand.txt', 'r') as f:
             for line in f:
                 data = line.strip().split(' ')
                 ind = int(data[0])
                 value = data[1]
 
-                if int(input_address) == ind:
+                if int(line_number) == ind:
                     ret_value = value
 
         with open('./ssd_output.txt', 'w') as f:
