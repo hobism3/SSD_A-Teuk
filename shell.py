@@ -9,8 +9,8 @@ class Shell:
     def __init__(self, ssd):
         self._ssd = ssd
         self._command_map = {
-            Cmd.WRITE: WriteCommand(ssd),
-            Cmd.READ: ReadCommand(ssd),
+            Cmd.WRITE: WriteCommand(),
+            Cmd.READ: ReadCommand(),
             Cmd.EXIT: ExitCommand(),
             Cmd.HELP: HelpCommand(),
         }
@@ -19,8 +19,7 @@ class Shell:
         flag = True
         while flag:
             try:
-                cmd = input(Msg.PROMPT).strip()
-                flag = self.command(cmd)
+                flag = self.command(input(Msg.PROMPT).strip())
             except (EOFError, KeyboardInterrupt):
                 break
 
@@ -31,7 +30,7 @@ class Shell:
         command_name = parts[0].lower()
         command = self._command_map.get(command_name)
         if command:
-            return command.execute(parts[1:])
+            return command.execute(parts[1:], self._ssd)
         else:
             print(Msg.INVALID)
             return True
