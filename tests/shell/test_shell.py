@@ -1,4 +1,5 @@
 import pytest
+
 from pytest_mock import MockerFixture
 
 from shell import Shell
