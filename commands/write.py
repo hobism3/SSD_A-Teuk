@@ -9,7 +9,7 @@ class WriteCommand(Command):
     def __init__(self):
         self._logger = Logger(Pre.WRITE)
 
-    def parse(self, args: list[str]) -> tuple:
+    def parse(self, args: list[str]) -> list[str]:
         if len(args) != 2:
             raise ValueError(Msg.WRITE_HELP)
         lba, data = args
@@ -19,4 +19,9 @@ class WriteCommand(Command):
             )
         if not self._check_data(data):
             raise ValueError('Data must be a hex string like 0x0129ABCF')
-        return 'W', lba, data
+        return ['W', lba, data]
+
+    def parse_result(self, result) -> str:
+        if not result:
+            return Msg.DONE
+        return Msg.ERROR

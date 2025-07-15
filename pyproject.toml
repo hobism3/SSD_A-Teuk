@@ -9,7 +9,7 @@ skip-magic-trailing-comma = false
 line-ending = "lf"
 
 [tool.ruff.lint]
-select = ["B", "C4", "E", "F", "N", "I", "W", "UP"]
+select = ["B", "C4", "E", "F", "N", "W", "UP"]
 ignore = ["B017", "F403", "F405", "E501", "E402", "Q000", "Q003"]
 
 [tool.isort]
