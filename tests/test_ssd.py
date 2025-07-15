@@ -77,22 +77,16 @@ def test_ssd_write_fail_wrong_address(ssd, invalid_address):
     assert actual_value == [ERROR]
 
 
-def test_ssd_write_fail_no_value(ssd):
-    ssd.execute('W', VALID_ADDRESS, None)
-
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-    assert actual_value == [ERROR]
-
-
-def test_ssd_write_fail_no_address(ssd):
-    ssd.execute('W', None, VALID_VALUE)
-
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-    assert actual_value == [ERROR]
-
-
-def test_ssd_write_fail_no_both(ssd):
-    ssd.execute('W', None, None)
+@pytest.mark.parametrize(
+    'address, value',
+    [
+        (None, VALID_VALUE),  # 주소 누락
+        (VALID_ADDRESS, None),  # 값 누락
+        (None, None),  # 둘 다 누락
+    ],
+)
+def test_ssd_write_fail_not_enough_args(ssd, address, value):
+    ssd.execute('W', address, value)
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [ERROR]
@@ -131,22 +125,16 @@ def test_ssd_write_fail_w_command_wrong_value(ssd, invalid_value):
     assert actual_value == [ERROR]
 
 
-def test_ssd_write_fail_w_command_no_value(ssd):
-    subprocess.run(f'{COMMAND_WRITE} {VALID_ADDRESS}')
-
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-    assert actual_value == [ERROR]
-
-
-def test_ssd_write_fail_w_command_no_address(ssd):
-    subprocess.run(f'{COMMAND_WRITE} {VALID_VALUE}')
-
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-    assert actual_value == [ERROR]
-
-
-def test_ssd_write_fail_w_command_no_both(ssd):
-    subprocess.run(f'{COMMAND_WRITE}')
+@pytest.mark.parametrize(
+    'address, value',
+    [
+        (None, VALID_VALUE),  # 주소 누락
+        (VALID_ADDRESS, None),  # 값 누락
+        (None, None),  # 둘 다 누락
+    ],
+)
+def test_ssd_write_fail_w_command_not_enough_args(ssd, address, value):
+    subprocess.run(f'{COMMAND_WRITE} {address} {value}')
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [ERROR]
