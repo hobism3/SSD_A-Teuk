@@ -7,6 +7,7 @@ from ssd import SSD, SSD_NAND_FILE_PATH, SSD_OUTPUT_FILE_PATH
 
 COMMAND_WRITE = 'python ../ssd.py W'
 COMMAND_READ = 'python ../ssd.py R'
+COMMAND_INVALID = 'python ../ssd.py M'
 
 ERROR = 'ERROR'
 
@@ -36,7 +37,12 @@ def sample_input_address(request):
 
 
 @pytest.fixture(
-    params=[('100', VALID_VALUE), ('0220', VALID_VALUE), ('990', VALID_VALUE)]
+    params=[
+        ('100', VALID_VALUE),
+        ('0220', VALID_VALUE),
+        ('990', VALID_VALUE),
+        ('ABC', VALID_VALUE),
+    ]
 )
 def sample_input_address_wrong(request):
     return request.param
@@ -47,6 +53,8 @@ def sample_input_address_wrong(request):
         (VALID_ADDRESS, '0x000000001'),
         (VALID_ADDRESS, '0xFFFF'),
         (VALID_ADDRESS, 'FFFFFF0'),
+        (VALID_ADDRESS, 'FFFFFF0000'),
+        (VALID_ADDRESS, '0xFXYZ0000'),
     ]
 )
 def sample_input_value_wrong(request):
@@ -117,6 +125,13 @@ def test_ssd_write_fail_no_both(ssd):
 def test_ssd_write_fail_wrong_value(ssd, sample_input_value_wrong):
     input_address, input_value = sample_input_value_wrong
     ssd.execute('W', input_address, input_value)
+
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
+
+
+def test_ssd_invalid_mode_w_command(ssd):
+    subprocess.run(f'{COMMAND_INVALID} {VALID_ADDRESS} {VALID_VALUE}')
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [ERROR]
