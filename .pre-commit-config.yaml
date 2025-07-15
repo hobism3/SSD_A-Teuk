@@ -14,8 +14,3 @@ repos:
         types_or: [ python ]
       - id: ruff-format
         types_or: [ python ]
-
-  - repo: https://github.com/PyCQA/isort
-    rev: 6.0.1
-    hooks:
-      - id: isort

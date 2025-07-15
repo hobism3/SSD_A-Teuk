@@ -1,5 +1,6 @@
 import os
 import sys
+from abc import ABC, abstractmethod
 
 INITIAL_VALUE = '0x00000000'
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -25,76 +26,123 @@ class SSD:
             self.initialize_ssd_nand()
             self.initialize_ssd_output()
 
-    def initialize_ssd_nand(self) -> None:
+    @staticmethod
+    def initialize_ssd_nand():
         with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
             for i in range(100):
-                f.writelines(f'{i:02d} {INITIAL_VALUE}\n')
+                f.write(f'{i:02d} {INITIAL_VALUE}\n')
 
-    def initialize_ssd_output(self) -> None:
+    def initialize_ssd_output(self):
         with open(SSD_OUTPUT_FILE_PATH, 'w', encoding='utf-8') as f:
             f.write('')
 
     def validate_address(self, input):
-        if input is None:
+        if input is None or not input.isdigit():
             return False
-        if not input.isdigit():
-            return False
-        if int(input) < 0 or int(input) > 99:
-            return False
-        return True
+        return 0 <= int(input) <= 99
 
     def validate_value(self, input):
-        if input is None:
+        if input is None or len(input) != 10:
             return False
-        if not input.startswith('0x') and not input.startswith('0X'):
+        if not input.startswith(('0x', '0X')):
             return False
-        if len(input) == 0 or len(input) > 10:
-            return False
+        hex_part = input[2:]
         try:
-            int(input[2:], 16)
+            int(hex_part, 16)
             return True
         except ValueError:
             return False
 
     def read(self, line_number):
-        if not self.validate_address(line_number):
-            self.report_error()
-            return
         ret_value = ''
         with open(SSD_NAND_FILE_PATH) as f:
             for line in f:
                 data = line.strip().split(' ')
                 ind = int(data[0])
-
                 if int(line_number) == ind:
                     ret_value = data[1]
 
         with open(SSD_OUTPUT_FILE_PATH, 'w') as f:
             f.write(f'{ret_value}')
 
+    def write(self, address, new_content):
+        with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
+            lines = f.readlines()
+
+        lines[address] = f'{address:02d} {new_content}\n'
+        with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
+            f.writelines(lines)
+
+        self.initialize_ssd_output()
+
+    def execute(self, mode, address, value=None):
+        try:
+            command = CommandFactory.create_command(
+                [mode, address] + ([value] if value else [])
+            )
+            command.execute()
+        except InvalidInputError:
+            self.report_error()
+
     @staticmethod
     def report_error():
         with open(SSD_OUTPUT_FILE_PATH, 'w', encoding='utf-8') as f:
             f.write('ERROR')
 
-    def write(self, line_number, new_content):
-        try:
-            if not self.validate_address(line_number):
-                raise InvalidInputError()
-            if not self.validate_value(new_content):
-                raise InvalidInputError()
-            line_number = int(line_number)
 
-            with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
-                lines = f.readlines()
+class Command(ABC):
+    @abstractmethod
+    def execute(self):
+        pass
 
-            lines[line_number] = f'{line_number:02d} {new_content}\n'
-            with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
-                f.writelines(lines)
 
-            self.initialize_ssd_output()
-        except InvalidInputError:
-            self.report_error()
+class ReadCommand(Command):
+    def __init__(self, ssd, address):
+        self.ssd = ssd
+        self.address = address
+
+    def execute(self):
+        if not self.ssd.validate_address(self.address):
+            raise InvalidInputError()
+        self.ssd.read(int(self.address))
+
+
+class WriteCommand(Command):
+    def __init__(self, ssd, address, value):
+        self.ssd = ssd
+        self.address = address
+        self.value = value
+
+    def execute(self):
+        if not self.ssd.validate_address(self.address) or not self.ssd.validate_value(
+            self.value
+        ):
+            raise InvalidInputError()
+        self.ssd.write(int(self.address), self.value)
+
+
+class CommandFactory:
+    @staticmethod
+    def create_command(args):
+        if len(args) < 2:
+            raise InvalidInputError('Insufficient arguments')
+
+        mode = args[0].upper()
+        address = args[1]
+        value = args[2] if len(args) > 2 else None
+
+        ssd = SSD()
+
+        if mode == 'W':
+            if value is None:
+                raise InvalidInputError('Write needs a value')
+            return WriteCommand(ssd, address, value)
+
+        elif mode == 'R':
+            return ReadCommand(ssd, address)
+
+        else:
+            raise InvalidInputError('Invalid mode')
 
     def execute(self, param, param1, param2=None):
         pass
@@ -103,35 +151,8 @@ class SSD:
 def main():
     args = sys.argv[1:]
     try:
-        if len(args) < 2:
-            print('How to use:')
-            print('  Write: python ssd.py W <adress> <value>')
-            print('  Read: python ssd.py R <address>')
-            raise InvalidInputError()
-
-        mode = args[0].upper()
-
-        if mode == 'W':
-            if len(args) != 3:
-                print('W need 3 arguments: W <address> <value>')
-                raise InvalidInputError()
-            address = args[1]
-            value = args[2]
-
-        elif mode == 'R':
-            if len(args) != 2:
-                print('R need 2 arguments: R <address>')
-                raise InvalidInputError()
-            address = args[1]
-        else:
-            print('Supported modes: W (write), R (read)')
-            raise InvalidInputError()
-
-        ssd = SSD()
-        if mode == 'W':
-            ssd.write(address, value)
-        elif mode == 'R':
-            ssd.read(address)
+        command = CommandFactory.create_command(args)
+        command.execute()
     except InvalidInputError:
         SSD.report_error()
         sys.exit(1)
