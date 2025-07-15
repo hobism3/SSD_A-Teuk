@@ -16,7 +16,7 @@ def test_shell_write_cmd_has_called(mocker: MockerFixture):
 
     shell.run()
 
-    ssd.write.assert_called_once()
+    ssd.execute.assert_called_once()
 
 
 def test_shell_write_cmd(capsys: pytest.CaptureFixture, mocker: MockerFixture):
