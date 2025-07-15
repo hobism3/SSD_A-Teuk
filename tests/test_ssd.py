@@ -9,7 +9,8 @@ COMMAND_WRITE = 'python ../ssd.py W'
 
 ERROR = 'ERROR'
 
-NORMAL_ADDRESS = '00'
+VALID_ADDRESS = '00'
+INVALID_ADDRESS = '100'
 INITIAL_VALUE = '0x00000000'
 VALID_VALUE = '0x00000001'
 
@@ -33,9 +34,9 @@ def sample_input_address_wrong(request):
 
 @pytest.fixture(
     params=[
-        (NORMAL_ADDRESS, '0x000000001'),
-        (NORMAL_ADDRESS, '0xFFFF'),
-        (NORMAL_ADDRESS, 'FFFFFF0'),
+        (VALID_ADDRESS, '0x000000001'),
+        (VALID_ADDRESS, '0xFFFF'),
+        (VALID_ADDRESS, 'FFFFFF0'),
     ]
 )
 def sample_input_value_wrong(request):
@@ -83,7 +84,7 @@ def test_ssd_write_fail_wrong_address(ssd, sample_input_address_wrong):
 
 
 def test_ssd_write_fail_no_value(ssd):
-    ssd.write(NORMAL_ADDRESS, None)
+    ssd.write(VALID_ADDRESS, None)
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [ERROR]
@@ -112,55 +113,47 @@ def test_ssd_write_fail_wrong_value(ssd, sample_input_value_wrong):
 
 
 def test_ssd_write_pass_w_command():
-    subprocess.run(f'{COMMAND_WRITE} {NORMAL_ADDRESS} {VALID_VALUE}')
+    subprocess.run(f'{COMMAND_WRITE} {VALID_ADDRESS} {VALID_VALUE}')
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert not actual_value
 
 
-def test_ssd_write_fail_w_command():
-    command = 'python ../ssd.py W 100 0x00000001'
-    expected_value = 'ERROR'
-    subprocess.run(command)
+def test_ssd_write_fail_w_command_wrong_address(sample_input_address_wrong):
+    input_address, input_value = sample_input_address_wrong
+    subprocess.run(f'{COMMAND_WRITE} {input_address} {input_value}')
 
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
 
-    command = 'python ../ssd.py W 02 0x0000001'
-    subprocess.run(command)
 
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+def test_ssd_write_fail_w_command_wrong_value(sample_input_value_wrong):
+    input_address, input_value = sample_input_value_wrong
+    subprocess.run(f'{COMMAND_WRITE} {input_address} {input_value}')
 
-    command = 'python ../ssd.py W 099 0x000000001'
-    subprocess.run(command)
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
 
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
 
-    command = 'python ../ssd.py W 0x00000001'
-    subprocess.run(command)
+def test_ssd_write_fail_w_command_no_value():
+    subprocess.run(f'{COMMAND_WRITE} {VALID_ADDRESS}')
 
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
 
-    command = 'python ../ssd.py W 00'
-    subprocess.run(command)
 
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+def test_ssd_write_fail_w_command_no_address():
+    subprocess.run(f'{COMMAND_WRITE} {VALID_VALUE}')
 
-    command = 'python ../ssd.py W'
-    subprocess.run(command)
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
 
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+
+def test_ssd_write_fail_w_command_no_both():
+    subprocess.run(f'{COMMAND_WRITE}')
+
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
 
 
 @pytest.mark.skip
