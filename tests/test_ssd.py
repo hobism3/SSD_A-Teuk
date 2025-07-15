@@ -29,6 +29,17 @@ def sample_input_address_wrong(request):
     return request.param
 
 
+@pytest.fixture(
+    params=[
+        (NORMAL_ADDRESS, '0x000000001'),
+        (NORMAL_ADDRESS, '0xFFFF'),
+        (NORMAL_ADDRESS, 'FFFFFF0'),
+    ]
+)
+def sample_input_value_wrong(request):
+    return request.param
+
+
 def read_file_with_lines(file_path):
     if not os.path.exists(file_path):
         return []
@@ -90,23 +101,12 @@ def test_ssd_write_fail_no_both(ssd):
     assert actual_value == [ERROR]
 
 
-def test_ssd_write_fail_wrong_value():
-    input_address = '00'
-    input_value = '0x000000010'
-    expected_value = 'ERROR'
-    ssd = SSD()
+def test_ssd_write_fail_wrong_value(ssd, sample_input_value_wrong):
+    input_address, input_value = sample_input_value_wrong
     ssd.write(input_address, input_value)
 
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
-
-    input_value = 'FFFFFF0'
-    ssd.write(input_address, input_value)
-
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
 
 
 @pytest.mark.skip
