@@ -7,6 +7,8 @@ SSD_OUTPUT_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_output.txt')
 
 class Logger:
     def __init__(self):
+        log_dir = os.path.join(OUTPUT_DIR, 'log')
+        os.makedirs(log_dir, exist_ok=True)
         self.log_file_path = f'{OUTPUT_DIR}/log/ssd_log_{datetime.datetime.now().strftime("%Y%m%d_%H%M")}.log'
 
     def log(self, message):
