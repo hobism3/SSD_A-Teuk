@@ -1,6 +1,7 @@
 from commands.base import ExitCommand, HelpCommand
 from commands.read import ReadCommand
 from commands.script1 import FullWriteAndReadCompare
+from commands.script3 import WriteReadAging
 from commands.write import WriteCommand
 from shell_constants import ShellCmd as Cmd
 from shell_constants import ShellMsg as Msg
@@ -15,6 +16,8 @@ class Shell:
             Cmd.HELP: HelpCommand(),
             Cmd.SCRIPT_1_FULL: FullWriteAndReadCompare(),
             Cmd.SCRIPT_1_SHORT: FullWriteAndReadCompare(),
+            Cmd.SCRIPT_3_FULL: WriteReadAging(),
+            Cmd.SCRIPT_3_SHORT: WriteReadAging(),
         }
 
     def run(self):
