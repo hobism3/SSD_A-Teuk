@@ -17,7 +17,9 @@ VALID_VALUE = '0x00000001'
 
 @pytest.fixture
 def ssd():
-    return SSD()
+    ssd = SSD()
+    ssd.initialize_ssd_nand()
+    return ssd
 
 
 @pytest.fixture(params=[('0', VALID_VALUE), ('50', VALID_VALUE), ('99', VALID_VALUE)])
@@ -51,7 +53,7 @@ def read_file_with_lines(file_path):
 
 
 def test_ssd_initial_nand_value_check(ssd):
-    actual_value_lines = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    actual_value_lines = read_file_with_lines(SSD_NAND_FILE_PATH)
     for idx, line in enumerate(actual_value_lines):
         assert line.strip() == f'{idx:02d} {INITIAL_VALUE}'
 
