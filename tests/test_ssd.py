@@ -7,6 +7,7 @@ from ssd import SSD, SSD_NAND_FILE_PATH, SSD_OUTPUT_FILE_PATH
 
 ERROR = 'ERROR'
 
+NORMAL_ADDRESS = '00'
 INITIAL_VALUE = '0x00000000'
 VALID_VALUE = '0x00000001'
 
@@ -68,16 +69,11 @@ def test_ssd_write_fail_wrong_address(ssd, sample_input_address_wrong):
     assert actual_value == [ERROR]
 
 
-def test_ssd_write_fail_no_value():
-    input_address = '00'
-    input_value = None
-    expected_value = 'ERROR'
-    ssd = SSD()
-    ssd.write(input_address, input_value)
+def test_ssd_write_fail_no_value(ssd):
+    ssd.write(NORMAL_ADDRESS, None)
 
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
 
 
 def test_ssd_write_fail_no_address():
