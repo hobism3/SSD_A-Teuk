@@ -39,7 +39,7 @@ class Shell:
         return True
 
     def command(self, cmd: str) -> bool:
-        if not cmd:
+        if not cmd.strip():
             return True
         parts = cmd.split()
         command_name = parts[0].lower()
