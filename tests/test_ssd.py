@@ -21,6 +21,7 @@ VALID_VALUE = '0x00000001'
 def ssd():
     ssd = SSD()
     ssd.initialize_ssd_nand()
+    ssd.initialize_ssd_output()
     return ssd
 
 
@@ -82,7 +83,7 @@ def test_ssd_write_pass(ssd, sample_input_address):
     assert not actual_value
 
 
-def test_ssd_write_pas_scheck_value(ssd, sample_input_address):
+def test_ssd_write_pass_scheck_value(ssd, sample_input_address):
     input_address, input_value = sample_input_address
     ssd.execute('W', input_address, input_value)
 
