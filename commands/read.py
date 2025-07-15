@@ -8,13 +8,17 @@ from shell_constants import ShellPrefix as Pre
 class ReadCommand(Command):
     def __init__(self):
         self._logger = Logger(Pre.READ)
+        self._lba = None
 
-    def parse(self, args: list[str]) -> tuple:
+    def parse(self, args: list[str]) -> list[str]:
         if len(args) != 1:
             raise ValueError(Msg.READ_HELP)
-        lba = args[0]
-        if not self._check_lba(lba):
+        self._lba = args[0]
+        if not self._check_lba(self._lba):
             raise ValueError(
                 f'LBA must be an integer between {LBA_RANGE[0]} and {LBA_RANGE[-1]}'
             )
-        return 'R', lba
+        return ['R', self._lba]
+
+    def parse_result(self, result) -> str:
+        return f'LBA {self._lba}: {result}'

@@ -1,3 +1,9 @@
+import os
+
+SSD_OUTPUT_FILE = os.path.join(os.path.dirname(__file__), 'ssd_output.txt')
+RUN_SSD = ['python', os.path.join(os.path.dirname(__file__), 'ssd.py')]
+
+
 class ShellMsg:
     PROMPT = 'Shell> '
     HELP = """Documented commands (type help <topic>):
