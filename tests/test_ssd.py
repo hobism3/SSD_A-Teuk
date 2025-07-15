@@ -12,7 +12,8 @@ SSD_NAND_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_nand.txt')
 
 def test_ssd_initial_nand_value_check():
     # fmt: off
-    SSD()
+    ssd = SSD()
+    ssd.initialize_ssd_nand()
     # fmt: on
     with open(SSD_NAND_FILE_PATH) as f:
         actual_value_lines = f.readlines()
@@ -26,7 +27,7 @@ def test_ssd_read_initial_value_check():
     input_address = '00'
     expected_value = '0x00000000'
     ssd = SSD()
-
+    ssd.initialize_ssd_nand()
     ssd.read(input_address)
     with open(SSD_OUTPUT_FILE_PATH) as f:
         actual_value = f.readlines()[0].strip()
@@ -50,6 +51,7 @@ def test_ssd_write_pass():
     input_address = '00'
     input_value = '0x00000001'
     ssd = SSD()
+    ssd.initialize_ssd_nand()
     ssd.write(input_address, input_value)
 
     with open(SSD_OUTPUT_FILE_PATH) as f:
@@ -73,6 +75,7 @@ def test_ssd_write_pass_check_value():
     input_address = '00'
     input_value = '0x00000001'
     ssd = SSD()
+    ssd.initialize_ssd_nand()
     ssd.write(input_address, input_value)
 
     with open(SSD_OUTPUT_FILE_PATH) as f:
@@ -109,6 +112,7 @@ def test_ssd_write_fail_wrong_address():
     input_value = '0x00000001'
     expected_value = 'ERROR'
     ssd = SSD()
+    ssd.initialize_ssd_nand()
     ssd.write(input_address, input_value)
 
     with open(SSD_OUTPUT_FILE_PATH) as f:
@@ -133,6 +137,7 @@ def test_ssd_write_fail_no_value():
     input_value = None
     expected_value = 'ERROR'
     ssd = SSD()
+    ssd.initialize_ssd_nand()
     ssd.write(input_address, input_value)
 
     with open(SSD_OUTPUT_FILE_PATH) as f:
@@ -145,6 +150,7 @@ def test_ssd_write_fail_no_address():
     input_value = '0x00000001'
     expected_value = 'ERROR'
     ssd = SSD()
+    ssd.initialize_ssd_nand()
     ssd.write(input_address, input_value)
 
     with open(SSD_OUTPUT_FILE_PATH) as f:
@@ -157,6 +163,7 @@ def test_ssd_write_fail_no_both():
     input_value = None
     expected_value = 'ERROR'
     ssd = SSD()
+    ssd.initialize_ssd_nand()
     ssd.write(input_address, input_value)
 
     with open(SSD_OUTPUT_FILE_PATH) as f:
@@ -169,6 +176,7 @@ def test_ssd_write_fail_wrong_value():
     input_value = '0x000000010'
     expected_value = 'ERROR'
     ssd = SSD()
+    ssd.initialize_ssd_nand()
     ssd.write(input_address, input_value)
 
     with open(SSD_OUTPUT_FILE_PATH) as f:
@@ -187,6 +195,7 @@ def test_ssd_read_written_value_pass():
     input_address = '00'
     input_value = '0x00000001'
     ssd = SSD()
+    ssd.initialize_ssd_nand()
 
     ssd.write(input_address, input_value)
     ssd.read(input_address)
@@ -240,6 +249,7 @@ def test_ssd_read_fail_wrong_address():
     input_address = '100'
     expected_value = 'ERROR'
     ssd = SSD()
+    ssd.initialize_ssd_nand()
     ssd.read(input_address)
 
     with open(SSD_OUTPUT_FILE_PATH) as f:
@@ -272,6 +282,8 @@ def test_ssd_read_write_pass_w_command():
 
 
 def test_ssd_write_fail_w_command():
+    ssd = SSD()
+    ssd.initialize_ssd_nand()
     command = 'python ../ssd.py W 100 0x00000001'
     expected_value = 'ERROR'
     subprocess.run(command)
