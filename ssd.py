@@ -2,6 +2,8 @@ import os
 import sys
 from abc import ABC, abstractmethod
 
+from logger import Logger
+
 INITIAL_VALUE = '0x00000000'
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 SSD_OUTPUT_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_output.txt')
@@ -21,8 +23,9 @@ class SSD:
         return cls._instance
 
     def __init__(self):
+        self.logger = Logger()
         if not os.path.exists(SSD_NAND_FILE_PATH):
-            print('Initialize')
+            self.logger.info('Initialize ssd_nand.txt, ssd_output.txt')
             self.initialize_ssd_nand()
             self.initialize_ssd_output()
 
@@ -53,19 +56,20 @@ class SSD:
         except ValueError:
             return False
 
-    def read(self, line_number):
+    def _read(self, address):
         ret_value = ''
         with open(SSD_NAND_FILE_PATH) as f:
             for line in f:
                 data = line.strip().split(' ')
                 ind = int(data[0])
-                if int(line_number) == ind:
+                if int(address) == ind:
                     ret_value = data[1]
 
         with open(SSD_OUTPUT_FILE_PATH, 'w') as f:
             f.write(f'{ret_value}')
+        self.logger.info(f'Read complete: {address:02d}: {ret_value}')
 
-    def write(self, address, new_content):
+    def _write(self, address, new_content):
         with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
             lines = f.readlines()
 
@@ -74,15 +78,18 @@ class SSD:
             f.writelines(lines)
 
         self.initialize_ssd_output()
+        self.logger.info(f'Write complete: {address:02d}: {new_content}')
 
     def execute(self, mode, address, value=None):
+        self.logger.info(f'Excecute command: {mode} {address} {value}')
         try:
             command = CommandFactory.create_command(
                 [mode, address] + ([value] if value else [])
             )
             command.execute()
-        except InvalidInputError:
+        except InvalidInputError as e:
             self.report_error()
+            self.logger.error(e)
 
     @staticmethod
     def report_error():
@@ -103,8 +110,8 @@ class ReadCommand(Command):
 
     def execute(self):
         if not self.ssd.validate_address(self.address):
-            raise InvalidInputError()
-        self.ssd.read(int(self.address))
+            raise InvalidInputError('Address validation failed')
+        self.ssd._read(int(self.address))
 
 
 class WriteCommand(Command):
@@ -117,8 +124,8 @@ class WriteCommand(Command):
         if not self.ssd.validate_address(self.address) or not self.ssd.validate_value(
             self.value
         ):
-            raise InvalidInputError()
-        self.ssd.write(int(self.address), self.value)
+            raise InvalidInputError('Address validation failed')
+        self.ssd._write(int(self.address), self.value)
 
 
 class CommandFactory:
