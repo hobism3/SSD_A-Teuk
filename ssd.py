@@ -1,5 +1,6 @@
 import os
 import sys
+from abc import ABC, abstractmethod
 
 INITIAL_VALUE = '0x00000000'
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -89,9 +90,10 @@ class SSD:
             f.write('ERROR')
 
 
-class Command:
+class Command(ABC):
+    @abstractmethod
     def execute(self):
-        raise NotImplementedError('Command subclasses must implement execute()')
+        pass
 
 
 class ReadCommand(Command):
