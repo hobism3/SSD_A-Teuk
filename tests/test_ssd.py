@@ -5,6 +5,8 @@ import pytest
 
 from ssd import SSD, SSD_NAND_FILE_PATH, SSD_OUTPUT_FILE_PATH
 
+ERROR = 'ERROR'
+
 INITIAL_VALUE = '0x00000000'
 VALID_VALUE = '0x00000001'
 
@@ -19,7 +21,14 @@ def sample_input_address(request):
     return request.param
 
 
-def read_file(file_path):
+@pytest.fixture(
+    params=[('100', VALID_VALUE), ('0220', VALID_VALUE), ('990', VALID_VALUE)]
+)
+def sample_input_address_wrong(request):
+    return request.param
+
+
+def read_file_with_lines(file_path):
     if not os.path.exists(file_path):
         return []
     with open(file_path) as f:
@@ -27,7 +36,7 @@ def read_file(file_path):
 
 
 def test_ssd_initial_nand_value_check(ssd):
-    actual_value_lines = read_file(SSD_OUTPUT_FILE_PATH)
+    actual_value_lines = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     for idx, line in enumerate(actual_value_lines):
         assert line.strip() == f'{idx:02d} {INITIAL_VALUE}'
 
@@ -36,43 +45,27 @@ def test_ssd_write_pass(ssd, sample_input_address):
     input_address, input_value = sample_input_address
     ssd.write(input_address, input_value)
 
-    actual_value = read_file(SSD_OUTPUT_FILE_PATH)
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert not actual_value
 
 
-def test_ssd_write_pass_check_value(ssd, sample_input_address):
+def test_ssd_write_pas_scheck_value(ssd, sample_input_address):
     input_address, input_value = sample_input_address
     ssd.write(input_address, input_value)
 
-    actual_value = read_file(SSD_OUTPUT_FILE_PATH)
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert not actual_value
 
-    actual_value = read_file(SSD_NAND_FILE_PATH)
+    actual_value = read_file_with_lines(SSD_NAND_FILE_PATH)
     assert actual_value[int(input_address)] == f'{int(input_address):02d} {input_value}'
 
 
-def test_ssd_write_fail_wrong_address():
-    input_address = '100'
-    input_value = '0x00000001'
-    expected_value = 'ERROR'
-    ssd = SSD()
+def test_ssd_write_fail_wrong_address(ssd, sample_input_address_wrong):
+    input_address, input_value = sample_input_address_wrong
     ssd.write(input_address, input_value)
 
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
-
-    input_address = '0220'
-    ssd.write(input_address, input_value)
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
-
-    input_address = '0990'
-    ssd.write(input_address, input_value)
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
 
 
 def test_ssd_write_fail_no_value():
