@@ -1,38 +1,22 @@
 from commands.base import Command
 from logger import Logger
-from shell_constants import LBA_RANGE, Hex
+from shell_constants import LBA_RANGE
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
 
 
 class WriteCommand(Command):
-    def __init__(self, ssd):
-        self._ssd = ssd
+    def __init__(self):
         self._logger = Logger(Pre.WRITE)
 
-    def execute(self, args):
+    def parse(self, args: list[str]) -> tuple:
         if len(args) != 2:
-            self._logger.error(Msg.ERROR)
-            return True
-
-        try:
-            lba = int(args[0])
-            data = args[1]
-
-            if lba not in LBA_RANGE:
-                self._logger.error(Msg.ERROR)
-                return True
-
-            if not (
-                data.startswith(Hex.PREFIX)
-                and len(data) == Hex.LENGTH
-                and all(c in Hex.RANGE for c in data[2:])
-            ):
-                self._logger.error(Msg.ERROR)
-                return True
-
-            self._ssd.execute(lba, data)
-            self._logger.info(Msg.DONE)
-        except ValueError:
-            self._logger.error(Msg.ERROR)
-        return True
+            raise ValueError(Msg.WRITE_HELP)
+        lba, data = args
+        if not self._check_lba(lba):
+            raise ValueError(
+                f'LBA must be an integer between {LBA_RANGE[0]} and {LBA_RANGE[-1]}'
+            )
+        if not self._check_data(data):
+            raise ValueError('Data must be a hex string like 0x0129ABCF')
+        return 'W', lba, data
