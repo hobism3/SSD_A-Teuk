@@ -68,6 +68,15 @@ def test_ssd_initial_nand_value_check(ssd):
 
 
 @pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
+def test_ssd_invalid_mode_w_command(ssd, runner_factory):
+    runner = runner_factory(ssd)
+    runner('M', VALID_ADDRESS, VALID_VALUE)
+
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
+
+
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
 def test_ssd_write_pass(ssd, runner_factory, valid_address):
     runner = runner_factory(ssd)
     runner('W', valid_address, VALID_VALUE)
@@ -90,11 +99,6 @@ def test_ssd_write_fail_not_enough_args(ssd, runner_factory, address, value):
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [ERROR]
 
-def test_ssd_invalid_mode_w_command(ssd):
-    subprocess.run(f'{COMMAND_INVALID} {VALID_ADDRESS} {VALID_VALUE}')
-
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-    assert actual_value == [ERROR]
 
 @pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
 def test_ssd_write_fail_wrong_value(ssd, runner_factory, invalid_value):
