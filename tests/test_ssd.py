@@ -83,16 +83,11 @@ def test_ssd_write_fail_no_address(ssd):
     assert actual_value == [ERROR]
 
 
-def test_ssd_write_fail_no_both():
-    input_address = None
-    input_value = None
-    expected_value = 'ERROR'
-    ssd = SSD()
-    ssd.write(input_address, input_value)
+def test_ssd_write_fail_no_both(ssd):
+    ssd.write(None, None)
 
-    with open('ssd_output.txt') as f:
-        actual_value = f.readlines()[0].strip()
-    assert actual_value == expected_value
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
 
 
 def test_ssd_write_fail_wrong_value():
