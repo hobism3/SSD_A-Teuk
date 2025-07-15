@@ -12,6 +12,13 @@ class InvalidInputError(Exception):
 
 
 class SSD:
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __init__(self):
         if not os.path.exists(SSD_NAND_FILE_PATH):
             print('Initialize')
@@ -58,10 +65,9 @@ class SSD:
             for line in f:
                 data = line.strip().split(' ')
                 ind = int(data[0])
-                value = data[1]
 
                 if int(line_number) == ind:
-                    ret_value = value
+                    ret_value = data[1]
 
         with open(SSD_OUTPUT_FILE_PATH, 'w') as f:
             f.write(f'{ret_value}')
