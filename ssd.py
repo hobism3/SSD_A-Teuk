@@ -45,7 +45,7 @@ class SSD:
     def read(self, input_address):
         ret_value = ""
         if int(input_address) > 99 or int(input_address) < 0:
-            self.errorcase()
+            self.report_error()
             return
         with open('./ssd_nand.txt', 'r') as f:
             for line in f:
@@ -82,10 +82,6 @@ class SSD:
 
         with open(SSD_OUTPUT_FILE_PATH, 'w', encoding='utf-8') as f:
             f.write('')
-
-    def errorcase(self):
-        with open('./ssd_output.txt', 'w') as f:
-            f.write('ERROR')
 
 
 def main():
