@@ -43,11 +43,32 @@ class Shell:
                         continue
                     try:
                         lba = int(parts[1])
-                        print(f'[Read] LBA: {lba}')
-                        self._ssd.read(lba)
-                        print('[Read] Done')
+                        print(f'[Read] LBA {lba:02d}: {self._ssd.read(lba)}')
                     except ValueError:
                         print('[Read] ERROR')
+
+                elif parts[0].lower() == 'fullread':
+                    if len(parts) != 1:
+                        print('[Full Read] ERROR')
+                        continue
+                    try:
+                        print('[Full Read]')
+                        for lba in range(100):
+                            print(f'LBA {lba:02d} : {self._ssd.read(lba)}')
+
+                    except ValueError:
+                        print('[Full Read] ERROR')
+
+                elif parts[0].lower() == 'fullwrite':
+                    if len(parts) != 2:
+                        print('[Full Write] ERROR')
+                        continue
+                    try:
+                        for lba in range(100):
+                            self._ssd.write(lba, parts[1])
+                        print('[Full Write] Done')
+                    except ValueError:
+                        print('[Full Write] ERROR')
 
                 elif parts[0].lower() == 'exit':
                     break
