@@ -17,7 +17,6 @@ def test_ssd_initial_nand_value_check():
     assert actual_value_lines[-1].strip() == '99 0x00000000'
 
 
-@pytest.mark.skip
 def test_ssd_read_initial_value_check():
     input_address = '00'
     expected_value = '0x00000000'
@@ -179,7 +178,6 @@ def test_ssd_write_fail_wrong_value():
     assert actual_value == expected_value
 
 
-@pytest.mark.skip
 def test_ssd_read_written_value_pass():
     input_address = '00'
     input_value = '0x00000001'
@@ -209,7 +207,6 @@ def test_ssd_read_written_value_pass():
     assert actual_value == input_value
 
 
-@pytest.mark.skip
 def test_ssd_read_initial_value_w_command():
     command = 'python ssd.py R 0'
     expected_value = '0x00000000'
@@ -234,7 +231,6 @@ def test_ssd_read_initial_value_w_command():
     assert actual_value == expected_value
 
 
-@pytest.mark.skip
 def test_ssd_read_fail_wrong_address():
     input_address = '100'
     expected_value = 'ERROR'
@@ -255,7 +251,6 @@ def test_ssd_write_pass_w_command():
     assert not actual_value
 
 
-@pytest.mark.skip
 def test_ssd_read_write_pass_w_command():
     command = 'python ssd.py W 0 0x00000001'
     subprocess.run(command)
