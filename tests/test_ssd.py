@@ -5,9 +5,7 @@ import pytest
 
 from ssd import SSD, SSD_NAND_FILE_PATH, SSD_OUTPUT_FILE_PATH
 
-COMMAND_WRITE = 'python ../ssd.py W'
-COMMAND_READ = 'python ../ssd.py R'
-COMMAND_INVALID = 'python ../ssd.py M'
+COMMAND_PREFIX = 'python ../ssd.py'
 
 ERROR = 'ERROR'
 
@@ -15,6 +13,22 @@ VALID_ADDRESS = '00'
 INVALID_ADDRESS = '100'
 INITIAL_VALUE = '0x00000000'
 VALID_VALUE = '0x00000001'
+
+
+def run_direct(ssd_instance):
+    def runner(command, *args):
+        ssd_instance.execute(command, *args)
+
+    return runner
+
+
+def run_cli(ssd_instance):
+    def runner(command, *args):
+        cli_args = [str(arg) for arg in args]
+        full_command = f'{COMMAND_PREFIX} {command} {" ".join(cli_args)}'
+        subprocess.run(full_command, shell=True, check=True)
+
+    return runner
 
 
 @pytest.fixture
@@ -53,15 +67,10 @@ def test_ssd_initial_nand_value_check(ssd):
         assert line.strip() == f'{idx:02d} {INITIAL_VALUE}'
 
 
-def test_ssd_write_pass(ssd, valid_address):
-    ssd.execute('W', valid_address, VALID_VALUE)
-
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-    assert not actual_value
-
-
-def test_ssd_write_pass_check_value(ssd, valid_address):
-    ssd.execute('W', valid_address, VALID_VALUE)
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
+def test_ssd_write_pass(ssd, runner_factory, valid_address):
+    runner = runner_factory(ssd)
+    runner('W', valid_address, VALID_VALUE)
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert not actual_value
@@ -70,30 +79,13 @@ def test_ssd_write_pass_check_value(ssd, valid_address):
     assert actual_value[int(valid_address)] == f'{int(valid_address):02d} {VALID_VALUE}'
 
 
-def test_ssd_write_fail_wrong_address(ssd, invalid_address):
-    ssd.execute('W', invalid_address, VALID_VALUE)
-
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-    assert actual_value == [ERROR]
-
-
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
 @pytest.mark.parametrize(
-    'address, value',
-    [
-        (None, VALID_VALUE),  # 주소 누락
-        (VALID_ADDRESS, None),  # 값 누락
-        (None, None),  # 둘 다 누락
-    ],
+    'address, value', [(None, VALID_VALUE), (VALID_ADDRESS, None), (None, None)]
 )
-def test_ssd_write_fail_not_enough_args(ssd, address, value):
-    ssd.execute('W', address, value)
-
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-    assert actual_value == [ERROR]
-
-
-def test_ssd_write_fail_wrong_value(ssd, invalid_value):
-    ssd.execute('W', VALID_ADDRESS, invalid_value)
+def test_ssd_write_fail_not_enough_args(ssd, runner_factory, address, value):
+    runner = runner_factory(ssd)
+    runner('W', address, value)
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [ERROR]
@@ -104,80 +96,50 @@ def test_ssd_invalid_mode_w_command(ssd):
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [ERROR]
 
-def test_ssd_write_pass_w_command(ssd):
-    subprocess.run(f'{COMMAND_WRITE} {VALID_ADDRESS} {VALID_VALUE}')
-
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-    assert not actual_value
-
-
-def test_ssd_write_fail_w_command_wrong_address(ssd, invalid_address):
-    subprocess.run(f'{COMMAND_WRITE} {invalid_address} {VALID_VALUE}')
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
+def test_ssd_write_fail_wrong_value(ssd, runner_factory, invalid_value):
+    runner = runner_factory(ssd)
+    runner('W', VALID_ADDRESS, invalid_value)
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [ERROR]
 
 
-def test_ssd_write_fail_w_command_wrong_value(ssd, invalid_value):
-    subprocess.run(f'{COMMAND_WRITE} {VALID_ADDRESS} {invalid_value}')
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
+def test_ssd_write_fail_wrong_address(ssd, runner_factory, invalid_address):
+    runner = runner_factory(ssd)
+    runner('W', invalid_address, VALID_VALUE)
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [ERROR]
 
 
-@pytest.mark.parametrize(
-    'address, value',
-    [
-        (None, VALID_VALUE),  # 주소 누락
-        (VALID_ADDRESS, None),  # 값 누락
-        (None, None),  # 둘 다 누락
-    ],
-)
-def test_ssd_write_fail_w_command_not_enough_args(ssd, address, value):
-    subprocess.run(f'{COMMAND_WRITE} {address} {value}')
-
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-    assert actual_value == [ERROR]
-
-
-def test_ssd_read_initial_value_check(ssd, valid_address):
-    ssd.execute('R', valid_address)
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
+def test_ssd_read_initial_value_check(ssd, runner_factory, valid_address):
+    runner = runner_factory(ssd)
+    runner('R', valid_address)
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [INITIAL_VALUE]
 
 
-def test_ssd_read_written_value_pass(ssd, valid_address):
-    ssd.execute('W', valid_address, VALID_VALUE)
-    ssd.execute('R', valid_address)
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-
-    assert actual_value == [VALID_VALUE]
-
-
-def test_ssd_read_fail_wrong_address(ssd, invalid_address):
-    ssd.execute('R', invalid_address)
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
+def test_ssd_read_fail_wrong_address(ssd, runner_factory, invalid_address):
+    runner = runner_factory(ssd)
+    runner('R', invalid_address)
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [ERROR]
 
 
-def test_ssd_read_initial_value_w_command(ssd, valid_address):
-    command = f'{COMMAND_READ} {valid_address}'
-    subprocess.run(command)
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
+def test_ssd_read_written_value_pass(ssd, runner_factory, valid_address):
+    runner = runner_factory(ssd)
 
-    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
-    assert actual_value == [INITIAL_VALUE]
-
-
-def test_ssd_read_write_pass_w_command(ssd, valid_address):
-    command = f'{COMMAND_WRITE} {valid_address} {VALID_VALUE}'
-    subprocess.run(command)
-
+    runner('W', valid_address, VALID_VALUE)
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert not actual_value
 
-    command = f'{COMMAND_READ} {valid_address}'
-    subprocess.run(command)
+    runner('R', valid_address)
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [VALID_VALUE]
