@@ -60,8 +60,8 @@ class SSD:
         if not self.validate_address(line_number):
             self.report_error()
             return
-        ret_value = ""
-        with open(SSD_NAND_FILE_PATH, 'r') as f:
+        ret_value = ''
+        with open(SSD_NAND_FILE_PATH) as f:
             for line in f:
                 data = line.strip().split(' ')
                 ind = int(data[0])
@@ -95,6 +95,9 @@ class SSD:
             self.initialize_ssd_output()
         except InvalidInputError:
             self.report_error()
+
+    def execute(self, param, param1, param2=None):
+        pass
 
 
 def main():
