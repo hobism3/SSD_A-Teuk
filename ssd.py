@@ -162,7 +162,7 @@ def main():
         command.execute()
     except InvalidInputError:
         SSD.report_error()
-        sys.exit(1)
+        sys.exit(0)
 
 
 if __name__ == '__main__':
