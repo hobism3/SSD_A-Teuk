@@ -35,16 +35,19 @@ class SSD:
             for i in range(100):
                 f.write(f'{i:02d} {INITIAL_VALUE}\n')
 
-    def initialize_ssd_output(self):
+    @staticmethod
+    def initialize_ssd_output():
         with open(SSD_OUTPUT_FILE_PATH, 'w', encoding='utf-8') as f:
             f.write('')
 
-    def validate_address(self, input):
+    @staticmethod
+    def validate_address(input):
         if input is None or not input.isdigit():
             return False
         return 0 <= int(input) <= 99
 
-    def validate_value(self, input):
+    @staticmethod
+    def validate_value(input):
         if input is None or len(input) != 10:
             return False
         if not input.startswith(('0x', '0X')):
