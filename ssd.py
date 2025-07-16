@@ -191,7 +191,7 @@ class CommandFactory:
                 f'{mode} only accepts {CommandFactory.MODES[mode]["args_count"]} arguments'
             )
 
-        command = CommandFactory.MODES[args[0].upper()]['command']
+        command = CommandFactory.MODES[mode]['command']
         return command(ssd, *args[1:])
 
 
