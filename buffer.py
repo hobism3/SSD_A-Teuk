@@ -1,4 +1,5 @@
 import os
+
 from logger import Logger
 from pathlib import Path
 
@@ -32,7 +33,7 @@ class Buffer:
             self.logger.error(f'Creation of the directory {dir} failed')
 
     def buffer_file_read(self) -> list:
-        ...
+        return sorted(os.listdir('buffer'))
 
     def buffer_file_write(self, lst):
         file_list =  sorted(os.listdir(BUFFER_DIR))
@@ -44,11 +45,8 @@ class Buffer:
             except OSError as e:
                 self.logger.error(f'Error during changing buffer {before_file_path} to {after_file_path}')
 
-    def _write(self, address, new_content):
-        ...
+    def _write(self, address, new_content): ...
 
-    def _read(self, address):
-        ...
+    def _read(self, address): ...
 
-    def _erase(self):
-        ...
+    def _erase(self, address, size): ...
