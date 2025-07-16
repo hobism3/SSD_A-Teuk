@@ -13,6 +13,7 @@ VALID_ADDRESS = '00'
 INVALID_ADDRESS = '100'
 INITIAL_VALUE = '0x00000000'
 VALID_VALUE = '0x00000001'
+VALID_SIZE = '5'
 
 
 def run_direct(ssd_instance):
@@ -51,6 +52,11 @@ def invalid_address(request):
 
 @pytest.fixture(params=['0x000000001', '0xFFFF', 'FFFFFF0', 'FFFFFF0000', '0xFXYZ0000'])
 def invalid_value(request):
+    return request.param
+
+
+@pytest.fixture(params=['-1', '0', '11', '2000', 'A', 'None'])
+def invalid_size(request):
     return request.param
 
 
@@ -147,3 +153,39 @@ def test_ssd_read_written_value_pass(ssd, runner_factory, valid_address):
     runner('R', valid_address)
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert actual_value == [VALID_VALUE]
+
+
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
+def test_ssd_erase_pass(ssd, runner_factory, valid_address):
+    runner = runner_factory(ssd)
+    for valid_size in range(1, 10):
+        runner('E', valid_address, str(valid_size))
+        actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+        assert not actual_value
+
+        actual_value = read_file_with_lines(SSD_NAND_FILE_PATH)
+        assert (
+            actual_value[int(valid_address)]
+            == f'{int(valid_address):02d} {INITIAL_VALUE}'
+        )
+
+
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
+def test_ssd_erase_fail_not_invalid_size(ssd, runner_factory, invalid_size):
+    runner = runner_factory(ssd)
+    runner('E', VALID_ADDRESS, invalid_size)
+
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
+
+
+@pytest.mark.parametrize(
+    'address, size', [(None, VALID_SIZE), (VALID_ADDRESS, None), (None, None)]
+)
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
+def test_ssd_erase_fail_not_enough_args(ssd, runner_factory, address, size):
+    runner = runner_factory(ssd)
+    runner('E', address, size)
+
+    actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+    assert actual_value == [ERROR]
