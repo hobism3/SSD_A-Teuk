@@ -65,8 +65,9 @@ class HelpCommand(Command):
         return []
 
     def execute(self, args) -> bool:
-        self._logger.info(ShellMsg.HELP)
-        return True
+        result = self.parse_result()
+        self._logger.info(result)
+        return result
 
-    def parse_result(self, result) -> str:
-        return ''
+    def parse_result(self, result=None) -> str:
+        return ShellMsg.HELP
