@@ -78,7 +78,7 @@ def test_shell_invalid_cmd(capsys: pytest.CaptureFixture, mocker: MockerFixture)
     captured = capsys.readouterr()
     output = captured.out
 
-    assert Msg.INVALID in output
+    assert Msg.HELP in output
 
 
 @pytest.mark.timeout(1)

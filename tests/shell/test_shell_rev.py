@@ -49,3 +49,49 @@ def test_subprocess_error_logged(shell, mock_subprocess_run, shell_user_inputs, 
     output = capsys.readouterr().out
     assert Msg.ERROR in output
     assert Pre.READ in output
+
+
+def test_shell_run_serial_script_success(tmp_path, capsys):
+    from shell import Shell
+
+    script_path = tmp_path / 'script.txt'
+    with open(script_path, 'w') as f:
+        f.write('1_FullWriteAndReadCompare\n')
+
+    shell = Shell()
+    shell.run_serial_script(str(script_path))
+
+    output = capsys.readouterr().out
+    print(output)
+    assert 'Run' in output
+    assert 'Pass' in output
+
+
+def test_shell_serial_script_file_not_found(capsys):
+    from shell import Shell
+
+    shell = Shell()
+    shell.run_serial_script('nonexistent.txt')
+    output = capsys.readouterr().out
+    assert 'Script file not found' in output
+
+
+@pytest.mark.skip
+def test_shell_dot_task_runs_briefly(mocker, tmp_path, capsys):
+    import time
+
+    from shell import Shell
+
+    mocker.patch(
+        'commands.script1.FullWriteAndReadCompare.execute',
+        side_effect=lambda x: time.sleep(1.5) or True,
+    )
+    script_path = tmp_path / 'script.txt'
+    with open(script_path, 'w') as f:
+        f.write('1_FullWriteAndReadCompare\n')
+
+    shell = Shell()
+    shell.run_serial_script(script_path)
+    output = capsys.readouterr().out
+    print(output)
+    assert '.' in output

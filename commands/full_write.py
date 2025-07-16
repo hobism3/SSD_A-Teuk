@@ -7,27 +7,28 @@ from shell_logger import Logger
 
 
 class FullWriteCommand(Command):
-    def __init__(self):
-        self._logger = Logger(Pre.FULLWRITE)
+    def __init__(self, logger: Logger, prefix=Pre.FULLWRITE):
+        super().__init__(logger, prefix)
         self._lba = None
-        self._write = WriteCommand()
+        self._read = WriteCommand(self._logger, prefix=None)
 
-    def parse(self, args: list[str]) -> list[str]: ...
-
-    def execute(self, args) -> bool:
+    def execute(self, args=None) -> bool:
         try:
+            self._logger.print_blank_line()
+            self._logger.print_and_log(self._prefix, None)
             for index in LBA_RANGE:
                 self._execute_write(index, args[0])
-                self._logger.info(Msg.DONE)
-            return True
+                self._logger.print_and_log(self._prefix, Msg.DONE)
         except ValueError:
-            self._logger.error(Msg.ERROR)
-
-    def parse_result(self, result) -> str:
-        if not result:
-            return Msg.DONE
-        return Msg.ERROR
+            self._logger.print_and_log(self._prefix, Msg.ERROR)
+        return True
 
     def _execute_write(self, lba, current_value):
-        cmd = f'{lba} {current_value}'
-        self._write.execute(cmd.split())
+        args = [str(lba), current_value]
+        self._read.execute(args)
+
+    def parse(self, args: list[str]) -> list[str]:
+        return args
+
+    def parse_result(self, result) -> str:
+        return result
