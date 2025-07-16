@@ -165,39 +165,32 @@ class EraseCommand(Command):
 
 
 class CommandFactory:
+    MODES = {
+        'R': {'command': ReadCommand, 'args_count': 1},
+        'W': {'command': WriteCommand, 'args_count': 2},
+        'E': {'command': EraseCommand, 'args_count': 2},
+    }
+
     @staticmethod
     def create_command(args):
-        if len(args) < 2:
-            raise InvalidInputError('Insufficient arguments')
+        if not args:
+            raise InvalidInputError('No arguments provided')
 
         mode = args[0].upper()
-        address = args[1]
-
         ssd = SSD()
 
-        if mode == 'W':
-            if len(args) != 3:
-                raise InvalidInputError('Write only accepts 2 arguments')
-            value = args[2]
-            if value is None:
-                raise InvalidInputError('Write needs a value')
-            return WriteCommand(ssd, address, value)
+        if mode not in CommandFactory.MODES:
+            raise InvalidInputError(
+                f'Invalid mode: {mode}. Supported modes are {", ".join(CommandFactory.MODES.keys())}.'
+            )
 
-        elif mode == 'R':
-            if len(args) != 2:
-                raise InvalidInputError('Read only accepts 1 argument')
-            return ReadCommand(ssd, address)
+        if CommandFactory.MODES[mode]['args_count'] != len(args) - 1:
+            raise InvalidInputError(
+                f'{mode} only accepts {CommandFactory.MODES[mode]["args_count"]} arguments'
+            )
 
-        elif mode == 'E':
-            if len(args) != 3:
-                raise InvalidInputError('Erase only accepts 2 arguments')
-            value = args[2]
-            if value is None:
-                raise InvalidInputError('Erase needs a size')
-            return EraseCommand(ssd, address, value)
-
-        else:
-            raise InvalidInputError('Invalid mode')
+        command = CommandFactory.MODES[args[0].upper()]['command']
+        return command(ssd, *args[1:])
 
 
 def main():
