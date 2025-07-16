@@ -6,37 +6,41 @@ from pytest_mock import MockerFixture
 
 from shell import Shell
 
-SSD_PATH = Path(__file__).resolve().parents[2] / 'ssd.py'
 
-TEST_ARGS_LIST = [
-    ('W', '04', '0x00000000'),
-    ('W', '00', '0x00000000'),
-    ('W', '03', '0x00000000'),
-    ('W', '01', '0x00000000'),
-    ('W', '02', '0x00000000'),
-    ('R', '04', None),
-    ('R', '00', None),
-    ('R', '03', None),
-    ('R', '01', None),
-    ('R', '02', None),
-]
+@pytest.fixture
+def case_list():
+    ssd_path = Path(__file__).resolve().parents[2] / 'ssd.py'
 
-
-CASE_LIST = []
-for cmd, code, value in TEST_ARGS_LIST:
-    cmd_args = [
-        'python',
-        str(SSD_PATH),
-        cmd,
-        code,
+    test_args_list = [
+        ('W', '04', '0x00000000'),
+        ('W', '00', '0x00000000'),
+        ('W', '03', '0x00000000'),
+        ('W', '01', '0x00000000'),
+        ('W', '02', '0x00000000'),
+        ('R', '04', None),
+        ('R', '00', None),
+        ('R', '03', None),
+        ('R', '01', None),
+        ('R', '02', None),
     ]
-    if value is not None:
-        cmd_args.append(value)
 
-    CASE_LIST.append(call(cmd_args, check=True))
+    test_cases = []
+    for cmd, code, value in test_args_list:
+        cmd_args = [
+            'python',
+            str(ssd_path),
+            cmd,
+            code,
+        ]
+        if value is not None:
+            cmd_args.append(value)
+
+        test_cases.append(call(cmd_args, check=True))
+
+    return test_cases
 
 
-def test_shell_script2(capsys: pytest.CaptureFixture, mocker: MockerFixture):
+def test_shell_script2(capsys: pytest.CaptureFixture, mocker: MockerFixture, case_list):
     mock_process = mocker.Mock()
     mock_process.returncode = 0
 
@@ -51,5 +55,5 @@ def test_shell_script2(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     output = captured.out
     assert '[2_PartialLBAWrite] Pass' in output
 
-    for case in CASE_LIST:
+    for case in case_list:
         assert case in mock_run.call_args_list
