@@ -112,7 +112,7 @@ class SSD:
         for buffed_command in buffer_list:
             if 'empty' in buffed_command:
                 break
-            args = buffed_command.split(' ')
+            args = buffed_command.split('_')
             mode = args[1]
             address = int(args[2])  # 주소는 항상 int로 변환
 
