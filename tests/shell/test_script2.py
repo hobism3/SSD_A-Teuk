@@ -5,6 +5,7 @@ from pytest_mock import MockerFixture
 
 from shell import Shell
 from shell_constants import RUN_SSD
+from shell_constants import ShellMsg as Msg
 
 
 @pytest.fixture
@@ -41,6 +42,7 @@ def test_shell_script2(capsys: pytest.CaptureFixture, mocker: MockerFixture, cas
     mocker.patch('builtins.input', side_effect=['2_', 'exit'])
     mocker.patch('builtins.open', mocker.mock_open(read_data='0x00000000'))
     mocker.patch('random.randint', return_value=0x00000000)
+    mocker.patch('commands.write.WriteCommand.parse_result', return_value=Msg.DONE)
     shell = Shell()
     shell.run()
 
