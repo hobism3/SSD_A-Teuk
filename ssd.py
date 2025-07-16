@@ -122,7 +122,6 @@ class ReadCommand(Command):
     def execute(self):
         if not self.ssd.validate_address(self.address):
             raise InvalidInputError('Address validation failed')
-        # self.ssd._read(int(self.address))
         self.ssd._buf_read(int(self.address))
 
 
@@ -137,7 +136,6 @@ class WriteCommand(Command):
             self.value
         ):
             raise InvalidInputError('Address validation failed')
-        # self.ssd._write(int(self.address), self.value)
         self.ssd._buf_write(int(self.address), self.value)
 
 
@@ -152,15 +150,14 @@ class CommandFactory:
         value = args[2] if len(args) > 2 else None
 
         ssd = SSD()
-        buffer = Buffer()
 
         if mode == 'W':
             if value is None:
                 raise InvalidInputError('Write needs a value')
-            return WriteCommand(ssd, buffer, address, value)
+            return WriteCommand(ssd, address, value)
 
         elif mode == 'R':
-            return ReadCommand(ssd, buffer, address)
+            return ReadCommand(ssd, address)
 
         else:
             raise InvalidInputError('Invalid mode')
