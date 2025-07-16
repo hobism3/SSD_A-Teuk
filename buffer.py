@@ -36,12 +36,12 @@ class Buffer:
     def buffer_file_write(self, lst):
         file_list =  sorted(os.listdir(BUFFER_DIR))
         for i, file in enumerate(lst):
-            file_path = f'{BUFFER_DIR}\{file_list[i]}'
-            new_file_path = f'{BUFFER_DIR}\{file}'
+            before_file_path = f'{BUFFER_DIR}\{file_list[i]}'
+            after_file_path = f'{BUFFER_DIR}\{file}'
             try:
-                os.rename(file_path, new_file_path)
+                os.rename(before_file_path, after_file_path)
             except OSError as e:
-                self.logger.error(f'Error during changing buffer {file_path} to {new_file_path}')
+                self.logger.error(f'Error during changing buffer {before_file_path} to {after_file_path}')
 
     def _write(self, address, new_content):
         ...
