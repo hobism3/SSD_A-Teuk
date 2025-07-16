@@ -172,19 +172,26 @@ class CommandFactory:
 
         mode = args[0].upper()
         address = args[1]
-        value = args[2] if len(args) > 2 else None
 
         ssd = SSD()
 
         if mode == 'W':
+            if len(args) != 3:
+                raise InvalidInputError('Write only accepts 2 arguments')
+            value = args[2]
             if value is None:
                 raise InvalidInputError('Write needs a value')
             return WriteCommand(ssd, address, value)
 
         elif mode == 'R':
+            if len(args) != 2:
+                raise InvalidInputError('Read only accepts 1 argument')
             return ReadCommand(ssd, address)
 
         elif mode == 'E':
+            if len(args) != 3:
+                raise InvalidInputError('Erase only accepts 2 arguments')
+            value = args[2]
             if value is None:
                 raise InvalidInputError('Erase needs a size')
             return EraseCommand(ssd, address, value)
