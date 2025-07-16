@@ -1,3 +1,6 @@
+import os
+
+
 class Buffer:
     _instance = None
 
@@ -8,7 +11,8 @@ class Buffer:
 
     def __init__(self): ...
 
-    def buffer_file_read(self) -> list: ...
+    def buffer_file_read(self) -> list:
+        return sorted(os.listdir('buffer'))
 
     def buffer_file_write(self, lst): ...
 
