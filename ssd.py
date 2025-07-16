@@ -107,16 +107,23 @@ class SSD:
         self.logger.info(f'Erase complete: {address:02d} to {address + size:02d}')
 
     def _flush(self):
+        self.logger.info('Flush Start')
         buffer_list = self.buffer.buffer_file_read()
         for buffed_command in buffer_list:
             if 'empty' in buffed_command:
                 break
-            _, mode, address, value = buffed_command.split('_')
+            args = buffed_command.split(' ')
+            mode = args[1]
+            address = int(args[2])  # 주소는 항상 int로 변환
 
             if mode == 'W':
+                value = args[3]
                 self._write(address, value)
             elif mode == 'E':
-                self._erase(address, value)
+                size = int(args[3])
+                self._erase(address, size)
+            elif mode == 'R':
+                self._read(address)
 
         self.initialize_ssd_output()
         self.logger.info('Flush complete')
