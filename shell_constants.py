@@ -48,6 +48,7 @@ class ShellPrefix:
 LBA_RANGE = range(100)
 MAX_LBA = 99
 SCRIPT_1_STEP = 5
+SCRIPT_3_ROTATE_CNT = 200
 
 
 class Hex:

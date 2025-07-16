@@ -4,6 +4,7 @@ from commands.base import Command
 from commands.read import ReadCommand
 from commands.write import WriteCommand
 from logger import Logger
+from shell_constants import SCRIPT_3_ROTATE_CNT
 from shell_constants import ShellPrefix as Pre
 
 
@@ -20,7 +21,7 @@ class WriteReadAging(Command):
         pass
 
     def execute(self, args):
-        for _ in range(0, 200):
+        for _ in range(0, SCRIPT_3_ROTATE_CNT):
             value = f'0x{random.getrandbits(32):08X}'
 
             self.write_cmd.execute(f'0 {value}'.split())

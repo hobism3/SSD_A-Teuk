@@ -100,3 +100,20 @@ def test_script3_valid_call_args_list(
 
     for case in case_list:
         assert case in mock_run.call_args_list
+
+
+def test_script3_call_args_order(
+    capsys: pytest.CaptureFixture, mocker: MockerFixture, case_list
+):
+    mock_process = mocker.Mock()
+    mock_process.returncode = 0
+    mock_run = mocker.patch('subprocess.run', return_value=mock_process)
+    mocker.patch('builtins.input', side_effect=['3_', 'exit'])
+    mocker.patch('random.getrandbits', return_value=0xAAAABBBB)
+    mocker.patch('builtins.open', mocker.mock_open(read_data='0xAAAABBBB'))
+    mocker.patch('commands.write.WriteCommand.parse_result', return_value=Msg.DONE)
+
+    shell = Shell()
+    shell.run()
+
+    mock_run.assert_has_calls(case_list, any_order=False)
