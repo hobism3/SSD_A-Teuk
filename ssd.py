@@ -125,7 +125,6 @@ class SSD:
             elif mode == 'R':
                 self._read(address)
 
-        self.initialize_ssd_output()
         self.logger.info('Flush complete')
 
     def _buf_read(self, address):
