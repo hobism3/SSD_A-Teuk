@@ -5,6 +5,7 @@ from logger import Logger
 from shell_constants import LBA_RANGE, RUN_SSD, SSD_OUTPUT_FILE
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
+from subprocess import CalledProcessError
 
 
 class ReadCommand(Command):
@@ -36,5 +37,5 @@ class ReadCommand(Command):
                 result = self.parse_result(read_value)
             self._logger.info(result)
             return read_value
-        except ValueError:
+        except (ValueError, CalledProcessError):
             self._logger.error(Msg.ERROR)
