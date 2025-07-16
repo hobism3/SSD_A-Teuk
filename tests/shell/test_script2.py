@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import call
 
 import pytest
@@ -5,103 +6,34 @@ from pytest_mock import MockerFixture
 
 from shell import Shell
 
-CASE_LIST = [
-    call(
-        [
-            'python',
-            'C:\\Users\\User\\PycharmProjects\\pythonProject31\\ssd.py',
-            'W',
-            '04',
-            '0x00000000',
-        ],
-        check=True,
-    ),
-    call(
-        [
-            'python',
-            'C:\\Users\\User\\PycharmProjects\\pythonProject31\\ssd.py',
-            'W',
-            '00',
-            '0x00000000',
-        ],
-        check=True,
-    ),
-    call(
-        [
-            'python',
-            'C:\\Users\\User\\PycharmProjects\\pythonProject31\\ssd.py',
-            'W',
-            '03',
-            '0x00000000',
-        ],
-        check=True,
-    ),
-    call(
-        [
-            'python',
-            'C:\\Users\\User\\PycharmProjects\\pythonProject31\\ssd.py',
-            'W',
-            '01',
-            '0x00000000',
-        ],
-        check=True,
-    ),
-    call(
-        [
-            'python',
-            'C:\\Users\\User\\PycharmProjects\\pythonProject31\\ssd.py',
-            'W',
-            '02',
-            '0x00000000',
-        ],
-        check=True,
-    ),
-    call(
-        [
-            'python',
-            'C:\\Users\\User\\PycharmProjects\\pythonProject31\\ssd.py',
-            'R',
-            '04',
-        ],
-        check=True,
-    ),
-    call(
-        [
-            'python',
-            'C:\\Users\\User\\PycharmProjects\\pythonProject31\\ssd.py',
-            'R',
-            '00',
-        ],
-        check=True,
-    ),
-    call(
-        [
-            'python',
-            'C:\\Users\\User\\PycharmProjects\\pythonProject31\\ssd.py',
-            'R',
-            '03',
-        ],
-        check=True,
-    ),
-    call(
-        [
-            'python',
-            'C:\\Users\\User\\PycharmProjects\\pythonProject31\\ssd.py',
-            'R',
-            '01',
-        ],
-        check=True,
-    ),
-    call(
-        [
-            'python',
-            'C:\\Users\\User\\PycharmProjects\\pythonProject31\\ssd.py',
-            'R',
-            '02',
-        ],
-        check=True,
-    ),
+SSD_PATH = Path(__file__).resolve().parents[2] / 'ssd.py'
+
+TEST_ARGS_LIST = [
+    ('W', '04', '0x00000000'),
+    ('W', '00', '0x00000000'),
+    ('W', '03', '0x00000000'),
+    ('W', '01', '0x00000000'),
+    ('W', '02', '0x00000000'),
+    ('R', '04', None),
+    ('R', '00', None),
+    ('R', '03', None),
+    ('R', '01', None),
+    ('R', '02', None),
 ]
+
+
+CASE_LIST = []
+for cmd, code, value in TEST_ARGS_LIST:
+    cmd_args = [
+        'python',
+        str(SSD_PATH),
+        cmd,
+        code,
+    ]
+    if value is not None:
+        cmd_args.append(value)
+
+    CASE_LIST.append(call(cmd_args, check=True))
 
 
 def test_shell_script2(capsys: pytest.CaptureFixture, mocker: MockerFixture):

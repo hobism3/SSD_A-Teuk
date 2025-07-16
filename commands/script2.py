@@ -5,7 +5,7 @@ from commands.base import Command
 from commands.read import ReadCommand
 from commands.write import WriteCommand
 from logger import Logger
-from shell_constants import RUN_SSD, SSD_OUTPUT_FILE, ShellMsg
+from shell_constants import RUN_SSD, ShellMsg
 from shell_constants import ShellPrefix as Pre
 
 
@@ -33,13 +33,9 @@ class PartialLBAWriteCommand(Command):
                         self._logger.error(ShellMsg.ERROR)
 
                 for index in sample_index:
-                    self._lba = index
-                    ssd_args = ['R', self._lba]
-                    return_code = subprocess.run(RUN_SSD + ssd_args, check=True)
-                    if return_code.returncode != 0:
-                        self._logger.error(ShellMsg.ERROR)
-                    with open(SSD_OUTPUT_FILE) as f:
-                        read_value = f.read().strip()
+                    ssd_args = [index]
+                    read_value = self._read.execute(ssd_args)
+                    if read_value != hex_string:
                         if read_value != hex_string:
                             print('[2_PartialLBAWrite] Fail')
                             return True
