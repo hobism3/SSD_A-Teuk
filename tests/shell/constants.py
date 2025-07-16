@@ -1,0 +1,65 @@
+from shell_constants import ShellCmd as Cmd
+
+# Test data constants
+TEST_LBA = '0'
+TEST_LBA_INVALID = '-1'
+TEST_DATA = '0x12345678'
+TEST_DATA_2 = '0x00ABCDEF'
+TEST_EMPTY_OUTPUT = ''
+TEST_READ_OUTPUT = '0x12345678'
+
+# Test case names
+SHELL_HELP_EXIT = 'help_exit'
+SHELL_JUST_EXIT = 'just_exit'
+SHELL_WRITE_THEN_EXIT = 'write_then_exit'
+SHELL_READ_THEN_EXIT = 'read_then_exit'
+SHELL_EMPTY_AND_EXIT = 'empty_and_exit'
+SHELL_UNKNOWN_THEN_EXIT = 'unknown_then_exit'
+SHELL_KEYBOARD_INTERRUPT = 'keyboard_interrupt'
+SHELL_EOF = 'eof'
+SHELL_WHITESPACE_AND_CASE = 'whitespace_and_case'
+SHELL_EXIT_MID_LOOP = 'exit_mid_loop'
+
+# Shell test cases
+SHELL_TEST_CASES = [
+    SHELL_HELP_EXIT,
+    SHELL_JUST_EXIT,
+    SHELL_WRITE_THEN_EXIT,
+    SHELL_READ_THEN_EXIT,
+    SHELL_EMPTY_AND_EXIT,
+    SHELL_UNKNOWN_THEN_EXIT,
+    SHELL_WHITESPACE_AND_CASE,
+    SHELL_EXIT_MID_LOOP,
+]
+
+SHELL_ERROR_TEST_CASES = [
+    SHELL_KEYBOARD_INTERRUPT,
+    SHELL_EOF,
+]
+
+SHELL_SUBPROCESS_TEST_CASES = [
+    SHELL_WRITE_THEN_EXIT,
+    SHELL_READ_THEN_EXIT,
+    SHELL_WHITESPACE_AND_CASE,
+]
+
+
+CMD_HELP = Cmd.HELP
+CMD_WRITE = Cmd.WRITE
+CMD_READ = Cmd.READ
+CMD_EXIT = Cmd.EXIT
+CMD_WRITE_INVALID = 'write_invalid'
+CMD_READ_INVALID = 'read_invalid'
+
+# Command test cases
+CMD_TEST_CASES = [
+    CMD_WRITE,
+    CMD_READ,
+    CMD_HELP,
+]
+
+# Invalid command test cases
+CMD_INVALID_TEST_CASES = [
+    CMD_WRITE_INVALID,
+    CMD_READ_INVALID,
+]
