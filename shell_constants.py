@@ -15,6 +15,7 @@ class ShellMsg:
   exit\tExit the shell"""
     READ_HELP = 'Invalid arguments. Usage: read <lba>'
     WRITE_HELP = 'Invalid arguments. Usage: write <lba> <hex data>'
+    FLUSH_HELP = 'Invalid arguments. Usage: flush'
     ERROR = 'ERROR'
     INVALID = 'INVALID COMMAND'
     DONE = 'Done'
@@ -35,6 +36,7 @@ class ShellCmd:
     SCRIPT_1_SHORT = '1_'
     SCRIPT_2_SHORT = '2_'
     SCRIPT_3_SHORT = '3_'
+    FLUSH = 'flush'
 
 
 class ShellPrefix:
@@ -48,6 +50,7 @@ class ShellPrefix:
     SCRIPT_1 = '[1_FullWriteAndReadCompare] '
     SCRIPT_2 = '[2_PartialLBAWrite] '
     SCRIPT_3 = '[3_WriteReadAging] '
+    FLUSH = '[Flush] '
 
 
 LBA_RANGE = range(100)
