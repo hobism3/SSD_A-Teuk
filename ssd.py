@@ -192,11 +192,20 @@ class EraseCommand(Command):
         self.ssd._buf_erase(int(self.address), int(self.size))
 
 
+class FlushCommand(Command):
+    def __init__(self, ssd):
+        self.ssd = ssd
+
+    def execute(self):
+        self.ssd._flush()
+
+
 class CommandFactory:
     MODES = {
         'R': {'command': ReadCommand, 'args_count': 1},
         'W': {'command': WriteCommand, 'args_count': 2},
         'E': {'command': EraseCommand, 'args_count': 2},
+        'F': {'command': FlushCommand, 'args_count': 0},
     }
 
     @staticmethod
