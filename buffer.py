@@ -27,8 +27,7 @@ class Buffer:
 
     def _create_directory(self, dir):
         try:
-            if not os.path.exists(dir):
-                os.makedirs(dir)
+            os.makedirs(dir, exist_ok=True)
         except OSError:
             self.logger.error(f'Creation of the directory {dir} failed')
 
