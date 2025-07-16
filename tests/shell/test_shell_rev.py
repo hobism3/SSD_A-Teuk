@@ -1,60 +1,51 @@
 from subprocess import CalledProcessError
 from unittest.mock import patch
 
-from _pytest.capture import CaptureFixture
 import pytest
 
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
 from tests.shell.conftest import assert_command_called_once, run_shell_with_inputs
-
-
-@pytest.mark.timeout(1)
-@pytest.mark.parametrize(
-    'case',
-    [
-        'help_exit',
-        'just_exit',
-        'write_then_exit',
-        'read_then_exit',
-        'empty_and_exit',
-        'unknown_then_exit',
-        'whitespace_and_case',
-        'exit_mid_loop',
-    ],
+from tests.shell.constants import (
+    SHELL_ERROR_TEST_CASES,
+    SHELL_READ_THEN_EXIT,
+    SHELL_SUBPROCESS_TEST_CASES,
+    SHELL_TEST_CASES,
 )
-def test_shell_execution(shell, mock_commands, user_inputs, expected_called, case):
-    run_shell_with_inputs(shell, user_inputs[case])
-    assert_command_called_once(mock_commands, expected_called[case])
 
 
 @pytest.mark.timeout(1)
-@pytest.mark.parametrize('case', ['keyboard_interrupt', 'eof'])
-def test_shell_error(shell, mock_subprocess_run, user_inputs, case):
-    with patch('builtins.input', side_effect=user_inputs[case]):
+@pytest.mark.parametrize('case', SHELL_TEST_CASES)
+def test_shell_execution(
+    shell, mock_commands, shell_user_inputs, shell_expected_called, case
+):
+    run_shell_with_inputs(shell, shell_user_inputs[case])
+    assert_command_called_once(mock_commands, shell_expected_called[case])
+
+
+@pytest.mark.timeout(1)
+@pytest.mark.parametrize('case', SHELL_ERROR_TEST_CASES)
+def test_shell_error_handling(shell, mock_subprocess_run, shell_user_inputs, case):
+    with patch('builtins.input', side_effect=shell_user_inputs[case]):
         shell.run()
     mock_subprocess_run.assert_not_called()
 
 
 @pytest.mark.timeout(1)
-@pytest.mark.parametrize(
-    'case', ['write_then_exit', 'read_then_exit', 'whitespace_and_case']
-)
+@pytest.mark.parametrize('case', SHELL_SUBPROCESS_TEST_CASES)
 def test_subprocess_called(
-    shell, mock_subprocess_run, user_inputs, case, expected_subprocess_cmd
+    shell, mock_subprocess_run, shell_user_inputs, shell_expected_subprocess_cmd, case
 ):
-    run_shell_with_inputs(shell, user_inputs[case])
+    run_shell_with_inputs(shell, shell_user_inputs[case])
     mock_subprocess_run.assert_called_once_with(
-        expected_subprocess_cmd[case], check=True
+        shell_expected_subprocess_cmd[case], check=True
     )
 
 
 @pytest.mark.timeout(1)
-def test_subprocess_error_logged(
-    shell, mock_subprocess_run, user_inputs, capsys: CaptureFixture
-):
+def test_subprocess_error_logged(shell, mock_subprocess_run, shell_user_inputs, capsys):
     mock_subprocess_run.side_effect = CalledProcessError(1, ['dummy'])
-    run_shell_with_inputs(shell, user_inputs['read_then_exit'])
+    run_shell_with_inputs(shell, shell_user_inputs[SHELL_READ_THEN_EXIT])
     output = capsys.readouterr().out
     assert Msg.ERROR in output
     assert Pre.READ in output
