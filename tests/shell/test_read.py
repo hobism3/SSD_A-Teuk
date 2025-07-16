@@ -1,7 +1,11 @@
+from pathlib import Path
+
 import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
+
+SSD_PATH = Path(__file__).resolve().parents[2] / 'ssd.py'
 
 
 def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
@@ -22,7 +26,7 @@ def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     mock_run.assert_called_with(
         [
             'python',
-            'C:\\Users\\User\\PycharmProjects\\pythonProject31\\ssd.py',
+            str(SSD_PATH),
             'R',
             '0',
         ],
