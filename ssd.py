@@ -61,6 +61,14 @@ class SSD:
         except ValueError:
             return False
 
+    @staticmethod
+    def validate_size(address, input):
+        if input is None or not input.isdigit():
+            return False
+        if int(address) + int(input) > 100:
+            return False
+        return 1 <= int(input) <= 10
+
     def _read(self, address):
         ret_value = ''
         with open(SSD_NAND_FILE_PATH) as f:
@@ -90,6 +98,19 @@ class SSD:
 
     def _buf_write(self, address, new_content):
         self.buffer._write(address, new_content)
+
+    def _erase(self, address, size):
+        with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
+            lines = f.readlines()
+
+        for i in range(address, address + size):
+            lines[i] = f'{i:02d} {INITIAL_VALUE}\n'
+
+        with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
+            f.writelines(lines)
+
+        self.initialize_ssd_output()
+        self.logger.info(f'Erase complete: {address:02d} to {address + size:02d}')
 
     def execute(self, mode, address, value=None):
         self.logger.info(f'Excecute command: {mode} {address} {value}')
@@ -139,31 +160,47 @@ class WriteCommand(Command):
         self.ssd._buf_write(int(self.address), self.value)
 
 
+class EraseCommand(Command):
+    def __init__(self, ssd, address, size):
+        self.ssd = ssd
+        self.address = address
+        self.size = size
+
+    def execute(self):
+        if not self.ssd.validate_address(self.address) or not self.ssd.validate_size(
+            self.address, self.size
+        ):
+            raise InvalidInputError('Address validation failed')
+        self.ssd._erase(int(self.address), int(self.size))
+
+
 class CommandFactory:
+    MODES = {
+        'R': {'command': ReadCommand, 'args_count': 1},
+        'W': {'command': WriteCommand, 'args_count': 2},
+        'E': {'command': EraseCommand, 'args_count': 2},
+    }
+
     @staticmethod
     def create_command(args):
-        if len(args) < 2:
-            raise InvalidInputError('Insufficient arguments')
+        if not args:
+            raise InvalidInputError('No arguments provided')
 
         mode = args[0].upper()
-        address = args[1]
-        value = args[2] if len(args) > 2 else None
-
         ssd = SSD()
 
-        if mode == 'W':
-            if value is None:
-                raise InvalidInputError('Write needs a value')
-            return WriteCommand(ssd, address, value)
+        if mode not in CommandFactory.MODES:
+            raise InvalidInputError(
+                f'Invalid mode: {mode}. Supported modes are {", ".join(CommandFactory.MODES.keys())}.'
+            )
 
-        elif mode == 'R':
-            return ReadCommand(ssd, address)
+        if CommandFactory.MODES[mode]['args_count'] != len(args) - 1:
+            raise InvalidInputError(
+                f'{mode} only accepts {CommandFactory.MODES[mode]["args_count"]} arguments'
+            )
 
-        else:
-            raise InvalidInputError('Invalid mode')
-
-    def execute(self, param, param1, param2=None):
-        pass
+        command = CommandFactory.MODES[mode]['command']
+        return command(ssd, *args[1:])
 
 
 def main():
