@@ -52,6 +52,7 @@ def test_shell_fullwrite_invalid_input(
     capsys: pytest.CaptureFixture, mocker: MockerFixture
 ):
     mocker.patch('builtins.input', side_effect=['fullwrite 0 0', 'exit'])
+    mocker.patch('commands.write.WriteCommand.execute', side_effect=ValueError)
 
     shell = Shell()
     shell.run()

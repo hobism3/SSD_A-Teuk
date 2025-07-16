@@ -41,6 +41,7 @@ def test_shell_fullread(
 
 def test_shell_fullread_exception(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     mocker.patch('builtins.input', side_effect=['fullread 0 0 0', 'exit'])
+    mocker.patch('commands.read.ReadCommand.execute', side_effect=ValueError)
 
     shell = Shell()
     shell.run()
