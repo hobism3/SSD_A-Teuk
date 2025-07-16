@@ -1,16 +1,13 @@
-import subprocess
-from subprocess import CalledProcessError
-
 from commands.base import Command
-from shell_constants import LBA_RANGE, RUN_SSD, SSD_OUTPUT_FILE
+from shell_constants import LBA_RANGE
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
 from shell_logger import Logger
 
 
 class ReadCommand(Command):
-    def __init__(self):
-        self._logger = Logger(Pre.READ)
+    def __init__(self, logger: Logger, prefix=Pre.READ):
+        super().__init__(logger, prefix)
         self._lba = None
 
     def parse(self, args: list[str]) -> list[str]:
@@ -25,17 +22,3 @@ class ReadCommand(Command):
 
     def parse_result(self, result) -> str:
         return f'LBA {self._lba}: {result}'
-
-    def execute(self, args: list[str]) -> str:
-        try:
-            ssd_args = self.parse(args)
-            return_code = subprocess.run(RUN_SSD + ssd_args, check=True)
-            if return_code.returncode != 0:
-                self._logger.error(Msg.ERROR)
-            with open(SSD_OUTPUT_FILE) as f:
-                read_value = f.read().strip()
-                result = self.parse_result(read_value)
-            self._logger.info(result)
-            return read_value
-        except (ValueError, CalledProcessError):
-            self._logger.error(Msg.ERROR)

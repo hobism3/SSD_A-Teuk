@@ -19,7 +19,7 @@ def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     captured = capsys.readouterr()
     output = captured.out
 
-    assert '[Read]  LBA 0: 0x00000000' in output
+    assert '[Read] LBA 0: 0x00000000' in output
     mock_run.assert_called_with(
         RUN_SSD
         + [
@@ -39,4 +39,4 @@ def test_shell_read_exception(capsys: pytest.CaptureFixture, mocker: MockerFixtu
     captured = capsys.readouterr()
     output = captured.out
 
-    assert '[Read]  ERROR' in output
+    assert '[Read] ERROR' in output

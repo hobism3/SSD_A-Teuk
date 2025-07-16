@@ -9,29 +9,24 @@ from shell_logger import Logger
 
 
 class FullReadCommand(Command):
-    def __init__(self):
-        self._logger = Logger(Pre.FULLREAD)
+    def __init__(self, logger: Logger, prefix=Pre.FULLREAD):
+        super().__init__(logger, prefix)
         self._lba = None
-        self._read = ReadCommand()
+        self._read = ReadCommand(self._logger, prefix=None)
 
-    def parse(self, args: list[str]) -> list[str]:
-        if len(args) != 0:
-            raise ValueError(Msg.READ_HELP)
-        if not self._check_lba(self._lba):
-            raise ValueError(
-                f'LBA must be an integer between {LBA_RANGE[0]} and {LBA_RANGE[-1]}'
-            )
-        return ['R', self._lba]
-
-    def execute(self, args) -> bool:
+    def execute(self, args=None) -> bool:
         try:
-            self._logger.info('')
+            self._logger.print_blank_line()
+            self._logger.print_and_log(self._prefix, None)
             for index in LBA_RANGE:
                 args = [str(index)]
                 self._read.execute(args)
-            return True
         except ValueError:
-            self._logger.error(Msg.ERROR)
+            self._logger.print_and_log(self._prefix, Msg.ERROR)
+        return True
+
+    def parse(self, args: list[str]) -> list[str]:
+        return args
 
     def parse_result(self, result) -> str:
-        return f'LBA {self._lba}: {result}'
+        return result

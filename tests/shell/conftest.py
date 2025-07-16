@@ -10,6 +10,7 @@ from shell_constants import RUN_SSD
 from shell_constants import ShellCmd as Cmd
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
+from shell_logger import Logger
 from tests.shell.constants import *
 
 
@@ -25,6 +26,11 @@ def mock_subprocess_run():
 @pytest.fixture
 def shell(mock_subprocess_run):
     return Shell()
+
+
+@pytest.fixture
+def logger():
+    return Logger()
 
 
 @pytest.fixture
@@ -45,12 +51,12 @@ def mock_commands():
         }
 
 
-def run_command_with_args(command_cls, args, expected=''):
+def run_command_with_args(logger, command_cls, args, expected=''):
     with (
         patch('subprocess.run') as mock_run,
         patch('builtins.open', mock_open(read_data=expected)) as mock_file,
     ):
-        cmd = command_cls()
+        cmd = command_cls(logger)
         result = cmd.execute(args)
     return mock_run, mock_file, result
 
