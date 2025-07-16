@@ -11,6 +11,23 @@ from shell_constants import ShellMsg as Msg
 
 
 @pytest.fixture
+def mock_run(mocker):
+    mock_process = mocker.Mock()
+    mock_process.returncode = 0
+    mock_run = mocker.patch('subprocess.run', return_value=mock_process)
+    mocker.patch('builtins.open', mocker.mock_open(read_data='0xAAAABBBB'))
+    mocker.patch('commands.write.WriteCommand.parse_result', return_value=Msg.DONE)
+    mocker.patch(
+        'commands.script1.FullWriteAndReadCompare._generate_random_value_lst',
+        return_value=[
+            '0xAAAABBBB' for _ in range(MAX_LBA + SCRIPT_1_STEP // SCRIPT_1_STEP)
+        ],
+    )
+
+    return mock_run
+
+
+@pytest.fixture
 def case_list():
     ssd_path = Path(__file__).resolve().parents[3] / 'ssd.py'
 
@@ -50,11 +67,9 @@ def _chunks(lst, n):
         yield lst[i : i + n]
 
 
-def test_script1_call_subprocess_and_file_with_fullname(mocker):
-    mock_run = mocker.patch('commands.base.subprocess.run')
+def test_script1_call_subprocess_and_file_with_fullname(mocker, mock_run):
     mock_open_file = mocker.patch('builtins.open', mock_open(read_data=''))
     mocker.patch('builtins.input', side_effect=['1_FullWriteAndReadCompare', 'exit'])
-    mocker.patch('commands.read.ReadCommand.execute', return_value='0xAAAABBBB')
 
     shell = Shell()
     shell.run()
@@ -63,11 +78,9 @@ def test_script1_call_subprocess_and_file_with_fullname(mocker):
     assert mock_open_file.called
 
 
-def test_script1_call_subprocess_and_file_with_shortname(mocker):
-    mock_run = mocker.patch('commands.base.subprocess.run')
+def test_script1_call_subprocess_and_file_with_shortname(mocker, mock_run):
     mock_open_file = mocker.patch('builtins.open', mock_open(read_data=''))
     mocker.patch('builtins.input', side_effect=['1_', 'exit'])
-    mocker.patch('commands.read.ReadCommand.execute', return_value='0xAAAABBBB')
 
     shell = Shell()
     shell.run()
@@ -77,19 +90,9 @@ def test_script1_call_subprocess_and_file_with_shortname(mocker):
 
 
 def test_script1_pass_with_no_include_any_error(
-    capsys: pytest.CaptureFixture, mocker: MockerFixture, case_list
+    capsys: pytest.CaptureFixture, mocker: MockerFixture, case_list, mock_run
 ):
-    mock_process = mocker.Mock()
-    mock_process.returncode = 0
     mocker.patch('builtins.input', side_effect=['1_', 'exit'])
-    mocker.patch('builtins.open', mocker.mock_open(read_data='0xAAAABBBB'))
-    mocker.patch('commands.write.WriteCommand.parse_result', return_value=Msg.DONE)
-    mocker.patch(
-        'commands.script1.FullWriteAndReadCompare._generate_random_value_lst',
-        return_value=[
-            '0xAAAABBBB' for _ in range(MAX_LBA + SCRIPT_1_STEP // SCRIPT_1_STEP)
-        ],
-    )
 
     shell = Shell()
     shell.run()
@@ -101,20 +104,9 @@ def test_script1_pass_with_no_include_any_error(
 
 
 def test_script1_valid_call_args_list(
-    capsys: pytest.CaptureFixture, mocker: MockerFixture, case_list
+    capsys: pytest.CaptureFixture, mocker: MockerFixture, case_list, mock_run
 ):
-    mock_process = mocker.Mock()
-    mock_process.returncode = 0
-    mock_run = mocker.patch('subprocess.run', return_value=mock_process)
     mocker.patch('builtins.input', side_effect=['1_', 'exit'])
-    mocker.patch('builtins.open', mocker.mock_open(read_data='0xAAAABBBB'))
-    mocker.patch('commands.write.WriteCommand.parse_result', return_value=Msg.DONE)
-    mocker.patch(
-        'commands.script1.FullWriteAndReadCompare._generate_random_value_lst',
-        return_value=[
-            '0xAAAABBBB' for _ in range(MAX_LBA + SCRIPT_1_STEP // SCRIPT_1_STEP)
-        ],
-    )
 
     shell = Shell()
     shell.run()
@@ -124,20 +116,9 @@ def test_script1_valid_call_args_list(
 
 
 def test_script1_valid_call_args_order(
-    capsys: pytest.CaptureFixture, mocker: MockerFixture, case_list
+    capsys: pytest.CaptureFixture, mocker: MockerFixture, case_list, mock_run
 ):
-    mock_process = mocker.Mock()
-    mock_process.returncode = 0
-    mock_run = mocker.patch('subprocess.run', return_value=mock_process)
     mocker.patch('builtins.input', side_effect=['1_', 'exit'])
-    mocker.patch('builtins.open', mocker.mock_open(read_data='0xAAAABBBB'))
-    mocker.patch('commands.write.WriteCommand.parse_result', return_value=Msg.DONE)
-    mocker.patch(
-        'commands.script1.FullWriteAndReadCompare._generate_random_value_lst',
-        return_value=[
-            '0xAAAABBBB' for _ in range(MAX_LBA + SCRIPT_1_STEP // SCRIPT_1_STEP)
-        ],
-    )
 
     shell = Shell()
     shell.run()
