@@ -21,7 +21,7 @@ class FullWriteCommand(Command):
             raise ValueError('Data must be a hex string like 0x0129ABCF')
         return ['W', self._lba, data]
 
-    def execute(self, args, ssd=None) -> bool:
+    def execute(self, args) -> bool:
         try:
             for index in LBA_RANGE:
                 self._lba = f'{index:02d}'

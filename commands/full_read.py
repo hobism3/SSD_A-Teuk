@@ -26,7 +26,7 @@ class FullReadCommand(Command):
             )
         return ['R', self._lba]
 
-    def execute(self, args, ssd=None) -> bool:
+    def execute(self, args) -> bool:
         try:
             self._logger.info(Pre.FULLREAD)
             for index in LBA_RANGE:

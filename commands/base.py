@@ -50,7 +50,7 @@ class ExitCommand(Command):
     def parse(self, args: list[str]) -> list[str]:
         return []
 
-    def execute(self, args, ssd=None) -> bool:
+    def execute(self, args) -> bool:
         return False
 
     def parse_result(self, result) -> str:
@@ -64,7 +64,7 @@ class HelpCommand(Command):
     def parse(self, args: list[str]) -> list[str]:
         return []
 
-    def execute(self, args, sdd=None) -> bool:
+    def execute(self, args) -> bool:
         self._logger.info(ShellMsg.HELP)
         return True
 

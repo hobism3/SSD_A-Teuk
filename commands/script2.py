@@ -19,7 +19,7 @@ class PartialLBAWriteCommand(Command):
 
     def parse(self, args: list[str]) -> list[str]: ...
 
-    def execute(self, args, ssd=None) -> bool:
+    def execute(self, args) -> bool:
         try:
             sample_index = ['04', '00', '03', '01', '02']
 
