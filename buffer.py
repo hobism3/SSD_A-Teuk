@@ -36,7 +36,7 @@ class Buffer:
         return sorted(os.listdir('buffer'))
 
     def buffer_file_write(self, lst):
-        file_list =  sorted(os.listdir(BUFFER_DIR))
+        file_list = self.buffer_file_read()
         for i, file in enumerate(lst):
             before_file_path = f'{BUFFER_DIR}\{file_list[i]}'
             after_file_path = f'{BUFFER_DIR}\{file}'
