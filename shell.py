@@ -2,11 +2,9 @@ from commands.base import ExitCommand, HelpCommand
 from commands.full_read import FullReadCommand
 from commands.full_write import FullWriteCommand
 from commands.read import ReadCommand
-
-from commands.script2 import PartialLBAWriteCommand
 from commands.script1 import FullWriteAndReadCompare
+from commands.script2 import PartialLBAWriteCommand
 from commands.script3 import WriteReadAging
-
 from commands.write import WriteCommand
 from shell_constants import ShellCmd as Cmd
 from shell_constants import ShellMsg as Msg
@@ -21,10 +19,10 @@ class Shell:
             Cmd.HELP: HelpCommand(),
             Cmd.FULLREAD: FullReadCommand(),
             Cmd.FULLWRITE: FullWriteCommand(),
-            Cmd.PARTIALLBAWRITE_SHORT: PartialLBAWriteCommand(),
-            Cmd.PARTIALLBAWRITE_LONG: PartialLBAWriteCommand(),
             Cmd.SCRIPT_1_FULL: FullWriteAndReadCompare(),
             Cmd.SCRIPT_1_SHORT: FullWriteAndReadCompare(),
+            Cmd.SCRIPT_2_FULL: PartialLBAWriteCommand(),
+            Cmd.SCRIPT_2_SHORT: PartialLBAWriteCommand(),
             Cmd.SCRIPT_3_FULL: WriteReadAging(),
             Cmd.SCRIPT_3_SHORT: WriteReadAging(),
         }
@@ -42,7 +40,7 @@ class Shell:
         if not cmd:
             return True
         parts = cmd.split()
-        command_name = parts[0].lower()
+        command_name = parts[0]
         command = self._command_map.get(command_name)
         if command:
             return command.execute(parts[1:])
