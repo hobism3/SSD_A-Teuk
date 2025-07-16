@@ -159,6 +159,8 @@ def test_ssd_read_written_value_pass(ssd, runner_factory, valid_address):
 def test_ssd_erase_pass(ssd, runner_factory, valid_address):
     runner = runner_factory(ssd)
     for valid_size in range(1, 10):
+        if valid_address == '99':
+            continue
         runner('E', valid_address, str(valid_size))
         actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
         assert not actual_value
@@ -168,6 +170,28 @@ def test_ssd_erase_pass(ssd, runner_factory, valid_address):
             actual_value[int(valid_address)]
             == f'{int(valid_address):02d} {INITIAL_VALUE}'
         )
+
+
+@pytest.mark.parametrize('runner_factory', [run_direct, run_cli])
+def test_ssd_erase_over_size(ssd, runner_factory, valid_address):
+    runner = runner_factory(ssd)
+    for valid_size in range(1, 10):
+        if valid_address != '99':
+            continue
+        if valid_size == 1:
+            runner('E', valid_address, str(valid_size))
+            actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+            assert not actual_value
+
+            actual_value = read_file_with_lines(SSD_NAND_FILE_PATH)
+            assert (
+                actual_value[int(valid_address)]
+                == f'{int(valid_address):02d} {INITIAL_VALUE}'
+            )
+        else:
+            runner('E', valid_address, str(valid_size))
+            actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
+            assert actual_value == [ERROR]
 
 
 @pytest.mark.parametrize('runner_factory', [run_direct, run_cli])

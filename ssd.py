@@ -60,8 +60,10 @@ class SSD:
             return False
 
     @staticmethod
-    def validate_size(input):
+    def validate_size(address, input):
         if input is None or not input.isdigit():
+            return False
+        if int(address) + int(input) > 100:
             return False
         return 1 <= int(input) <= 10
 
@@ -160,7 +162,7 @@ class EraseCommand(Command):
 
     def execute(self):
         if not self.ssd.validate_address(self.address) or not self.ssd.validate_size(
-            self.size
+            self.address, self.size
         ):
             raise InvalidInputError('Address validation failed')
         self.ssd._erase(int(self.address), int(self.size))
