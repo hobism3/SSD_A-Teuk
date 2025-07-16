@@ -21,7 +21,7 @@ class PartialLBAWriteCommand(Command):
 
     def execute(self, args) -> bool:
         try:
-            sample_index = ['04', '00', '03', '01', '02']
+            sample_index = ['4', '0', '3', '1', '2']
 
             for _ in range(30):
                 hex_string = f'0x{self._random_value:08X}'

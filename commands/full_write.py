@@ -23,7 +23,7 @@ class FullWriteCommand(Command):
     def execute(self, args) -> bool:
         try:
             for index in LBA_RANGE:
-                self._lba = f'{index:02d}'
+                self._lba = f'{index}'
                 ssd_args = self.parse(args)
                 return_code = subprocess.run(RUN_SSD + ssd_args, check=True)
                 if return_code.returncode != 0:
