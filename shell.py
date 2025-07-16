@@ -6,6 +6,7 @@ from commands.read import ReadCommand
 from commands.script1 import FullWriteAndReadCompare
 from commands.script2 import PartialLBAWriteCommand
 from commands.script3 import WriteReadAging
+from commands.script4 import EraseAndWriteAging
 from commands.write import WriteCommand
 from shell_constants import ShellCmd as Cmd
 from shell_constants import ShellMsg as Msg
@@ -26,6 +27,8 @@ class Shell:
             Cmd.SCRIPT_2_SHORT: PartialLBAWriteCommand(),
             Cmd.SCRIPT_3_FULL: WriteReadAging(),
             Cmd.SCRIPT_3_SHORT: WriteReadAging(),
+            Cmd.SCRIPT_4_FULL: EraseAndWriteAging(),
+            Cmd.SCRIPT_4_SHORT: EraseAndWriteAging(),
             Cmd.FLUSH: FlushCommand(),
         }
 

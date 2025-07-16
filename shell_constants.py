@@ -16,6 +16,7 @@ class ShellMsg:
     READ_HELP = 'Invalid arguments. Usage: read <lba>'
     WRITE_HELP = 'Invalid arguments. Usage: write <lba> <hex data>'
     FLUSH_HELP = 'Invalid arguments. Usage: flush'
+    SCRIPT_4_HELP = 'Invalid arguments. Usage: 4_EraseAndWriteAging or 4_'
     ERROR = 'ERROR'
     INVALID = 'INVALID COMMAND'
     DONE = 'Done'
@@ -33,9 +34,11 @@ class ShellCmd:
     SCRIPT_1_FULL = '1_FullWriteAndReadCompare'
     SCRIPT_2_FULL = '2_PartialLBAWrite'
     SCRIPT_3_FULL = '3_WriteReadAging'
+    SCRIPT_4_FULL = '4_EraseAndWriteAging'
     SCRIPT_1_SHORT = '1_'
     SCRIPT_2_SHORT = '2_'
     SCRIPT_3_SHORT = '3_'
+    SCRIPT_4_SHORT = '4_'
     FLUSH = 'flush'
 
 
@@ -50,6 +53,7 @@ class ShellPrefix:
     SCRIPT_1 = '[1_FullWriteAndReadCompare] '
     SCRIPT_2 = '[2_PartialLBAWrite] '
     SCRIPT_3 = '[3_WriteReadAging] '
+    SCRIPT_4 = '[4_EraseAndWriteAging] '
     FLUSH = '[Flush] '
 
 
