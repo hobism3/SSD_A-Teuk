@@ -83,6 +83,19 @@ class SSD:
         self.initialize_ssd_output()
         self.logger.info(f'Write complete: {address:02d}: {new_content}')
 
+    def _erase(self, address, size):
+        with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
+            lines = f.readlines()
+
+        for i in range(address, address + size):
+            lines[i] = f'{i:02d} {INITIAL_VALUE}\n'
+
+        with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
+            f.writelines(lines)
+
+        self.initialize_ssd_output()
+        self.logger.info(f'Erase complete: {address:02d} to {address + size:02d}')
+
     def execute(self, mode, address, value=None):
         self.logger.info(f'Excecute command: {mode} {address} {value}')
         try:
