@@ -31,6 +31,6 @@ class WriteReadAging(Command):
 
             if val_lba_0 != value or val_lba_99 != value:
                 print('[3_WriteReadAging] FAIL')
-                return  # 실패하면 바로 종료
+                return
 
-        print('[3_WriteReadAging] PASS')  # 200회 모두 통과 시 출력
+        print('[3_WriteReadAging] PASS')
