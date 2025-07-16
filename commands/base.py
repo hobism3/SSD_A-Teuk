@@ -28,7 +28,7 @@ class Command(ABC):
             return True
         return False
 
-    def execute(self, args) -> bool:
+    def execute(self, args: list[str]) -> bool:
         try:
             ssd_args = self.parse(args)
             return_code = subprocess.run(RUN_SSD + ssd_args, check=True)

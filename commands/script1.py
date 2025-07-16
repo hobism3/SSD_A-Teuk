@@ -31,11 +31,11 @@ class FullWriteAndReadCompare(Command):
             current_end = min(current_start + self.step - 1, self.max_lba)
             current_value = random_values[chunk_index]
 
-            # Write 명령어 수행
+            # Execute Write
             for lba in range(current_start, current_end + 1):
                 self._execute_write(lba, current_value)
 
-            # Read 후 값 확인
+            # Read and Verify
             for lba in range(current_start, current_end + 1):
                 if not self._execute_read_verify(lba, current_value):
                     return
@@ -57,7 +57,7 @@ class FullWriteAndReadCompare(Command):
         self.write_cmd.execute(cmd.split())
 
     def _execute_read_verify(self, lba, current_value):
-        read_value = self.read_cmd.execute(f'{lba}')
+        read_value = self.read_cmd.execute([f'{lba}'])
         if read_value != current_value:
             print('[1_FullWriteAndReadCompare] FAIL')
             return False

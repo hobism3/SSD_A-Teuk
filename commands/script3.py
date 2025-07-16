@@ -26,8 +26,8 @@ class WriteReadAging(Command):
             self.write_cmd.execute(f'0 {value}'.split())
             self.write_cmd.execute(f'99 {value}'.split())
 
-            val_lba_0 = self.read_cmd.execute('0')
-            val_lba_99 = self.read_cmd.execute('99')
+            val_lba_0 = self.read_cmd.execute(['0'])
+            val_lba_99 = self.read_cmd.execute(['99'])
 
             if val_lba_0 != value or val_lba_99 != value:
                 print('[3_WriteReadAging] FAIL')
