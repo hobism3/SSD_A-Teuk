@@ -93,7 +93,9 @@ class SSD:
         with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
             lines = f.readlines()
 
-        for i in range(address, address + size):
+        target_size = 100 if address + size > 100 else address + size
+
+        for i in range(address, target_size):
             lines[i] = f'{i:02d} {INITIAL_VALUE}\n'
 
         with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
