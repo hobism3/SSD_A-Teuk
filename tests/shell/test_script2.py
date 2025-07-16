@@ -1,16 +1,14 @@
-from pathlib import Path
 from unittest.mock import call
 
 import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
+from shell_constants import RUN_SSD
 
 
 @pytest.fixture
 def case_list():
-    ssd_path = Path(__file__).resolve().parents[2] / 'ssd.py'
-
     test_args_list = [
         ('W', '4', '0x00000000'),
         ('W', '0', '0x00000000'),
@@ -26,12 +24,7 @@ def case_list():
 
     test_cases = []
     for cmd, code, value in test_args_list:
-        cmd_args = [
-            'python',
-            str(ssd_path),
-            cmd,
-            code,
-        ]
+        cmd_args = RUN_SSD + [cmd, code]
         if value is not None:
             cmd_args.append(value)
 

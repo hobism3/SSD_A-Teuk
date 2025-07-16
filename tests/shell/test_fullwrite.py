@@ -1,11 +1,8 @@
-from pathlib import Path
-
 import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-
-SSD_PATH = Path(__file__).resolve().parents[2] / 'ssd.py'
+from shell_constants import RUN_SSD
 
 
 def test_shell_fullwrite(capsys: pytest.CaptureFixture, mocker: MockerFixture):
@@ -23,9 +20,8 @@ def test_shell_fullwrite(capsys: pytest.CaptureFixture, mocker: MockerFixture):
 
     assert '[Full Write] Done' in output
     mock_run.assert_called_with(
-        [
-            'python',
-            str(SSD_PATH),
+        RUN_SSD
+        + [
             'W',
             '99',
             '0xFFFFFFFF',
@@ -45,4 +41,4 @@ def test_shell_fullwrite_invalid_input(
     captured = capsys.readouterr()
     output = captured.out
 
-    assert '[Read]  ERROR' in output
+    assert '[Full Write]  ERROR' in output

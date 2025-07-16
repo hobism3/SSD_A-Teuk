@@ -1,11 +1,8 @@
-from pathlib import Path
-
 import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-
-SSD_PATH = Path(__file__).resolve().parents[2] / 'ssd.py'
+from shell_constants import RUN_SSD
 
 
 def test_shell_fullread(capsys: pytest.CaptureFixture, mocker: MockerFixture):
@@ -23,9 +20,8 @@ def test_shell_fullread(capsys: pytest.CaptureFixture, mocker: MockerFixture):
 
     assert '[Full Read]' in output
     mock_run.assert_called_with(
-        [
-            'python',
-            str(SSD_PATH),
+        RUN_SSD
+        + [
             'R',
             '99',
         ],
@@ -42,4 +38,4 @@ def test_shell_fullread_exception(capsys: pytest.CaptureFixture, mocker: MockerF
     captured = capsys.readouterr()
     output = captured.out
 
-    assert '[Read]  ERROR' in output
+    assert '[Full Read]  ERROR' in output

@@ -1,11 +1,8 @@
-from pathlib import Path
-
 import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-
-SSD_PATH = Path(__file__).resolve().parents[2] / 'ssd.py'
+from shell_constants import RUN_SSD
 
 
 def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
@@ -24,9 +21,8 @@ def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
 
     assert '[Read]  LBA 0: 0x00000000' in output
     mock_run.assert_called_with(
-        [
-            'python',
-            str(SSD_PATH),
+        RUN_SSD
+        + [
             'R',
             '0',
         ],
