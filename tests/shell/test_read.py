@@ -5,8 +5,6 @@ from shell import Shell
 
 
 def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
-    ssd = mocker.Mock()
-
     mock_process = mocker.Mock()
     mock_process.returncode = 0
 
@@ -14,7 +12,7 @@ def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     mocker.patch('builtins.input', side_effect=['read 00', 'exit'])
     mocker.patch('builtins.open', mocker.mock_open(read_data='0x00000000'))
 
-    shell = Shell(ssd)
+    shell = Shell()
     shell.run()
 
     captured = capsys.readouterr()
@@ -33,12 +31,9 @@ def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
 
 
 def test_shell_read_exception(capsys: pytest.CaptureFixture, mocker: MockerFixture):
-    ssd = mocker.Mock()
-    ssd.read.side_effect = [ValueError]
-
     mocker.patch('builtins.input', side_effect=['read 0 0 0', 'exit'])
 
-    shell = Shell(ssd)
+    shell = Shell()
     shell.run()
 
     captured = capsys.readouterr()

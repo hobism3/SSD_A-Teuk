@@ -105,8 +105,6 @@ CASE_LIST = [
 
 
 def test_shell_script2(capsys: pytest.CaptureFixture, mocker: MockerFixture):
-    ssd = mocker.Mock()
-
     mock_process = mocker.Mock()
     mock_process.returncode = 0
 
@@ -114,7 +112,7 @@ def test_shell_script2(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     mocker.patch('builtins.input', side_effect=['2_', 'exit'])
     mocker.patch('builtins.open', mocker.mock_open(read_data='0x00000000'))
     mocker.patch('random.randint', return_value=0x00000000)
-    shell = Shell(ssd)
+    shell = Shell()
     shell.run()
 
     captured = capsys.readouterr()

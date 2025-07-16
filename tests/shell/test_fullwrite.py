@@ -5,14 +5,13 @@ from shell import Shell
 
 
 def test_shell_fullwrite(capsys: pytest.CaptureFixture, mocker: MockerFixture):
-    ssd = mocker.Mock()
     mock_process = mocker.Mock()
     mock_process.returncode = 0
 
     mock_run = mocker.patch('subprocess.run', return_value=mock_process)
     mocker.patch('builtins.input', side_effect=['fullwrite 0xFFFFFFFF', 'exit'])
 
-    shell = Shell(ssd)
+    shell = Shell()
     shell.run()
 
     captured = capsys.readouterr()
@@ -34,11 +33,9 @@ def test_shell_fullwrite(capsys: pytest.CaptureFixture, mocker: MockerFixture):
 def test_shell_fullwrite_invalid_input(
     capsys: pytest.CaptureFixture, mocker: MockerFixture
 ):
-    ssd = mocker.Mock()
-
     mocker.patch('builtins.input', side_effect=['fullwrite 0 0', 'exit'])
 
-    shell = Shell(ssd)
+    shell = Shell()
     shell.run()
 
     captured = capsys.readouterr()
