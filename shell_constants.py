@@ -18,6 +18,8 @@ class ShellMsg:
     ERROR = 'ERROR'
     INVALID = 'INVALID COMMAND'
     DONE = 'Done'
+    FAIL = 'FAIL'
+    PASS = 'PASS'
 
 
 class ShellCmd:
@@ -27,6 +29,8 @@ class ShellCmd:
     FULLREAD = 'fullread'
     EXIT = 'exit'
     HELP = 'help'
+    PARTIALLBAWRITE_SHORT = '2_'
+    PARTIALLBAWRITE_LONG = '2_PartialLBAWrite'
     SCRIPT_1_FULL = '1_fullwriteandreadcompare'
     SCRIPT_2_FULL = '2_partiallbawrite'
     SCRIPT_3_FULL = '3_writereadaging'
@@ -35,14 +39,19 @@ class ShellCmd:
     SCRIPT_3_SHORT = '3_'
 
 
+
 class ShellPrefix:
     READ = '[Read] '
     WRITE = '[Write] '
+    FULLREAD = '[Full Read] '
+    FULLWRITE = '[Full Write] '
+    SCRIPT2 = '[2_PartialLBAWrite] '
     FULLWRITE = '[FullWrite] '
     FULLREAD = '[FullRead] '
     SCRIPT_1 = '[1_FullWriteAndReadCompare] '
     SCRIPT_2 = '[2_PartialLBAWrite] '
     SCRIPT_3 = '[3_WriteReadAging] '
+
 
 
 LBA_RANGE = range(100)

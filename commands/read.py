@@ -26,7 +26,6 @@ class ReadCommand(Command):
         return f'LBA {self._lba}: {result}'
 
     def execute(self, args: list[str]) -> str:
-        read_value = ''
         try:
             ssd_args = self.parse(args)
             return_code = subprocess.run(RUN_SSD + ssd_args, check=True)
@@ -36,6 +35,6 @@ class ReadCommand(Command):
                 read_value = f.read().strip()
                 result = self.parse_result(read_value)
             self._logger.info(result)
+            return read_value
         except ValueError:
             self._logger.error(Msg.ERROR)
-        return read_value
