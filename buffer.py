@@ -36,17 +36,22 @@ class Buffer:
             self.logger.error(f'Creation of the directory {dir} failed')
 
     def buffer_file_read_as_list(self) -> list:
-        return [
-            [parts[1]] + [int(x) for x in parts[2:]]
-            for file in sorted(os.listdir('buffer'))
-            for parts in [file.split('_')]
-        ]
+        list = [file.split('_')[1:] for file in sorted(os.listdir('buffer'))]
+        for i in range(len(list)):
+            if list[i][0] == 'empty':
+                continue
+            list[i][1] = int(list[i][1])
+            if list[i][0] == 'E':
+                list[i][2] = int(list[i][2])
+                continue
+        return list
 
     def buffer_file_read(self) -> list:
         return sorted(os.listdir('buffer'))
 
     def buffer_file_write(self):
         file_list = self.buffer_file_read()
+        self.logger.info(f'write: {file_list}, self.buffer: {self.buffer}')
         for i in range(len(file_list)):
             before_file_path = rf'{BUFFER_DIR}\{file_list[i]}'
             if self.buffer[i][0] == 'empty':
@@ -54,6 +59,7 @@ class Buffer:
             else:
                 after_file_path = rf'{BUFFER_DIR}\{i + 1}_{self.buffer[i][0]}_{self.buffer[i][1]}_{self.buffer[i][2]}'
             try:
+                print(before_file_path, after_file_path)
                 os.rename(before_file_path, after_file_path)
             except OSError:
                 self.logger.error(
@@ -86,6 +92,7 @@ class Buffer:
         self.buffer[seq] = [mode, address, value]
 
     def _remove_buffer(self, seq):
+        self.logger.info(f'Remove buffer {seq}')
         self.buffer[seq] = ['empty']
 
     def _can_merge_ranges(self, addr1, len1, addr2, len2):
@@ -98,13 +105,16 @@ class Buffer:
             merged_len = len(merged)
             if merged_len > ERASE_MAX_RANGE:
                 self.logger.info(f"Buffer can't be merged. {merged_start} {merged_len}")
-                return False, None
+                return False, (
+                    list(set(merged) - range2)[0],
+                    len(list(set(merged) - range2)),
+                )
             return True, (merged_start, merged_len)
         return False, None
 
     def _reduce_erase_buffer(self, i, param1):
         buf = self.buffer[i]
-        start, length = buf[1], buf[2]
+        start, length = int(buf[1]), int(buf[2])
 
         if start == param1:
             self.logger.info(f'Erase range(F) reduced {start}: {length}')
@@ -157,7 +167,7 @@ class Buffer:
 
                 elif buf[0] == 'E':
                     can_merge, merged_range = self._can_merge_ranges(
-                        buf[1], buf[2], param1, param2
+                        int(buf[1]), int(buf[2]), param1, param2
                     )
                     if can_merge:
                         self.logger.info(f'Buffer {i} can be merged.')
@@ -174,6 +184,8 @@ class Buffer:
                         if flag_add_buffer:
                             seq -= 1
                         flag_add_buffer = False
+                    elif merged_range is not None:
+                        self._add_buffer(i, 'E', merged_range[0], merged_range[1])
 
         if flag_add_buffer:
             self.logger.info(f'Add buffer {seq} {mode} {param1} {param2}')
