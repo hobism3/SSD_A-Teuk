@@ -8,24 +8,16 @@ from shell_constants import RUN_SSD
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
 
+TEST_LBA = ['4', '0', '3', '1', '2']
+TEST_ARGS_LIST = [('W', index, '0x00000000') for index in TEST_LBA] + [
+    ('R', index, None) for index in TEST_LBA
+]
+
 
 @pytest.fixture
 def case_list():
-    test_args_list = [
-        ('W', '4', '0x00000000'),
-        ('W', '0', '0x00000000'),
-        ('W', '3', '0x00000000'),
-        ('W', '1', '0x00000000'),
-        ('W', '2', '0x00000000'),
-        ('R', '4', None),
-        ('R', '0', None),
-        ('R', '3', None),
-        ('R', '1', None),
-        ('R', '2', None),
-    ]
-
     test_cases = []
-    for cmd, code, value in test_args_list:
+    for cmd, code, value in TEST_ARGS_LIST:
         cmd_args = RUN_SSD + [cmd, code]
         if value is not None:
             cmd_args.append(value)
