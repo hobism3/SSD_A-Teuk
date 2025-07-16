@@ -2,6 +2,7 @@ import os
 from logger import Logger
 from pathlib import Path
 
+MAX_BUFFER_SIZE = 5
 BUFFER_DIR_NAME = 'buffer'
 BUFFER_DIR = f'{os.path.dirname(os.path.abspath(__file__))}/{BUFFER_DIR_NAME}'
 
@@ -16,12 +17,12 @@ class Buffer:
     def __init__(self):
         self.logger = Logger()
         self._create_directory(BUFFER_DIR)
-        if os.listdir(BUFFER_DIR) == []:
+        if len(os.listdir(BUFFER_DIR)) < MAX_BUFFER_SIZE:
             self._create_file(BUFFER_DIR)
 
     def _create_file(self, dir):
-        for i in range(1, 6):
-            Path(f'{dir}/{i}_empty').touch()
+        for i in range(MAX_BUFFER_SIZE):
+            Path(f'{dir}/{i + 1}_empty').touch()
 
     def _create_directory(self, dir):
         try:
