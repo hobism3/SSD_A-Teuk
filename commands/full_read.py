@@ -13,7 +13,7 @@ from shell_constants import ShellPrefix as Pre
 
 class FullReadCommand(Command):
     def __init__(self):
-        self._logger = Logger(Pre.READ)
+        self._logger = Logger(Pre.FULLREAD)
         self._lba = None
 
     def parse(self, args: list[str]) -> list[str]:

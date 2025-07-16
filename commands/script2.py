@@ -11,7 +11,7 @@ from shell_constants import ShellPrefix as Pre
 
 class PartialLBAWriteCommand(Command):
     def __init__(self):
-        self._logger = Logger(Pre.READ)
+        self._logger = Logger(Pre.SCRIPT2)
         self._lba = None
         self._read = ReadCommand()
         self._write = WriteCommand()
@@ -37,9 +37,9 @@ class PartialLBAWriteCommand(Command):
                     read_value = self._read.execute(ssd_args)
                     if read_value != hex_string:
                         if read_value != hex_string:
-                            print('[2_PartialLBAWrite] Fail')
+                            self._logger.info(Pre.SCRIPT2 + ShellMsg.FAIL)
                             return True
-                print('[2_PartialLBAWrite] Pass')
+                self._logger.info(Pre.SCRIPT2 + ShellMsg.PASS)
 
         except ValueError:
             self._logger.error(ShellMsg.ERROR)

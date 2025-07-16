@@ -9,7 +9,7 @@ from shell_constants import ShellPrefix as Pre
 
 class FullWriteCommand(Command):
     def __init__(self):
-        self._logger = Logger(Pre.READ)
+        self._logger = Logger(Pre.FULLWRITE)
         self._lba = None
 
     def parse(self, args: list[str]) -> list[str]:
