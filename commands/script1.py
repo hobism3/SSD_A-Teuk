@@ -23,33 +23,42 @@ class FullWriteAndReadCompare(Command):
         pass
 
     def execute(self, args):
-        used_values = set()
+        random_values = self._generate_random_value_lst()
         current_start = 0
+        chunk_index = 0
 
         while current_start <= self.max_lba:
             current_end = min(current_start + self.step - 1, self.max_lba)
-
-            # 중복 없는 랜덤값 생성
-            while True:
-                current_value = f'0x{random.getrandbits(32):08X}'
-                if current_value not in used_values:
-                    used_values.add(current_value)
-                    break
+            current_value = random_values[chunk_index]
 
             # Write 명령어 수행
             for lba in range(current_start, current_end + 1):
-                cmd = f'{lba} {current_value}'
-                parts = cmd.split()
-                self.write_cmd.execute(parts)
+                self._execute_write(lba, current_value)
 
             # Read 후 값 확인
             for lba in range(current_start, current_end + 1):
-                read_value = self.read_cmd.execute(f'{lba}')
-
-                if read_value != current_value:
-                    print('[1_FullWriteAndReadCompare] FAIL')
+                if not self._execute_read_verify(lba, current_value):
                     return
 
             current_start = current_end + 1
+            chunk_index += 1
 
         print('[1_FullWriteAndReadCompare] PASS')
+
+    def _generate_random_value_lst(self):
+        num_chunks = (self.max_lba + self.step) // self.step
+        random_values = [
+            f'0x{val:08X}' for val in random.sample(range(0x100000000), num_chunks)
+        ]
+        return random_values
+
+    def _execute_write(self, lba, current_value):
+        cmd = f'{lba} {current_value}'
+        self.write_cmd.execute(cmd.split())
+
+    def _execute_read_verify(self, lba, current_value):
+        read_value = self.read_cmd.execute(f'{lba}')
+        if read_value != current_value:
+            print('[1_FullWriteAndReadCompare] FAIL')
+            return False
+        return True
