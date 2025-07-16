@@ -44,6 +44,17 @@ class Buffer:
             except OSError as e:
                 self.logger.error(f'Error during changing buffer {before_file_path} to {after_file_path}')
 
+    def buffer_clear(self):
+        file_list = self.buffer_file_read()
+        for i in range(MAX_BUFFER_SIZE):
+            before_file_path = f'{BUFFER_DIR}\{file_list[i]}'
+            after_file_path = f'{BUFFER_DIR}\{i + 1}_empty'
+            try:
+                os.rename(before_file_path, after_file_path)
+            except OSError as e:
+                self.logger.error(f'Error during changing buffer {before_file_path} to {after_file_path}')
+
+
     def _write(self, address, new_content): ...
 
     def _read(self, address): ...
