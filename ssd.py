@@ -93,12 +93,6 @@ class SSD:
         self.initialize_ssd_output()
         self.logger.info(f'Write complete: {address:02d}: {new_content}')
 
-    def _buf_read(self, address):
-        self.buffer._read(address)
-
-    def _buf_write(self, address, new_content):
-        self.buffer._write(address, new_content)
-
     def _erase(self, address, size):
         with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
             lines = f.readlines()
@@ -111,6 +105,15 @@ class SSD:
 
         self.initialize_ssd_output()
         self.logger.info(f'Erase complete: {address:02d} to {address + size:02d}')
+
+    def _buf_read(self, address):
+        self.buffer._read(address)
+
+    def _buf_write(self, address, new_content):
+        self.buffer._write(address, new_content)
+
+    def _buf_erase(self, address, size):
+        self.buffer._erase(address, size)
 
     def execute(self, mode, address, value=None):
         self.logger.info(f'Excecute command: {mode} {address} {value}')
@@ -171,7 +174,7 @@ class EraseCommand(Command):
             self.address, self.size
         ):
             raise InvalidInputError('Address validation failed')
-        self.ssd._erase(int(self.address), int(self.size))
+        self.ssd._buf_erase(int(self.address), int(self.size))
 
 
 class CommandFactory:
