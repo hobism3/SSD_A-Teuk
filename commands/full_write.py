@@ -37,5 +37,5 @@ class FullWriteCommand(Command):
 
     def parse_result(self, result) -> str:
         if not result:
-            return Pre.FULLWRITE + Msg.DONE
+            return Msg.DONE
         return Msg.ERROR

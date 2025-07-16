@@ -1,16 +1,41 @@
+from unittest.mock import call
+
 import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-from shell_constants import RUN_SSD
+from shell_constants import LBA_RANGE, RUN_SSD
+from shell_constants import ShellCmd as Cmd
+from shell_constants import ShellMsg as Msg
+from shell_constants import ShellPrefix as Pre
+
+TEST_DATA = '0xFFFFFFFF'
 
 
-def test_shell_fullwrite(capsys: pytest.CaptureFixture, mocker: MockerFixture):
+@pytest.fixture
+def case_list():
+    test_cases = []
+    for index in LBA_RANGE:
+        cmd_args = RUN_SSD + [
+            'W',
+            str(index),
+            TEST_DATA,
+        ]
+        test_cases.append(call(cmd_args, check=True))
+
+    return test_cases
+
+
+def test_shell_fullwrite(
+    capsys: pytest.CaptureFixture, mocker: MockerFixture, case_list
+):
     mock_process = mocker.Mock()
     mock_process.returncode = 0
 
     mock_run = mocker.patch('subprocess.run', return_value=mock_process)
-    mocker.patch('builtins.input', side_effect=['fullwrite 0xFFFFFFFF', 'exit'])
+    mocker.patch(
+        'builtins.input', side_effect=[f'{Cmd.FULLWRITE} {TEST_DATA}', Cmd.EXIT]
+    )
 
     shell = Shell()
     shell.run()
@@ -18,16 +43,9 @@ def test_shell_fullwrite(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     captured = capsys.readouterr()
     output = captured.out
 
-    assert '[Full Write] Done' in output
-    mock_run.assert_called_with(
-        RUN_SSD
-        + [
-            'W',
-            '99',
-            '0xFFFFFFFF',
-        ],
-        check=True,
-    )
+    assert Pre.FULLWRITE + ' ' + Msg.DONE in output
+    for case in case_list:
+        assert case in mock_run.call_args_list
 
 
 def test_shell_fullwrite_invalid_input(
@@ -41,4 +59,4 @@ def test_shell_fullwrite_invalid_input(
     captured = capsys.readouterr()
     output = captured.out
 
-    assert '[Full Write]  ERROR' in output
+    assert Pre.FULLWRITE + ' ' + Msg.ERROR in output

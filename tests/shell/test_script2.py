@@ -6,6 +6,7 @@ from pytest_mock import MockerFixture
 from shell import Shell
 from shell_constants import RUN_SSD
 from shell_constants import ShellMsg as Msg
+from shell_constants import ShellPrefix as Pre
 
 
 @pytest.fixture
@@ -48,7 +49,7 @@ def test_shell_script2(capsys: pytest.CaptureFixture, mocker: MockerFixture, cas
 
     captured = capsys.readouterr()
     output = captured.out
-    assert '[2_PartialLBAWrite] PASS' in output
+    assert Pre.SCRIPT2 + ' ' + Msg.PASS in output
 
     for case in case_list:
         assert case in mock_run.call_args_list

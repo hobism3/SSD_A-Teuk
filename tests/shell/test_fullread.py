@@ -1,11 +1,27 @@
+from unittest.mock import call
+
 import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-from shell_constants import RUN_SSD
+from shell_constants import LBA_RANGE, RUN_SSD
+from shell_constants import ShellMsg as Msg
+from shell_constants import ShellPrefix as Pre
 
 
-def test_shell_fullread(capsys: pytest.CaptureFixture, mocker: MockerFixture):
+@pytest.fixture
+def case_list():
+    test_cases = []
+    for index in LBA_RANGE:
+        cmd_args = RUN_SSD + ['R', str(index)]
+        test_cases.append(call(cmd_args, check=True))
+
+    return test_cases
+
+
+def test_shell_fullread(
+    capsys: pytest.CaptureFixture, mocker: MockerFixture, case_list
+):
     mock_process = mocker.Mock()
     mock_process.returncode = 0
 
@@ -18,15 +34,9 @@ def test_shell_fullread(capsys: pytest.CaptureFixture, mocker: MockerFixture):
     captured = capsys.readouterr()
     output = captured.out
 
-    assert '[Full Read]' in output
-    mock_run.assert_called_with(
-        RUN_SSD
-        + [
-            'R',
-            '99',
-        ],
-        check=True,
-    )
+    assert Pre.FULLREAD in output
+    for case in case_list:
+        assert case in mock_run.call_args_list
 
 
 def test_shell_fullread_exception(capsys: pytest.CaptureFixture, mocker: MockerFixture):
@@ -38,4 +48,4 @@ def test_shell_fullread_exception(capsys: pytest.CaptureFixture, mocker: MockerF
     captured = capsys.readouterr()
     output = captured.out
 
-    assert '[Full Read]  ERROR' in output
+    assert Pre.FULLREAD + ' ' + Msg.ERROR in output

@@ -32,9 +32,9 @@ class PartialLBAWriteCommand(Command):
                     read_value = self._read.execute(ssd_args)
                     if read_value != hex_string:
                         if read_value != hex_string:
-                            self._logger.info(Pre.SCRIPT2 + ShellMsg.FAIL)
+                            self._logger.info(ShellMsg.FAIL)
                             return True
-                self._logger.info(Pre.SCRIPT2 + ShellMsg.PASS)
+                self._logger.info(ShellMsg.PASS)
 
         except ValueError:
             self._logger.error(ShellMsg.ERROR)
