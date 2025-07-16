@@ -1,4 +1,5 @@
 import os
+from logger import Logger
 from pathlib import Path
 
 BUFFER_DIR_NAME = 'buffer'
@@ -13,26 +14,34 @@ class Buffer:
         return cls._instance
 
     def __init__(self):
+        self.logger = Logger()
         self._create_directory(BUFFER_DIR)
         if os.listdir(BUFFER_DIR) == []:
             self._create_file(BUFFER_DIR)
 
     def _create_file(self, dir):
         for i in range(1, 6):
-            Path(f"{dir}/{i}_empty").touch()
+            Path(f'{dir}/{i}_empty').touch()
 
     def _create_directory(self, dir):
         try:
             if not os.path.exists(dir):
                 os.makedirs(dir)
         except OSError:
-            print("Creation of the directory %s failed" % dir)
+            self.logger.error(f'Creation of the directory {dir} failed')
 
     def buffer_file_read(self) -> list:
         ...
 
     def buffer_file_write(self, lst):
-        ...
+        file_list =  sorted(os.listdir(BUFFER_DIR))
+        for i, file in enumerate(lst):
+            file_path = f'{BUFFER_DIR}\{file_list[i]}'
+            new_file_path = f'{BUFFER_DIR}\{file}'
+            try:
+                os.rename(file_path, new_file_path)
+            except OSError as e:
+                self.logger.error(f'Error during changing buffer {file_path} to {new_file_path}')
 
     def _write(self, address, new_content):
         ...
