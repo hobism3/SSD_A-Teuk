@@ -59,6 +59,12 @@ class SSD:
         except ValueError:
             return False
 
+    @staticmethod
+    def validate_size(input):
+        if input is None or not input.isdigit():
+            return False
+        return 1 <= int(input) <= 10
+
     def _read(self, address):
         ret_value = ''
         with open(SSD_NAND_FILE_PATH) as f:
@@ -144,6 +150,20 @@ class WriteCommand(Command):
         self.ssd._write(int(self.address), self.value)
 
 
+class EraseCommand(Command):
+    def __init__(self, ssd, address, size):
+        self.ssd = ssd
+        self.address = address
+        self.size = size
+
+    def execute(self):
+        if not self.ssd.validate_address(self.address) or not self.ssd.validate_size(
+            self.size
+        ):
+            raise InvalidInputError('Address validation failed')
+        self.ssd._erase(int(self.address), int(self.size))
+
+
 class CommandFactory:
     @staticmethod
     def create_command(args):
@@ -164,11 +184,13 @@ class CommandFactory:
         elif mode == 'R':
             return ReadCommand(ssd, address)
 
+        elif mode == 'E':
+            if value is None:
+                raise InvalidInputError('Erase needs a size')
+            return EraseCommand(ssd, address, value)
+
         else:
             raise InvalidInputError('Invalid mode')
-
-    def execute(self, param, param1, param2=None):
-        pass
 
 
 def main():
