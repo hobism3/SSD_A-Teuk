@@ -31,6 +31,13 @@ class ShellCmd:
     HELP = 'help'
     PARTIALLBAWRITE_SHORT = '2_'
     PARTIALLBAWRITE_LONG = '2_PartialLBAWrite'
+    SCRIPT_1_FULL = '1_fullwriteandreadcompare'
+    SCRIPT_2_FULL = '2_partiallbawrite'
+    SCRIPT_3_FULL = '3_writereadaging'
+    SCRIPT_1_SHORT = '1_'
+    SCRIPT_2_SHORT = '2_'
+    SCRIPT_3_SHORT = '3_'
+
 
 
 class ShellPrefix:
@@ -39,9 +46,18 @@ class ShellPrefix:
     FULLREAD = '[Full Read] '
     FULLWRITE = '[Full Write] '
     SCRIPT2 = '[2_PartialLBAWrite] '
+    FULLWRITE = '[FullWrite] '
+    FULLREAD = '[FullRead] '
+    SCRIPT_1 = '[1_FullWriteAndReadCompare] '
+    SCRIPT_2 = '[2_PartialLBAWrite] '
+    SCRIPT_3 = '[3_WriteReadAging] '
+
 
 
 LBA_RANGE = range(100)
+MAX_LBA = 99
+SCRIPT_1_STEP = 5
+SCRIPT_3_ROTATE_CNT = 200
 
 
 class Hex:
