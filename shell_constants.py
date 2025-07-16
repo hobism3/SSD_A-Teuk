@@ -18,6 +18,8 @@ class ShellMsg:
     ERROR = 'ERROR'
     INVALID = 'INVALID COMMAND'
     DONE = 'Done'
+    FAIL = 'FAIL'
+    PASS = 'PASS'
 
 
 class ShellCmd:
@@ -36,6 +38,7 @@ class ShellPrefix:
     WRITE = '[Write] '
     FULLREAD = '[Full Read] '
     FULLWRITE = '[Full Write] '
+    SCRIPT2 = '[2_PartialLBAWrite] '
 
 
 LBA_RANGE = range(100)

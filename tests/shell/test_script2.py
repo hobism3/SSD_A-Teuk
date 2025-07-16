@@ -53,7 +53,7 @@ def test_shell_script2(capsys: pytest.CaptureFixture, mocker: MockerFixture, cas
 
     captured = capsys.readouterr()
     output = captured.out
-    assert '[2_PartialLBAWrite] Pass' in output
+    assert '[2_PartialLBAWrite] PASS' in output
 
     for case in case_list:
         assert case in mock_run.call_args_list
