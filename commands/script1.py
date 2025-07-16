@@ -3,9 +3,9 @@ import random
 from commands.base import Command
 from commands.read import ReadCommand
 from commands.write import WriteCommand
-from logger import Logger
 from shell_constants import MAX_LBA, SCRIPT_1_STEP
 from shell_constants import ShellPrefix as Pre
+from shell_logger import Logger
 
 
 class FullWriteAndReadCompare(Command):

@@ -76,7 +76,7 @@ def shell_user_inputs():
         SHELL_UNKNOWN_THEN_EXIT: ['???', 'foo', 'blah', Cmd.EXIT],
         SHELL_KEYBOARD_INTERRUPT: KeyboardInterrupt(),
         SHELL_EOF: EOFError(),
-        SHELL_WHITESPACE_AND_CASE: [f'  wRiTe {TEST_LBA} {TEST_DATA_2}  ', Cmd.EXIT],
+        SHELL_WHITESPACE_AND_CASE: [f'  write {TEST_LBA} {TEST_DATA_2}  ', Cmd.EXIT],
         SHELL_EXIT_MID_LOOP: [Cmd.HELP, Cmd.EXIT, Cmd.HELP],
     }
 

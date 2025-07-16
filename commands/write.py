@@ -1,8 +1,8 @@
 from commands.base import Command
-from logger import Logger
 from shell_constants import LBA_RANGE
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
+from shell_logger import Logger
 
 
 class WriteCommand(Command):

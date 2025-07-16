@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 import subprocess
 
-from logger import Logger
 from shell_constants import LBA_RANGE, RUN_SSD, SSD_OUTPUT_FILE, Hex, ShellMsg
+from shell_logger import Logger
 
 
 class Command(ABC):

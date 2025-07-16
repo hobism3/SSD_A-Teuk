@@ -3,9 +3,9 @@ import random
 from commands.base import Command
 from commands.read import ReadCommand
 from commands.write import WriteCommand
-from logger import Logger
 from shell_constants import SCRIPT_3_ROTATE_CNT
 from shell_constants import ShellPrefix as Pre
+from shell_logger import Logger
 
 
 class WriteReadAging(Command):
