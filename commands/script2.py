@@ -1,11 +1,10 @@
 import random
-import subprocess
 
 from commands.base import Command
 from commands.read import ReadCommand
 from commands.write import WriteCommand
 from logger import Logger
-from shell_constants import RUN_SSD, ShellMsg
+from shell_constants import ShellMsg
 from shell_constants import ShellPrefix as Pre
 
 
@@ -26,11 +25,7 @@ class PartialLBAWriteCommand(Command):
             for _ in range(30):
                 hex_string = f'0x{self._random_value:08X}'
                 for index in sample_index:
-                    self._lba = index
-                    ssd_args = ['W', self._lba, hex_string]
-                    return_code = subprocess.run(RUN_SSD + ssd_args, check=True)
-                    if return_code.returncode != 0:
-                        self._logger.error(ShellMsg.ERROR)
+                    self._execute_write(index, hex_string)
 
                 for index in sample_index:
                     ssd_args = [index]
@@ -44,5 +39,9 @@ class PartialLBAWriteCommand(Command):
         except ValueError:
             self._logger.error(ShellMsg.ERROR)
         return True
+
+    def _execute_write(self, lba, current_value):
+        cmd = f'{lba} {current_value}'
+        self._write.execute(cmd.split())
 
     def parse_result(self, result) -> str: ...
