@@ -93,12 +93,6 @@ class SSD:
         self.initialize_ssd_output()
         self.logger.info(f'Write complete: {address:02d}: {new_content}')
 
-    def _buf_read(self, address):
-        self.buffer._read(address)
-
-    def _buf_write(self, address, new_content):
-        self.buffer._write(address, new_content)
-
     def _erase(self, address, size):
         with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
             lines = f.readlines()
@@ -111,6 +105,36 @@ class SSD:
 
         self.initialize_ssd_output()
         self.logger.info(f'Erase complete: {address:02d} to {address + size:02d}')
+
+    def _flush(self):
+        self.logger.info('Flush Start')
+        buffer_list = self.buffer.buffer_file_read()
+        for buffed_command in buffer_list:
+            if 'empty' in buffed_command:
+                break
+            args = buffed_command.split(' ')
+            mode = args[1]
+            address = int(args[2])  # 주소는 항상 int로 변환
+
+            if mode == 'W':
+                value = args[3]
+                self._write(address, value)
+            elif mode == 'E':
+                size = int(args[3])
+                self._erase(address, size)
+            elif mode == 'R':
+                self._read(address)
+
+        self.logger.info('Flush complete')
+
+    def _buf_read(self, address):
+        self.buffer._read(address)
+
+    def _buf_write(self, address, new_content):
+        self.buffer._write(address, new_content)
+
+    def _buf_erase(self, address, size):
+        self.buffer._erase(address, size)
 
     def execute(self, mode, address, value=None):
         self.logger.info(f'Excecute command: {mode} {address} {value}')
@@ -171,7 +195,15 @@ class EraseCommand(Command):
             self.address, self.size
         ):
             raise InvalidInputError('Address validation failed')
-        self.ssd._erase(int(self.address), int(self.size))
+        self.ssd._buf_erase(int(self.address), int(self.size))
+
+
+class FlushCommand(Command):
+    def __init__(self, ssd):
+        self.ssd = ssd
+
+    def execute(self):
+        self.ssd._flush()
 
 
 class CommandFactory:
@@ -179,6 +211,7 @@ class CommandFactory:
         'R': {'command': ReadCommand, 'args_count': 1},
         'W': {'command': WriteCommand, 'args_count': 2},
         'E': {'command': EraseCommand, 'args_count': 2},
+        'F': {'command': FlushCommand, 'args_count': 0},
     }
 
     @staticmethod
