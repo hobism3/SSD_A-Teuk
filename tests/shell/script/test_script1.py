@@ -1,12 +1,11 @@
 from itertools import zip_longest
-from pathlib import Path
 from unittest.mock import call, mock_open
 
 import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-from shell_constants import MAX_LBA, SCRIPT_1_STEP
+from shell_constants import MAX_LBA, RUN_SSD, SCRIPT_1_STEP
 from shell_constants import ShellMsg as Msg
 
 
@@ -29,18 +28,11 @@ def mock_run(mocker):
 
 @pytest.fixture
 def case_list():
-    ssd_path = Path(__file__).resolve().parents[3] / 'ssd.py'
-
     test_args_list = _generate_input_arg_list()
 
     test_cases = []
     for cmd, code, value in test_args_list:
-        cmd_args = [
-            'python',
-            str(ssd_path),
-            cmd,
-            code,
-        ]
+        cmd_args = RUN_SSD + [cmd, code]
         if value is not None:
             cmd_args.append(value)
 
