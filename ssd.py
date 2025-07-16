@@ -2,6 +2,7 @@ import os
 import sys
 from abc import ABC, abstractmethod
 
+from buffer import Buffer
 from logger import Logger
 
 INITIAL_VALUE = '0x00000000'
@@ -24,6 +25,7 @@ class SSD:
 
     def __init__(self):
         self.logger = Logger()
+        self.buffer = Buffer()
         if not os.path.exists(SSD_NAND_FILE_PATH):
             self.logger.info('Initialize ssd_nand.txt, ssd_output.txt')
             self.initialize_ssd_nand()
@@ -83,6 +85,12 @@ class SSD:
         self.initialize_ssd_output()
         self.logger.info(f'Write complete: {address:02d}: {new_content}')
 
+    def _buf_read(self, address):
+        self.buffer._read(address)
+
+    def _buf_write(self, address, new_content):
+        self.buffer._write(address, new_content)
+
     def execute(self, mode, address, value=None):
         self.logger.info(f'Excecute command: {mode} {address} {value}')
         try:
@@ -114,7 +122,8 @@ class ReadCommand(Command):
     def execute(self):
         if not self.ssd.validate_address(self.address):
             raise InvalidInputError('Address validation failed')
-        self.ssd._read(int(self.address))
+        # self.ssd._read(int(self.address))
+        self.ssd._buf_read(int(self.address))
 
 
 class WriteCommand(Command):
@@ -128,7 +137,8 @@ class WriteCommand(Command):
             self.value
         ):
             raise InvalidInputError('Address validation failed')
-        self.ssd._write(int(self.address), self.value)
+        # self.ssd._write(int(self.address), self.value)
+        self.ssd._buf_write(int(self.address), self.value)
 
 
 class CommandFactory:
@@ -142,14 +152,15 @@ class CommandFactory:
         value = args[2] if len(args) > 2 else None
 
         ssd = SSD()
+        buffer = Buffer()
 
         if mode == 'W':
             if value is None:
                 raise InvalidInputError('Write needs a value')
-            return WriteCommand(ssd, address, value)
+            return WriteCommand(ssd, buffer, address, value)
 
         elif mode == 'R':
-            return ReadCommand(ssd, address)
+            return ReadCommand(ssd, buffer, address)
 
         else:
             raise InvalidInputError('Invalid mode')
