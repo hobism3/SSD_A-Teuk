@@ -5,13 +5,12 @@ from functools import wraps
 
 from filelock import FileLock
 
-from ssd_tool.buffer import Buffer
+from ssd_tool.buffer import Buffer, EMPTY
 from ssd_tool.logger import Logger
 
 INITIAL_VALUE = '0x00000000'
 SSD_NAND_SIZE = 100
 VALID_VALUE_SIZE = 10
-EMPTY = 'empty'
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 SSD_OUTPUT_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_output.txt')
 SSD_NAND_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_nand.txt')
