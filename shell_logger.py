@@ -46,12 +46,14 @@ class Logger:
         self.log(message)
 
     def _get_caller(self):
-        frame = inspect.currentframe()
-        outer = inspect.getouterframes(frame)[2]
-        method = outer.function
-        cls = outer.frame.f_locals.get('self', None)
-        class_name = cls.__class__.__name__ if cls else '(NoClass)'
-        return f'{class_name}.{method}()'
+        for frame_info in inspect.stack():
+            frame = frame_info.frame
+            cls = frame.f_locals.get('self', None)
+            if cls is not None and not isinstance(cls, Logger):
+                class_name = cls.__class__.__name__
+                method_name = frame_info.function
+                return f'{class_name}.{method_name}()'
+        return '(Unknown)'
 
     def _rotate_log(self):
         if not os.path.exists(self.filename):
