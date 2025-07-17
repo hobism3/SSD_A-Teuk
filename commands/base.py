@@ -84,6 +84,13 @@ class Command(CommandInterface):
             return True
         raise ValueError('Erase range exceeds device limit.')
 
+    def _check_lba_range(self, start: str, end: str):
+        start_lba = int(start)
+        end_lba = int(end)
+        if start_lba > end_lba:
+            raise ValueError(f"Invalid range: {start} <= {end}")
+        return True
+
     def _run_sdd(self, args):
         cmd = RUN_SSD + args
         self._logger.log('Executing command:' + ' '.join(cmd))

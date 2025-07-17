@@ -39,8 +39,8 @@ class EraseCommand(Command):
             self._logger.print_and_log(self._prefix, Msg.ERROR)
         return True
 
-    def _execute_chunks(self, start: int, total: int, chunk_size: int = 10):
-        end = start + total
+    def _execute_chunks(self, start: int, size: int, chunk_size: int = 10):
+        end = start + size
         for lba in range(start, end, chunk_size):
             size = min(chunk_size, end - lba)
             self._run_sdd([self.command, str(lba), str(size)])
