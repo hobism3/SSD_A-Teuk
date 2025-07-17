@@ -96,6 +96,7 @@ class Buffer:
         self.buffer[seq] = ['empty']
 
     def _can_merge_ranges(self, addr1, len1, addr2, len2):
+        self.logger.info(f'Can merge ranges?: {addr1} {len1} {addr2} {len2}')
         range1 = set(range(addr1, addr1 + len1))
         range2 = set(range(addr2, addr2 + len2))
         merged = sorted(range1 | range2)
@@ -104,11 +105,10 @@ class Buffer:
             merged_start = merged[0]
             merged_len = len(merged)
             if merged_len > ERASE_MAX_RANGE:
-                self.logger.info(f"Buffer can't be merged. {merged_start} {merged_len}")
-                return False, (
-                    list(set(merged) - range2)[0],
-                    len(list(set(merged) - range2)),
-                )
+                return False, [
+                    (merged[0], merged_len - ERASE_MAX_RANGE),
+                    (merged[-ERASE_MAX_RANGE], ERASE_MAX_RANGE),
+                ]
             return True, (merged_start, merged_len)
         return False, None
 
@@ -142,50 +142,40 @@ class Buffer:
         if mode == 'W':
             for i in range(seq, -1, -1):
                 buf = self.buffer[i]
-
                 if buf[0] == 'W' and buf[1] == param1:
-                    buf[2] = param2
-                    flag_add_buffer = False
+                    self._remove_buffer(i)
+                    self._sort_buffer()
+                    seq -= 1
                     break
-
                 if buf[0] == 'E':
                     erased = self._reduce_erase_buffer(i, param1)
                     if erased:
                         self._sort_buffer()
                         seq -= 1
                         break
-
         elif mode == 'E':
             for i in range(seq, -1, -1):
                 buf = self.buffer[i]
-
                 if buf[0] == 'W' and param1 <= buf[1] < param1 + param2:
                     self.logger.info(f'Write is useless now. Remove buffer {i}')
                     self._remove_buffer(i)
                     self._sort_buffer()
                     seq -= 1
-
                 elif buf[0] == 'E':
                     can_merge, merged_range = self._can_merge_ranges(
-                        int(buf[1]), int(buf[2]), param1, param2
+                        buf[1], buf[2], param1, param2
                     )
                     if can_merge:
                         self.logger.info(f'Buffer {i} can be merged.')
-                        if merged_range == (buf[1], buf[2]):
-                            self.logger.info(
-                                f'Erase is fully included in buffer {i}. Stop processing'
-                            )
-                            flag_add_buffer = False
-                            seq -= 1
-                            break
-                        self._remove_buffer(i)
                         self._add_buffer(i, 'E', merged_range[0], merged_range[1])
                         self._sort_buffer()
-                        if flag_add_buffer:
-                            seq -= 1
                         flag_add_buffer = False
                     elif merged_range is not None:
-                        self._add_buffer(i, 'E', merged_range[0], merged_range[1])
+                        self.logger.info(
+                            f'Buffer Rearranged. merged_range: {merged_range}'
+                        )
+                        self._add_buffer(i, 'E', merged_range[0][0], merged_range[0][1])
+                        param1, param2 = merged_range[1][0], merged_range[1][1]
 
         if flag_add_buffer:
             self.logger.info(f'Add buffer {seq} {mode} {param1} {param2}')
