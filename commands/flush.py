@@ -2,10 +2,10 @@ import subprocess
 from subprocess import CalledProcessError
 
 from commands.base import Command
-from shell_logger import Logger
 from shell_constants import RUN_SSD
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
+from shell_logger import Logger
 
 
 class FlushCommand(Command):
@@ -27,7 +27,7 @@ class FlushCommand(Command):
             ssd_args = self.parse(args)
             return_code = subprocess.run(RUN_SSD + ssd_args, check=True)
             result = self.parse_result(return_code.returncode)
-            self._logger.info(result)
-            return True
+            self._logger.print_and_log(self._prefix, result)
         except (ValueError, CalledProcessError):
-            self._logger.error(Msg.ERROR)
+            self._logger.print_and_log(self._prefix, Msg.ERROR)
+        return True
