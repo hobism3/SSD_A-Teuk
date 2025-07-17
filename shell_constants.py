@@ -1,7 +1,8 @@
 import os
 
 SSD_OUTPUT_FILE = os.path.join(os.path.dirname(__file__), 'ssd_output.txt')
-RUN_SSD = ['python', os.path.join(os.path.dirname(__file__), 'ssd.py')]
+PYTHON = 'C:\\reviewer\\best-reviewer\\.venv\\Scripts\\python.exe'
+RUN_SSD = [PYTHON, os.path.join(os.path.dirname(__file__), 'ssd.py')]
 
 
 class ShellMsg:
