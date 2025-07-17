@@ -8,75 +8,45 @@ from shell_tool.shell_logger import Logger
 
 
 class EraseCommand(Command):
+    expected_num_args = 2
+    help_msg = Msg.ERASE_HELP
+    command = 'E'
+
     def __init__(self, logger: Logger, prefix=Pre.ERASE):
         super().__init__(logger, prefix)
+        self._chunk_size = 10
+    
+    def _parse(self, args: list[str]) -> list[str]:
+        args = args or []
+        self._check_argument_count(args)
 
-    def execute(self, args: list[str]) -> bool:
+        lba, size = args[0], args[1]
+        self._check_lba(lba)
+        self._check_size(size)
+        self._check_boundary(lba, size)
+
+        self._lba = int(lba)
+        self._size = int(size)
+        return [self.command] + args
+    
+    def _parse_result(self, result: str) -> str:
+        return Msg.DONE if not result.strip() else Msg.ERROR
+
+    def execute(self, args: list[str] = None) -> bool:
         try:
-            erase_cmd, current_lba, remaining = self._parse_erase_args(args)
-            self._execute_chunk_erase(erase_cmd, current_lba, remaining)
-            self._check_output_file()
-        except ValueError:
+            parsed_args = self._parse(args)
+            self._execute_chunks(self._lba, self._size, self._chunk_size)
+            self._process_result()
+        except (ValueError, subprocess.CalledProcessError):
             self._logger.print_and_log(self._prefix, Msg.ERROR)
         return True
 
-    def _check_output_file(self):
-        with open(SSD_OUTPUT_FILE) as f:
-            result = self.parse_result(f.read().strip())
-        self._logger.print_and_log(self._prefix, result)
-
-    def _execute_chunk_erase(
-        self, erase_cmd: str, current_lba: int, remaining: int
-    ) -> None:
-        while remaining > 0:
-            chunk_size = min(10, remaining)
-            full_cmd = RUN_SSD + [erase_cmd] + [str(current_lba), str(chunk_size)]
-            return_code = subprocess.run(full_cmd, check=True)
-            if return_code.returncode != 0:
-                self._logger.error(Msg.ERROR)
-                break
-            current_lba += chunk_size
-            remaining -= chunk_size
-
-    def _parse_erase_args(self, args: list[str]) -> tuple[str, int, int]:
-        ssd_args = self.parse(args)
-        return ssd_args[0], int(ssd_args[1]), int(ssd_args[2])
-
-    def parse(self, args: list[str]) -> list[str]:
-        if len(args) != 2:
-            raise ValueError(Msg.ERASE_HELP)
-        lba, size = args
-        self._check_validity(lba, size)
-
-        return ['E', lba, size]
-
-    def parse_result(self, result) -> str:
-        if not result:
-            return Msg.DONE
-        return Msg.ERROR
-
-    def _check_validity(self, lba, size):
-        if not self._check_lba(lba):
-            raise ValueError(
-                f'LBA must be an integer between {LBA_RANGE[0]} and {LBA_RANGE[-1]}'
-            )
-        if not self._check_size(size):
-            raise ValueError(
-                f'Size must be an integer between {SIZE_RANGE[0]} and {SIZE_RANGE[-1]}'
-            )
-        if not self._check_end_lba(lba, size):
-            raise ValueError(
-                f'End LBA must not exceed the maximum value of {LBA_RANGE[-1]}'
-            )
-
-    @staticmethod
-    def _check_size(size):
+    def _check_size(self, size: str) -> bool:
         if size.isdigit() and int(size) in SIZE_RANGE:
             return True
-        return False
+        raise ValueError(f"Invalid size: {size}")
 
-    @staticmethod
-    def _check_end_lba(lba, size):
-        if int(lba) + int(size) - 1 <= 99:
+    def _check_boundary(self, lba: str, size: str) -> bool:
+        if int(lba) + int(size) - 1 <= max(LBA_RANGE):
             return True
-        return False
+        raise ValueError("Erase range exceeds device limit.")
