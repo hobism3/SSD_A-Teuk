@@ -1,8 +1,9 @@
-from abc import ABC, abstractmethod
-from commands.command_interface import CommandInterface
+from abc import abstractmethod
 import subprocess
 from subprocess import CalledProcessError
 
+from commands.command_interface import CommandInterface
+from commands.validator import Validator
 from shell_tool.shell_constants import (
     LBA_RANGE,
     RUN_SSD,
@@ -22,19 +23,27 @@ class Command(CommandInterface):
         self._logger = logger
         self._result = None
         self._prefix = prefix
-        self._validators: list[callable] = []
+        self._validators: list[Validator] = []
 
     @property
     def result(self):
         return self._result
-    
+
     @result.setter
     def result(self, result):
         self._result = result
 
-    @abstractmethod
-    def _parse(self, args: list[str]) -> list[str]:...
-    
+    def _parse(self, args: list[str]) -> list[str]:
+        args = args or []
+        self._check_argument_count(args)
+        try:
+            for validator in self._validators:
+                validator.validate(args)
+        except ValueError as e:
+            self._logger.print(prefix='[ERROR]', message=str(e))
+            raise
+        return [self.command] + args
+
     @abstractmethod
     def _parse_result(self, result: str) -> str:
         raise NotImplementedError
@@ -68,7 +77,7 @@ class Command(CommandInterface):
         cmd = RUN_SSD + args
         self._logger.log('Executing command:' + ' '.join(cmd))
         subprocess.run(cmd, check=True)
-    
+
     def _process_result(self):
         """Reads result file and logs parsed result."""
         with open(SSD_OUTPUT_FILE) as f:
@@ -86,7 +95,7 @@ class Command(CommandInterface):
         except CalledProcessError:
             self._logger.print_and_log(self._prefix, ShellMsg.ERROR)
         return True
-    
+
     def _execute_chunks(self, start: int, total: int, chunk_size: int = 10):
         end = start + total
         for lba in range(start, end, chunk_size):
