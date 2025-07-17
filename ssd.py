@@ -9,6 +9,9 @@ from ssd_tool.buffer import Buffer
 from ssd_tool.logger import Logger
 
 INITIAL_VALUE = '0x00000000'
+SSD_NAND_SIZE = 100
+VALID_VALUE_SIZE = 10
+EMPTY = 'empty'
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 SSD_OUTPUT_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_output.txt')
 SSD_NAND_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_nand.txt')
@@ -56,7 +59,7 @@ class SSD:
     @staticmethod
     def initialize_ssd_nand():
         with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
-            for i in range(100):
+            for i in range(SSD_NAND_SIZE):
                 f.write(f'{i:02d} {INITIAL_VALUE}\n')
 
     @staticmethod
@@ -65,18 +68,18 @@ class SSD:
             f.write('')
 
     @staticmethod
-    def validate_address(input):
-        if input is None or not input.isdigit():
+    def validate_address(input_val):
+        if input_val is None or not input_val.isdigit():
             return False
-        return 0 <= int(input) <= 99
+        return 0 <= int(input_val) <= SSD_NAND_SIZE - 1
 
     @staticmethod
-    def validate_value(input):
-        if input is None or len(input) != 10:
+    def validate_value(input_val):
+        if input_val is None or len(input_val) != VALID_VALUE_SIZE:
             return False
-        if not input.startswith(('0x', '0X')):
+        if not input_val.startswith(('0x', '0X')):
             return False
-        hex_part = input[2:]
+        hex_part = input_val[2:]
         try:
             int(hex_part, 16)
             return True
@@ -84,12 +87,12 @@ class SSD:
             return False
 
     @staticmethod
-    def validate_size(address, input):
-        if input is None or not input.isdigit():
+    def validate_size(address, input_val):
+        if input_val is None or not input_val.isdigit():
             return False
-        if int(address) + int(input) > 100:
+        if int(address) + int(input_val) > SSD_NAND_SIZE:
             return False
-        return 1 <= int(input) <= 10
+        return 1 <= int(input_val) <= VALID_VALUE_SIZE
 
     def read(self, address):
         is_read_buf, ret_value = self._buffer.read(int(address))
@@ -129,7 +132,7 @@ class SSD:
         self.logger.info('Flush Start')
         buffer_list = self._buffer.buffer_file_read()
         for buffed_command in buffer_list:
-            if 'empty' in buffed_command:
+            if EMPTY in buffed_command:
                 break
             args = buffed_command.split('_')
             mode = args[1]
