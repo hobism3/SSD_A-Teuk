@@ -71,13 +71,15 @@ class SSD:
 
     def _read(self, address):
         ret_value = ''
-        with open(SSD_NAND_FILE_PATH) as f:
-            for line in f:
-                data = line.strip().split(' ')
-                ind = int(data[0])
-                if int(address) == ind:
-                    ret_value = data[1]
-
+        if self.buffer._read(int(address))[0]:
+            ret_value = self.buffer._read(int(address))[1]
+        else:
+            with open(SSD_NAND_FILE_PATH) as f:
+                for line in f:
+                    data = line.strip().split(' ')
+                    ind = int(data[0])
+                    if int(address) == ind:
+                        ret_value = data[1]
         with open(SSD_OUTPUT_FILE_PATH, 'w') as f:
             f.write(f'{ret_value}')
         self.logger.info(f'Read complete: {address:02d}: {ret_value}')
@@ -133,9 +135,13 @@ class SSD:
 
     def _buf_write(self, address, new_content):
         self.buffer._write(address, new_content)
+        self.initialize_ssd_output()
+        self.logger.info(f'Write complete: {address:02d}: {new_content}')
 
     def _buf_erase(self, address, size):
         self.buffer._erase(address, size)
+        self.initialize_ssd_output()
+        self.logger.info(f'Erase complete: {address:02d}: {size:02d}')
 
     def execute(self, mode, address, value=None):
         self.logger.info(f'Excecute command: {mode} {address} {value}')
@@ -168,7 +174,7 @@ class ReadCommand(Command):
     def execute(self):
         if not self.ssd.validate_address(self.address):
             raise InvalidInputError('Address validation failed')
-        self.ssd._buf_read(int(self.address))
+        self.ssd._read(int(self.address))
 
 
 class WriteCommand(Command):
