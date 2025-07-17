@@ -1,6 +1,6 @@
 import pytest
 
-from buffer import Buffer
+from ssd_tool.buffer import Buffer
 from tests.test_ssd.testcase.buffer_test_case import *
 
 

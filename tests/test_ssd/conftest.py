@@ -89,4 +89,4 @@ def read_file_with_lines(file_path):
 
 def read_buffer():
     ssd = SSD()
-    return ssd._buffer.buffer
+    return ssd._buffer._buffer_list

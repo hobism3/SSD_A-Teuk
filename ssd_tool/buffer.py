@@ -65,6 +65,8 @@ class Buffer:
                 after_file_path = rf'{BUFFER_DIR}\{i + 1}_empty'
             else:
                 after_file_path = rf'{BUFFER_DIR}\{i + 1}_{self._buffer_list[i][0]}_{self._buffer_list[i][1]}_{self._buffer_list[i][2]}'
+            if before_file_path == after_file_path:
+                continue
             try:
                 os.rename(before_file_path, after_file_path)
             except OSError:
