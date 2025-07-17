@@ -20,6 +20,8 @@ class WriteReadAging(Command):
         pass
 
     def execute(self, args=None) -> bool:
+        self._logger.print_blank_line()
+        self._logger.print_and_log(self._prefix, None)
         for _ in range(0, SCRIPT_3_ROTATE_CNT):
             value = f'0x{random.getrandbits(32):08X}'
 

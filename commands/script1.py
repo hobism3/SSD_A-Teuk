@@ -3,8 +3,7 @@ import random
 from commands.base import Command
 from commands.read import ReadCommand
 from commands.write import WriteCommand
-from shell_constants import MAX_LBA, SCRIPT_1_STEP
-from shell_constants import ShellPrefix, ShellMsg
+from shell_constants import MAX_LBA, SCRIPT_1_STEP, ShellMsg, ShellPrefix
 from shell_logger import Logger
 
 
@@ -26,7 +25,8 @@ class FullWriteAndReadCompare(Command):
         random_values = self._generate_random_value_lst()
         current_start = 0
         chunk_index = 0
-
+        self._logger.print_blank_line()
+        self._logger.print_and_log(self._prefix, None)
         while current_start <= self.max_lba:
             current_end = min(current_start + self.step - 1, self.max_lba)
             current_value = random_values[chunk_index]
