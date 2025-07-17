@@ -82,7 +82,15 @@ class Buffer:
         self.buffer_arrange('W', address, new_content, self._get_buffer_length())
         self.buffer_file_write()
 
-    def _read(self, address): ...
+    def _read(self, address) -> (bool, str):
+        for buf in self.buffer:
+            if buf[0] == 'empty':
+                continue
+            if buf[0] == 'W' and buf[1] == address:
+                return True, buf[2]
+            if buf[0] == 'E' and buf[1] <= address < buf[1] + buf[2]:
+                return True, '0x00000000'
+        return False, ''
 
     def _erase(self, address, size):
         self.buffer_arrange('E', address, size, self._get_buffer_length())
