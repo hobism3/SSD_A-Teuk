@@ -5,14 +5,14 @@ from functools import wraps
 
 from filelock import FileLock
 
-from buffer import Buffer
-from logger import Logger
+from ssd_tool.buffer import Buffer
+from ssd_tool.logger import Logger
 
 INITIAL_VALUE = '0x00000000'
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 SSD_OUTPUT_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_output.txt')
 SSD_NAND_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_nand.txt')
-LOCK_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd.lock')
+LOCK_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_tool.lock')
 
 
 def file_lock_decorator(lock_path):
@@ -24,7 +24,9 @@ def file_lock_decorator(lock_path):
             with lock:
                 result = func(*args, **kwargs)
                 return result
+
         return wrapper
+
     return decorator
 
 
@@ -42,10 +44,10 @@ class SSD:
 
     def __init__(self):
         self.logger = Logger()
-        self.buffer = Buffer()
-        if self.buffer.buffer_length == 5:
+        self._buffer = Buffer()
+        if self._buffer.buffer_length == 5:
             self.logger.info('Buffer is full. Flush buffer.')
-            self._flush()
+            self.flush()
         if not os.path.exists(SSD_NAND_FILE_PATH):
             self.logger.info('Initialize ssd_nand.txt, ssd_output.txt')
             self.initialize_ssd_nand()
@@ -89,10 +91,10 @@ class SSD:
             return False
         return 1 <= int(input) <= 10
 
-    def _read(self, address):
+    def read(self, address):
         ret_value = ''
-        if self.buffer._read(int(address))[0]:
-            ret_value = self.buffer._read(int(address))[1]
+        if self._buffer.read(int(address))[0]:
+            ret_value = self._buffer.read(int(address))[1]
         else:
             with open(SSD_NAND_FILE_PATH) as f:
                 for line in f:
@@ -128,9 +130,9 @@ class SSD:
         self.initialize_ssd_output()
         self.logger.info(f'Erase complete: {address:02d} to {address + size:02d}')
 
-    def _flush(self):
+    def flush(self):
         self.logger.info('Flush Start')
-        buffer_list = self.buffer.buffer_file_read()
+        buffer_list = self._buffer.buffer_file_read()
         for buffed_command in buffer_list:
             if 'empty' in buffed_command:
                 break
@@ -145,20 +147,22 @@ class SSD:
                 size = int(args[3])
                 self._erase(address, size)
             elif mode == 'R':
-                self._read(address)
+                self.read(address)
 
-        self.buffer.buffer_clear()
+        self._buffer.buffer_clear()
         self.logger.info('Flush complete')
 
-    def _buf_write(self, address, new_content):
-        self.buffer.buffer_arrange('W', address, new_content, self.buffer.buffer_length)
-        self.buffer.buffer_file_write()
+    def buf_write(self, address, new_content):
+        self._buffer.buffer_arrange(
+            'W', address, new_content, self._buffer.buffer_length
+        )
+        self._buffer.buffer_file_write()
         self.initialize_ssd_output()
         self.logger.info(f'Write complete: {address:02d}: {new_content}')
 
-    def _buf_erase(self, address, size):
-        self.buffer.buffer_arrange('E', address, size, self.buffer.buffer_length)
-        self.buffer.buffer_file_write()
+    def buf_erase(self, address, size):
+        self._buffer.buffer_arrange('E', address, size, self._buffer.buffer_length)
+        self._buffer.buffer_file_write()
         self.initialize_ssd_output()
         self.logger.info(f'Erase complete: {address:02d}: {size:02d}')
 
@@ -193,7 +197,7 @@ class ReadCommand(Command):
     def execute(self):
         if not self.ssd.validate_address(self.address):
             raise InvalidInputError('Address validation failed')
-        self.ssd._read(int(self.address))
+        self.ssd.read(int(self.address))
 
 
 class WriteCommand(Command):
@@ -208,7 +212,7 @@ class WriteCommand(Command):
             self.value
         ):
             raise InvalidInputError('Address validation failed')
-        self.ssd._buf_write(int(self.address), self.value)
+        self.ssd.buf_write(int(self.address), self.value)
 
 
 class EraseCommand(Command):
@@ -223,7 +227,7 @@ class EraseCommand(Command):
             self.address, self.size
         ):
             raise InvalidInputError('Address validation failed')
-        self.ssd._buf_erase(int(self.address), int(self.size))
+        self.ssd.buf_erase(int(self.address), int(self.size))
 
 
 class FlushCommand(Command):
@@ -232,7 +236,7 @@ class FlushCommand(Command):
 
     @file_lock_decorator(LOCK_FILE_PATH)
     def execute(self):
-        self.ssd._flush()
+        self.ssd.flush()
 
 
 class CommandFactory:
