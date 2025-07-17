@@ -130,22 +130,16 @@ class SSD:
 
     def flush(self):
         self.logger.info('Flush Start')
-        buffer_list = self._buffer.buffer_file_read()
+        buffer_list = self._buffer._buffer_file_read_as_list()
         for buffed_command in buffer_list:
             if EMPTY in buffed_command:
                 break
-            args = buffed_command.split('_')
-            mode = args[1]
-            address = int(args[2])  # 주소는 항상 int로 변환
-
-            if mode == 'W':
-                value = args[3]
-                self._write(address, value)
-            elif mode == 'E':
-                size = int(args[3])
-                self._erase(address, size)
-            elif mode == 'R':
-                self.read(address)
+            if buffed_command[0] == 'W':
+                self._write(buffed_command[1], buffed_command[2])
+            elif buffed_command[0] == 'E':
+                self._erase(buffed_command[1], buffed_command[2])
+            elif buffed_command[0] == 'R':
+                self.read(buffed_command[1])
 
         self._buffer.buffer_clear()
         self.logger.info('Flush complete')
