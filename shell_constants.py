@@ -15,6 +15,8 @@ class ShellMsg:
   exit\tExit the shell"""
     READ_HELP = 'Invalid arguments. Usage: read <lba>'
     WRITE_HELP = 'Invalid arguments. Usage: write <lba> <hex data>'
+    ERASE_HELP = 'Invalid arguments. Usage: erase <start lba> <size>'
+    ERASE_RANGE_HELP = 'Invalid arguments. Usage: erase_range <start lba> <end lba>'
     ERROR = 'ERROR'
     INVALID = 'INVALID COMMAND'
     DONE = 'Done'
@@ -35,11 +37,14 @@ class ShellCmd:
     SCRIPT_1_SHORT = '1_'
     SCRIPT_2_SHORT = '2_'
     SCRIPT_3_SHORT = '3_'
+    ERASE = 'erase'
+    ERASERANGE = 'erase_range'
 
 
 class ShellPrefix:
     READ = '[Read]'
     WRITE = '[Write]'
+    ERASE = '[Erase]'
     FULLREAD = '[Full Read]'
     FULLWRITE = '[Full Write]'
     SCRIPT2 = '[2_PartialLBAWrite]'
@@ -48,9 +53,11 @@ class ShellPrefix:
     SCRIPT_1 = '[1_FullWriteAndReadCompare]'
     SCRIPT_2 = '[2_PartialLBAWrite]'
     SCRIPT_3 = '[3_WriteReadAging]'
+    ERASERANGE = '[Erase Range] '
 
 
 LBA_RANGE = range(100)
+SIZE_RANGE = range(1, 101)
 MAX_LBA = 99
 SCRIPT_1_STEP = 5
 SCRIPT_3_ROTATE_CNT = 200

@@ -12,8 +12,8 @@ class FullWriteAndReadCompare(Command):
         super().__init__(logger, prefix)
         self.max_lba = MAX_LBA
         self.step = SCRIPT_1_STEP
-        self.write_cmd = WriteCommand(self._logger, prefix=None)
-        self.read_cmd = ReadCommand(self._logger, prefix=None)
+        self._write_cmd = WriteCommand(self._logger, prefix=None)
+        self._read_cmd = ReadCommand(self._logger, prefix=None)
 
     def parse(self, args: list[str]) -> list[str]:
         pass
@@ -47,7 +47,7 @@ class FullWriteAndReadCompare(Command):
         return True
 
     def _generate_random_value_lst(self):
-        num_chunks = (self.max_lba + self.step) // self.step
+        num_chunks = (self._max_lba + self._step) // self._step
         random_values = [
             f'0x{val:08X}' for val in random.sample(range(0x100000000), num_chunks)
         ]
@@ -55,11 +55,11 @@ class FullWriteAndReadCompare(Command):
 
     def _execute_write(self, lba, current_value):
         cmd = f'{lba} {current_value}'
-        self.write_cmd.execute(cmd.split())
+        self._write_cmd.execute(cmd.split())
 
     def _execute_read_verify(self, lba, current_value):
-        self.read_cmd.execute([f'{lba}'])
-        read_value = self.read_cmd.result
+        self._read_cmd.execute([f'{lba}'])
+        read_value = self._read_cmd.result
         if read_value != current_value:
             self._logger.print_and_log(self._prefix, ShellMsg.FAIL)
             return False

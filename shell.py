@@ -3,6 +3,8 @@ import threading
 import time
 
 from commands.base import ExitCommand, HelpCommand
+from commands.erase import EraseCommand
+from commands.erase_range import EraseRangeCommand
 from commands.full_read import FullReadCommand
 from commands.full_write import FullWriteCommand
 from commands.read import ReadCommand
@@ -24,6 +26,7 @@ class Shell:
             Cmd.READ: ReadCommand(self.logger),
             Cmd.EXIT: ExitCommand(self.logger),
             Cmd.HELP: HelpCommand(self.logger),
+            Cmd.ERASE: EraseCommand(self.logger),
         }
         self._script_map = {
             Cmd.FULLREAD: FullReadCommand(self.logger),
@@ -34,6 +37,7 @@ class Shell:
             Cmd.SCRIPT_2_SHORT: PartialLBAWriteCommand(self.logger),
             Cmd.SCRIPT_3_FULL: WriteReadAging(self.logger),
             Cmd.SCRIPT_3_SHORT: WriteReadAging(self.logger),
+            Cmd.ERASERANGE: EraseRangeCommand(self.logger),
         }
 
     def run(self, serial_path: str = None):
