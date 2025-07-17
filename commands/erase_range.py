@@ -12,6 +12,15 @@ class EraseRangeCommand(Command):
         self._logger = Logger(Pre.ERASERANGE)
         self._erase_cmd = EraseCommand()
 
+    def execute(self, args: list[str]) -> bool:
+        try:
+            start_lba, size = self._parse_erase_range_args(args)
+            self._execute_erase(start_lba, size)
+            self._logger.info(Msg.DONE)
+        except ValueError:
+            self._logger.error(ShellMsg.ERROR)
+        return True
+
     def parse(self, args: list[str]) -> list[str]:
         if len(args) != 2:
             raise ValueError(Msg.ERASE_RANGE_HELP)
@@ -21,18 +30,7 @@ class EraseRangeCommand(Command):
         return [start_lba, end_lba]
 
     def parse_result(self, result) -> str:
-        if not result:
-            return Msg.DONE
-        return Msg.ERROR
-
-    def execute(self, args: list[str]) -> bool:
-        try:
-            start_lba, size = self._parse_erase_range_args(args)
-            self._execute_erase(start_lba, size)
-            self._logger.info(Msg.DONE)
-        except ValueError:
-            self._logger.error(ShellMsg.ERROR)
-        return True
+        pass
 
     def _execute_erase(self, lba: int, size: int) -> None:
         cmd = f'{lba} {size}'
