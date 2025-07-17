@@ -28,12 +28,12 @@ class Logger:
                 f.write(log_line)
 
     def dot(self):
-        self.print(None, '.', end='', flush=True)
+        self.print(message='.', end='', flush=True)
 
     def print_blank_line(self):
-        self.print(None, '')
+        self.print()
 
-    def print(self, prefix: str, message: str, end='\n', flush=False):
+    def print(self, prefix: str = '', message: str = '', end='\n', flush=False):
         if not self._verbose:
             return
         msg = []
@@ -43,8 +43,8 @@ class Logger:
             msg.append(message)
         print(' '.join(msg), end=end, flush=flush)
 
-    def print_and_log(self, tag: str, message: str):
-        self.print(tag, message)
+    def print_and_log(self, prefix: str = '', message: str = ''):
+        self.print(prefix, message)
         self.log(message)
 
     def _get_caller(self):

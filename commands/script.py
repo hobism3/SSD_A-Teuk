@@ -1,14 +1,12 @@
 from commands.base import Command
 from commands.read import ReadCommand
 from commands.write import WriteCommand
-from shell_constants import ShellMsg
 from shell_logger import Logger
 
 
 class ScriptCommand(Command):
     def __init__(self, logger: Logger, prefix=None):
         super().__init__(logger, prefix)
-        self._commands = []
         self._read_cmd: ReadCommand | None = None
         self._write_cmd: WriteCommand | None = None
 
@@ -39,10 +37,7 @@ class ScriptCommand(Command):
 
     def read_with_verify(self, lba, expected) -> bool:
         read_value = self.read(lba)
-        if read_value != expected:
-            self._logger.print_and_log(self._prefix, ShellMsg.FAIL)
-            return False
-        return True
+        return read_value == expected
 
     def parse(self, args: list[str]) -> list[str]:
         return []

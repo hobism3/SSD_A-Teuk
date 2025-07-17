@@ -15,7 +15,7 @@ class FullReadCommand(ScriptCommand):
     def execute(self, args=None) -> bool:
         try:
             self._logger.print_blank_line()
-            self._logger.print_and_log(self._prefix, None)
+            self._logger.print_and_log(self._prefix)
             for index in LBA_RANGE:
                 self.read(index)
         except ValueError:
