@@ -5,6 +5,9 @@ from ssd_tool.logger import Logger
 
 MAX_BUFFER_SIZE = 5
 ERASE_MAX_RANGE = 10
+CMD_WRITE = 'W'
+CMD_ERASE = 'E'
+EMPTY = 'empty'
 BUFFER_DIR_NAME = 'buffer'
 BUFFER_DIR = (
     f'{os.path.dirname(os.path.dirname(os.path.abspath(__file__)))}/{BUFFER_DIR_NAME}'
@@ -29,7 +32,7 @@ class Buffer:
 
     @property
     def buffer_length(self):
-        non_empty = [x for x in self._buffer_list if x != ['empty']]
+        non_empty = [x for x in self._buffer_list if x != [EMPTY]]
         return len(non_empty)
 
     def _create_file(self, dir):
@@ -45,10 +48,10 @@ class Buffer:
     def buffer_file_read_as_list(self) -> list:
         list = [file.split('_')[1:] for file in sorted(os.listdir(BUFFER_DIR))]
         for i in range(len(list)):
-            if list[i][0] == 'empty':
+            if list[i][0] == EMPTY:
                 continue
             list[i][1] = int(list[i][1])
-            if list[i][0] == 'E':
+            if list[i][0] == CMD_ERASE:
                 list[i][2] = int(list[i][2])
                 continue
         return list
@@ -61,7 +64,7 @@ class Buffer:
         self.logger.info(f'write: {file_list}, self.buffer: {self._buffer_list}')
         for i in range(len(file_list)):
             before_file_path = rf'{BUFFER_DIR}\{file_list[i]}'
-            if self._buffer_list[i][0] == 'empty':
+            if self._buffer_list[i][0] == EMPTY:
                 after_file_path = rf'{BUFFER_DIR}\{i + 1}_empty'
             else:
                 after_file_path = rf'{BUFFER_DIR}\{i + 1}_{self._buffer_list[i][0]}_{self._buffer_list[i][1]}_{self._buffer_list[i][2]}'
@@ -79,7 +82,7 @@ class Buffer:
             after_file_path = rf'{BUFFER_DIR}\{i + 1}_empty'
             try:
                 os.rename(before_file_path, after_file_path)
-                self._buffer_list[i] = ['empty']
+                self._buffer_list[i] = [EMPTY]
             except OSError:
                 self.logger.error(
                     f'Error during changing buffer {before_file_path} to {after_file_path}'
@@ -87,11 +90,11 @@ class Buffer:
 
     def read(self, address) -> (bool, str):
         for buf in self._buffer_list:
-            if buf[0] == 'empty':
+            if buf[0] == EMPTY:
                 continue
-            if buf[0] == 'W' and buf[1] == address:
+            if buf[0] == CMD_WRITE and buf[1] == address:
                 return True, buf[2]
-            if buf[0] == 'E' and buf[1] <= address < buf[1] + buf[2]:
+            if buf[0] == CMD_ERASE and buf[1] <= address < buf[1] + buf[2]:
                 return True, '0x00000000'
         return False, ''
 
@@ -100,7 +103,7 @@ class Buffer:
 
     def _remove_buffer(self, seq):
         self.logger.info(f'Remove buffer {seq}')
-        self._buffer_list[seq] = ['empty']
+        self._buffer_list[seq] = [EMPTY]
 
     def _can_merge_ranges(self, addr1, len1, addr2, len2):
         self.logger.info(f'Can merge ranges?: {addr1} {len1} {addr2} {len2}')
@@ -146,42 +149,42 @@ class Buffer:
 
         self._remove_buffer(seq)
 
-        if mode == 'W':
+        if mode == CMD_WRITE:
             for i in range(seq, -1, -1):
                 buf = self._buffer_list[i]
-                if buf[0] == 'W' and buf[1] == param1:
+                if buf[0] == CMD_WRITE and buf[1] == param1:
                     self._remove_buffer(i)
                     self._sort_buffer()
                     seq -= 1
                     break
-                if buf[0] == 'E':
+                if buf[0] == CMD_ERASE:
                     erased = self._reduce_erase_buffer(i, param1)
                     if erased:
                         self._sort_buffer()
                         seq -= 1
                         break
-        elif mode == 'E':
+        elif mode == CMD_ERASE:
             for i in range(seq, -1, -1):
                 buf = self._buffer_list[i]
-                if buf[0] == 'W' and param1 <= buf[1] < param1 + param2:
+                if buf[0] == CMD_WRITE and param1 <= buf[1] < param1 + param2:
                     self.logger.info(f'Write is useless now. Remove buffer {i}')
                     self._remove_buffer(i)
                     self._sort_buffer()
                     seq -= 1
-                elif buf[0] == 'E':
+                elif buf[0] == CMD_ERASE:
                     can_merge, merged_range = self._can_merge_ranges(
                         buf[1], buf[2], param1, param2
                     )
                     if can_merge:
                         self.logger.info(f'Buffer {i} can be merged.')
-                        self._add_buffer(i, 'E', merged_range[0], merged_range[1])
+                        self._add_buffer(i, CMD_ERASE, merged_range[0], merged_range[1])
                         self._sort_buffer()
                         flag_add_buffer = False
                     elif merged_range is not None:
                         self.logger.info(
                             f'Buffer Rearranged. merged_range: {merged_range}'
                         )
-                        self._add_buffer(i, 'E', merged_range[0][0], merged_range[0][1])
+                        self._add_buffer(i, CMD_ERASE, merged_range[0][0], merged_range[0][1])
                         param1, param2 = merged_range[1][0], merged_range[1][1]
 
         if flag_add_buffer:
@@ -199,6 +202,6 @@ class Buffer:
             )
 
     def _sort_buffer(self):
-        non_empty = [x for x in self._buffer_list if x != ['empty']]
-        empty = [x for x in self._buffer_list if x == ['empty']]
+        non_empty = [x for x in self._buffer_list if x != [EMPTY]]
+        empty = [x for x in self._buffer_list if x == [EMPTY]]
         self._buffer_list = non_empty + empty
