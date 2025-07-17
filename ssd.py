@@ -1,7 +1,7 @@
-import os
-import sys
 from abc import ABC, abstractmethod
 from functools import wraps
+import os
+import sys
 
 from filelock import FileLock
 
@@ -130,7 +130,7 @@ class SSD:
 
     def flush(self):
         self.logger.info('Flush Start')
-        buffer_list = self._buffer.buffer_file_read_as_list()
+        buffer_list = self._buffer._buffer_file_read_as_list()
         for buffed_command in buffer_list:
             if EMPTY in buffed_command:
                 break
@@ -277,4 +277,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
