@@ -20,20 +20,20 @@ class Shell:
         self.logger = Logger()
         self._prefix = 'SHELL'
         self._command_map = {
-            Cmd.WRITE: WriteCommand,
-            Cmd.READ: ReadCommand,
-            Cmd.EXIT: ExitCommand,
-            Cmd.HELP: HelpCommand,
+            Cmd.WRITE: WriteCommand(self.logger),
+            Cmd.READ: ReadCommand(self.logger),
+            Cmd.EXIT: ExitCommand(self.logger),
+            Cmd.HELP: HelpCommand(self.logger),
         }
         self._script_map = {
-            Cmd.FULLREAD: FullReadCommand,
-            Cmd.FULLWRITE: FullWriteCommand,
-            Cmd.SCRIPT_1_FULL: FullWriteAndReadCompare,
-            Cmd.SCRIPT_1_SHORT: FullWriteAndReadCompare,
-            Cmd.SCRIPT_2_FULL: PartialLBAWriteCommand,
-            Cmd.SCRIPT_2_SHORT: PartialLBAWriteCommand,
-            Cmd.SCRIPT_3_FULL: WriteReadAging,
-            Cmd.SCRIPT_3_SHORT: WriteReadAging,
+            Cmd.FULLREAD: FullReadCommand(self.logger),
+            Cmd.FULLWRITE: FullWriteCommand(self.logger),
+            Cmd.SCRIPT_1_FULL: FullWriteAndReadCompare(self.logger),
+            Cmd.SCRIPT_1_SHORT: FullWriteAndReadCompare(self.logger),
+            Cmd.SCRIPT_2_FULL: PartialLBAWriteCommand(self.logger),
+            Cmd.SCRIPT_2_SHORT: PartialLBAWriteCommand(self.logger),
+            Cmd.SCRIPT_3_FULL: WriteReadAging(self.logger),
+            Cmd.SCRIPT_3_SHORT: WriteReadAging(self.logger),
         }
 
     def run(self, serial_path: str = None):
@@ -76,7 +76,7 @@ class Shell:
         def _dot_task():
             while not done_flag['done']:
                 logger.dot()
-                time.sleep(1)
+                time.sleep(0.1)
 
         thread = threading.Thread(target=_dot_task, args=(done_flag,))
         thread.start()
@@ -94,9 +94,9 @@ class Shell:
         parts = cmd.split()
         command_name = parts[0]
         command_cls = self._script_map.get(command_name) or self._command_map.get(
-            command_name, HelpCommand
+            command_name, self._command_map[Cmd.HELP]
         )
-        return command_cls(self.logger).execute(parts[1:])
+        return command_cls.execute(parts[1:])
 
 
 if __name__ == '__main__':
