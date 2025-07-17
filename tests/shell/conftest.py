@@ -129,7 +129,7 @@ def cmd_expected_msg():
     return {
         CMD_WRITE: f'{Pre.WRITE} {Msg.DONE}',
         CMD_WRITE_INVALID: f'{Pre.WRITE} {Msg.ERROR}',
-        CMD_READ: f'{Pre.READ} LBA {TEST_LBA}: {TEST_READ_OUTPUT}',
+        CMD_READ: f'{Pre.READ} LBA {TEST_LBA:02}: {TEST_READ_OUTPUT}',
         CMD_READ_INVALID: f'{Pre.READ} {Msg.ERROR}',
         CMD_HELP: Msg.HELP,
         CMD_EXIT: TEST_EMPTY_OUTPUT,
