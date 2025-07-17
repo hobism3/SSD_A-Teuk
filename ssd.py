@@ -9,6 +9,9 @@ from ssd_tool.buffer import Buffer
 from ssd_tool.logger import Logger
 
 INITIAL_VALUE = '0x00000000'
+SSD_NAND_SIZE = 100
+VALID_VALUE_SIZE = 10
+EMPTY = 'empty'
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 SSD_OUTPUT_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_output.txt')
 SSD_NAND_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_nand.txt')
@@ -56,7 +59,7 @@ class SSD:
     @staticmethod
     def initialize_ssd_nand():
         with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
-            for i in range(100):
+            for i in range(SSD_NAND_SIZE):
                 f.write(f'{i:02d} {INITIAL_VALUE}\n')
 
     @staticmethod
@@ -65,18 +68,18 @@ class SSD:
             f.write('')
 
     @staticmethod
-    def validate_address(input):
-        if input is None or not input.isdigit():
+    def validate_address(input_val):
+        if input_val is None or not input_val.isdigit():
             return False
-        return 0 <= int(input) <= 99
+        return 0 <= int(input_val) <= SSD_NAND_SIZE - 1
 
     @staticmethod
-    def validate_value(input):
-        if input is None or len(input) != 10:
+    def validate_value(input_val):
+        if input_val is None or len(input_val) != VALID_VALUE_SIZE:
             return False
-        if not input.startswith(('0x', '0X')):
+        if not input_val.startswith(('0x', '0X')):
             return False
-        hex_part = input[2:]
+        hex_part = input_val[2:]
         try:
             int(hex_part, 16)
             return True
@@ -84,70 +87,59 @@ class SSD:
             return False
 
     @staticmethod
-    def validate_size(address, input):
-        if input is None or not input.isdigit():
+    def validate_size(address, input_val):
+        if input_val is None or not input_val.isdigit():
             return False
-        if int(address) + int(input) > 100:
+        if int(address) + int(input_val) > SSD_NAND_SIZE:
             return False
-        return 1 <= int(input) <= 10
+        return 1 <= int(input_val) <= VALID_VALUE_SIZE
 
     def read(self, address):
-        ret_value = ''
-        if self._buffer.read(int(address))[0]:
-            ret_value = self._buffer.read(int(address))[1]
-        else:
+        is_read_buf, ret_value = self._buffer.read(int(address))
+        if not is_read_buf:
             with open(SSD_NAND_FILE_PATH) as f:
-                for line in f:
-                    data = line.strip().split(' ')
-                    ind = int(data[0])
-                    if int(address) == ind:
-                        ret_value = data[1]
+                lines = f.readlines()
+                ret_value = lines[int(address)].strip().split(' ')[1]
         with open(SSD_OUTPUT_FILE_PATH, 'w') as f:
             f.write(f'{ret_value}')
         self.logger.info(f'Read complete: {address:02d}: {ret_value}')
 
     def _write(self, address, new_content):
-        with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
+        with open(SSD_NAND_FILE_PATH, 'r+', encoding='utf-8') as f:
             lines = f.readlines()
-
-        lines[address] = f'{address:02d} {new_content}\n'
-        with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
+            lines[address] = f'{address:02d} {new_content}\n'
+            f.seek(0)
             f.writelines(lines)
+            f.truncate()
 
         self.initialize_ssd_output()
         self.logger.info(f'Write complete: {address:02d}: {new_content}')
 
     def _erase(self, address, size):
-        with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
+        with open(SSD_NAND_FILE_PATH, 'r+', encoding='utf-8') as f:
             lines = f.readlines()
 
-        for i in range(address, address + size):
-            lines[i] = f'{i:02d} {INITIAL_VALUE}\n'
-
-        with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
+            for i in range(address, address + size):
+                lines[i] = f'{i:02d} {INITIAL_VALUE}\n'
+            f.seek(0)
             f.writelines(lines)
+            f.truncate()
 
         self.initialize_ssd_output()
         self.logger.info(f'Erase complete: {address:02d} to {address + size:02d}')
 
     def flush(self):
         self.logger.info('Flush Start')
-        buffer_list = self._buffer.buffer_file_read()
+        buffer_list = self._buffer.buffer_file_read_as_list()
         for buffed_command in buffer_list:
-            if 'empty' in buffed_command:
+            if EMPTY in buffed_command:
                 break
-            args = buffed_command.split('_')
-            mode = args[1]
-            address = int(args[2])  # 주소는 항상 int로 변환
-
-            if mode == 'W':
-                value = args[3]
-                self._write(address, value)
-            elif mode == 'E':
-                size = int(args[3])
-                self._erase(address, size)
-            elif mode == 'R':
-                self.read(address)
+            if buffed_command[0] == 'W':
+                self._write(buffed_command[1], buffed_command[2])
+            elif buffed_command[0] == 'E':
+                self._erase(buffed_command[1], buffed_command[2])
+            elif buffed_command[0] == 'R':
+                self.read(buffed_command[1])
 
         self._buffer.buffer_clear()
         self.logger.info('Flush complete')
