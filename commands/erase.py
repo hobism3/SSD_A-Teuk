@@ -2,7 +2,6 @@ import subprocess
 
 from commands.base import Command
 from shell_constants import LBA_RANGE, RUN_SSD, SIZE_RANGE, SSD_OUTPUT_FILE
-from shell_constants import ShellMsg
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
 from shell_logger import Logger
@@ -18,7 +17,7 @@ class EraseCommand(Command):
             self._execute_chunk_erase(erase_cmd, current_lba, remaining)
             self._check_output_file()
         except ValueError:
-            self._logger.error(ShellMsg.ERROR)
+            self._logger.error(Msg.ERROR)
         return True
 
     def _check_output_file(self):
@@ -34,7 +33,7 @@ class EraseCommand(Command):
             full_cmd = RUN_SSD + [erase_cmd] + [str(current_lba), str(chunk_size)]
             return_code = subprocess.run(full_cmd, check=True)
             if return_code.returncode != 0:
-                self._logger.error(ShellMsg.ERROR)
+                self._logger.error(Msg.ERROR)
                 break
             current_lba += chunk_size
             remaining -= chunk_size

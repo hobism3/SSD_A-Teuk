@@ -32,9 +32,9 @@ def case_list(test_args_list):
     return test_cases
 
 
-def test_erase_call_subprocess_and_file(mocker: MockerFixture, mock_run):
+def test_erase_range_call_subprocess_and_file(mocker: MockerFixture, mock_run):
     mock_open_file = mocker.patch('builtins.open', mock_open(read_data=''))
-    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASE} 0 1', Cmd.EXIT])
+    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASERANGE} 0 1', Cmd.EXIT])
 
     shell = Shell()
     shell.run()
@@ -43,25 +43,25 @@ def test_erase_call_subprocess_and_file(mocker: MockerFixture, mock_run):
     assert mock_open_file.called
 
 
-def test_erase_pass_with_no_include_any_error(
+def test_erase_range_pass_with_no_include_any_error(
     capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
     mocker.patch('builtins.open', mock_open(read_data=''))
-    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASE} 0 3', Cmd.EXIT])
+    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASERANGE} 0 3', Cmd.EXIT])
 
     shell = Shell()
     shell.run()
 
     captured = capsys.readouterr()
     output = captured.out
-    assert '[Erase]' in output and 'Done' in output
+    assert '[Erase Range]' in output and 'Done' in output
     assert 'ERROR' not in output
 
 
-def test_erase_invalid_param_count(
+def test_erase_range_invalid_param_count(
     capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
-    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASE} 0 1 1', Cmd.EXIT])
+    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASERANGE} 0 1 1', Cmd.EXIT])
 
     shell = Shell()
     shell.run()
@@ -72,10 +72,10 @@ def test_erase_invalid_param_count(
     assert 'Done' not in output
 
 
-def test_erase_invalid_command(
+def test_erase_range_invalid_command(
     capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
-    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASE}e 0 1 1', Cmd.EXIT])
+    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASERANGE}e 0 1', Cmd.EXIT])
 
     shell = Shell()
     shell.run()
@@ -86,10 +86,10 @@ def test_erase_invalid_command(
     assert 'Done' not in output
 
 
-def test_erase_invalid_lba_range(
+def test_erase_range_invalid_lba_range(
     capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
-    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASE} 100 1 ', Cmd.EXIT])
+    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASERANGE} 0 100 ', Cmd.EXIT])
 
     shell = Shell()
     shell.run()
@@ -100,10 +100,10 @@ def test_erase_invalid_lba_range(
     assert 'Done' not in output
 
 
-def test_erase_invalid_size(
+def test_erase_range_start_lba_exceed_end_lba(
     capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
-    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASE} 0 101 ', Cmd.EXIT])
+    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASERANGE} 70 65 ', Cmd.EXIT])
 
     shell = Shell()
     shell.run()
@@ -114,10 +114,11 @@ def test_erase_invalid_size(
     assert 'Done' not in output
 
 
-def test_erase_valid_call_args_all_list(
+#####
+def test_erase_range_valid_call_args_all_list(
     capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
-    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASE} 0 100 ', Cmd.EXIT])
+    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASERANGE} 0 99 ', Cmd.EXIT])
     test_args_list = [('E', str(i), '10') for i in range(0, 100, 10)]
     split_case = case_list(test_args_list)
 
@@ -128,12 +129,12 @@ def test_erase_valid_call_args_all_list(
         assert case in mock_run.call_args_list
 
 
-def test_erase_valid_call_args_unaligned_list(
+def test_erase_range_valid_call_args_unaligned_list(
     capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
-    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASE} 0 98 ', Cmd.EXIT])
+    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASERANGE} 0 98 ', Cmd.EXIT])
     test_args_list = [('E', str(i), '10') for i in range(0, 90, 10)] + [
-        ('E', '90', '8')
+        ('E', '90', '9')
     ]
     split_case = case_list(test_args_list)
 
@@ -144,10 +145,10 @@ def test_erase_valid_call_args_unaligned_list(
         assert case in mock_run.call_args_list
 
 
-def test_erase_valid_call_args_all_list_valid_order(
+def test_erase_range_valid_call_args_all_list_valid_order(
     capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
-    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASE} 0 100 ', Cmd.EXIT])
+    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASERANGE} 0 99 ', Cmd.EXIT])
     test_args_list = [('E', str(i), '10') for i in range(0, 100, 10)]
     split_case = case_list(test_args_list)
 
@@ -157,12 +158,12 @@ def test_erase_valid_call_args_all_list_valid_order(
     mock_run.assert_has_calls(split_case, any_order=False)
 
 
-def test_erase_call_args_unaligned_list_valid_order(
+def test_erase_range_call_args_unaligned_list_valid_order(
     capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
-    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASE} 0 98 ', Cmd.EXIT])
+    mocker.patch('builtins.input', side_effect=[f'{Cmd.ERASERANGE} 0 98 ', Cmd.EXIT])
     test_args_list = [('E', str(i), '10') for i in range(0, 90, 10)] + [
-        ('E', '90', '8')
+        ('E', '90', '9')
     ]
     split_case = case_list(test_args_list)
 

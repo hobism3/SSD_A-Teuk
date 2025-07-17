@@ -1,7 +1,6 @@
 from commands.base import Command
 from commands.erase import EraseCommand
 from shell_constants import LBA_RANGE
-from shell_constants import ShellMsg
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
 from shell_logger import Logger
@@ -18,7 +17,7 @@ class EraseRangeCommand(Command):
             self._execute_erase(start_lba, size)
             self._logger.info(Msg.DONE)
         except ValueError:
-            self._logger.error(ShellMsg.ERROR)
+            self._logger.error(Msg.ERROR)
         return True
 
     def parse(self, args: list[str]) -> list[str]:
