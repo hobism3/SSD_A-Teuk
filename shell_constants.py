@@ -15,6 +15,13 @@ class ShellMsg:
   exit\tExit the shell"""
     READ_HELP = 'Invalid arguments. Usage: read <lba>'
     WRITE_HELP = 'Invalid arguments. Usage: write <lba> <hex data>'
+    FLUSH_HELP = 'Invalid arguments. Usage: flush'
+    FULLREAD_HELP = 'Invalid arguments. Usage: fullread'
+    FULLWRITE_HELP = 'Invalid arguments. Usage: fullwrite'
+    SCRIPT_1_HELP = 'Invalid arguments. Usage: 1_FullWriteAndReadCompare or 1_'
+    SCRIPT_2_HELP = 'Invalid arguments. Usage: 2_PartialLBAWrite or 2_'
+    SCRIPT_3_HELP = 'Invalid arguments. Usage: 3_WriteReadAging or 3_'
+    SCRIPT_4_HELP = 'Invalid arguments. Usage: 4_EraseAndWriteAging or 4_'
     ERASE_HELP = 'Invalid arguments. Usage: erase <start lba> <size>'
     ERASE_RANGE_HELP = 'Invalid arguments. Usage: erase_range <start lba> <end lba>'
     ERROR = 'ERROR'
@@ -34,9 +41,12 @@ class ShellCmd:
     SCRIPT_1_FULL = '1_FullWriteAndReadCompare'
     SCRIPT_2_FULL = '2_PartialLBAWrite'
     SCRIPT_3_FULL = '3_WriteReadAging'
+    SCRIPT_4_FULL = '4_EraseAndWriteAging'
     SCRIPT_1_SHORT = '1_'
     SCRIPT_2_SHORT = '2_'
     SCRIPT_3_SHORT = '3_'
+    SCRIPT_4_SHORT = '4_'
+    FLUSH = 'flush'
     ERASE = 'erase'
     ERASERANGE = 'erase_range'
 
@@ -44,6 +54,7 @@ class ShellCmd:
 class ShellPrefix:
     READ = '[Read]'
     WRITE = '[Write]'
+    FLUSH = '[Flush]'
     ERASE = '[Erase]'
     FULLREAD = '[Full Read]'
     FULLWRITE = '[Full Write]'
@@ -61,6 +72,11 @@ SIZE_RANGE = range(1, 101)
 MAX_LBA = 99
 SCRIPT_1_STEP = 5
 SCRIPT_3_ROTATE_CNT = 200
+
+
+class Script:
+    DEFAULT_ERASE_SIZE = 3
+    STEP_LBA = 2
 
 
 class Hex:

@@ -15,43 +15,40 @@ class FullWriteAndReadCompare(Command):
         self._write_cmd = WriteCommand(self._logger, prefix=None)
         self._read_cmd = ReadCommand(self._logger, prefix=None)
 
-    def parse(self, args: list[str]) -> list[str]:
-        pass
+    def parse(self, args: list[str]) -> None:
+        if len(args) != 0:
+            raise ValueError(ShellMsg.SCRIPT_1_HELP)
 
     def parse_result(self, result) -> str:
         pass
 
-    def execute(self, args=None):
-        random_values = self._generate_random_value_lst()
-        current_start = 0
-        chunk_index = 0
-        self._logger.print_blank_line()
-        self._logger.print_and_log(self._prefix, None)
-        while current_start <= self.max_lba:
-            current_end = min(current_start + self.step - 1, self.max_lba)
-            current_value = random_values[chunk_index]
+    def execute(self, args: list[str]) -> None:
+        try:
+            self.parse(args)
+            random_values = self._generate_random_value_lst()
+            current_start = 0
+            chunk_index = 0
+            self._logger.print_blank_line()
+            self._logger.print_and_log(self._prefix, None)
 
-            # Execute Write
-            for lba in range(current_start, current_end + 1):
-                self._execute_write(lba, current_value)
+            while current_start <= self.max_lba:
+                current_end = min(current_start + self.step - 1, self.max_lba)
+                current_value = random_values[chunk_index]
 
-            # Read and Verify
-            for lba in range(current_start, current_end + 1):
-                if not self._execute_read_verify(lba, current_value):
-                    return True
+                # Execute Write
+                for lba in range(current_start, current_end + 1):
+                    self._execute_write(lba, current_value)
 
-            current_start = current_end + 1
-            chunk_index += 1
+                # Read and Verify
+                for lba in range(current_start, current_end + 1):
+                    if not self._execute_read_verify(lba, current_value):
+                        return
 
-        self._logger.print_and_log(self._prefix, ShellMsg.PASS)
-        return True
-
-    def _generate_random_value_lst(self):
-        num_chunks = (self._max_lba + self._step) // self._step
-        random_values = [
-            f'0x{val:08X}' for val in random.sample(range(0x100000000), num_chunks)
-        ]
-        return random_values
+                current_start = current_end + 1
+                chunk_index += 1
+            self._logger.print_and_log(self._prefix, ShellMsg.PASS)
+        except ValueError:
+            self._logger.print_and_log(self._prefix, ShellMsg.ERROR)
 
     def _execute_write(self, lba, current_value):
         cmd = f'{lba} {current_value}'
@@ -64,3 +61,10 @@ class FullWriteAndReadCompare(Command):
             self._logger.print_and_log(self._prefix, ShellMsg.FAIL)
             return False
         return True
+
+    def _generate_random_value_lst(self):
+        num_chunks = (self.max_lba + self.step) // self.step
+        random_values = [
+            f'0x{val:08X}' for val in random.sample(range(0x100000000), num_chunks)
+        ]
+        return random_values

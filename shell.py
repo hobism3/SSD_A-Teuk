@@ -3,6 +3,7 @@ import threading
 import time
 
 from commands.base import ExitCommand, HelpCommand
+from commands.flush import FlushCommand
 from commands.erase import EraseCommand
 from commands.erase_range import EraseRangeCommand
 from commands.full_read import FullReadCommand
@@ -11,6 +12,7 @@ from commands.read import ReadCommand
 from commands.script1 import FullWriteAndReadCompare
 from commands.script2 import PartialLBAWriteCommand
 from commands.script3 import WriteReadAging
+from commands.script4 import EraseAndWriteAging
 from commands.write import WriteCommand
 from shell_constants import ShellCmd as Cmd
 from shell_constants import ShellMsg as Msg
@@ -26,6 +28,7 @@ class Shell:
             Cmd.READ: ReadCommand(self.logger),
             Cmd.EXIT: ExitCommand(self.logger),
             Cmd.HELP: HelpCommand(self.logger),
+            Cmd.FLUSH: FlushCommand(self.logger),
             Cmd.ERASE: EraseCommand(self.logger),
         }
         self._script_map = {

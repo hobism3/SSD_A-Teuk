@@ -16,10 +16,13 @@ class PartialLBAWriteCommand(Command):
         self._write = WriteCommand(self._logger, prefix=None)
         self._random_value = random.randint(0x00000000, 0xFFFFFFFF)
 
-    def parse(self, args: list[str]) -> list[str]: ...
+    def parse(self, args: list[str]) -> None:
+        if len(args) != 0:
+            raise ValueError(ShellMsg.SCRIPT_2_HELP)
 
     def execute(self, args=None) -> bool:
         try:
+            self.parse(args)
             sample_index = ['4', '0', '3', '1', '2']
             self._logger.print_blank_line()
             self._logger.print_and_log(self._prefix, None)
@@ -44,5 +47,3 @@ class PartialLBAWriteCommand(Command):
     def _execute_write(self, lba, current_value):
         cmd = f'{lba} {current_value}'
         self._write.execute(cmd.split())
-
-    def parse_result(self, result) -> str: ...
