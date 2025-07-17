@@ -41,6 +41,8 @@ class Shell:
             Cmd.SCRIPT_3_FULL: WriteReadAging(self.logger),
             Cmd.SCRIPT_3_SHORT: WriteReadAging(self.logger),
             Cmd.ERASERANGE: EraseRangeCommand(self.logger),
+            Cmd.SCRIPT_4_FULL: EraseAndWriteAging(self.logger),
+            Cmd.SCRIPT_4_SHORT: EraseAndWriteAging(self.logger),
         }
 
     def run(self, serial_path: str = None):

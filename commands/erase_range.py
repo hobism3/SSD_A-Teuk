@@ -7,17 +7,17 @@ from shell_logger import Logger
 
 
 class EraseRangeCommand(Command):
-    def __init__(self):
-        self._logger = Logger(Pre.ERASERANGE)
-        self._erase_cmd = EraseCommand()
+    def __init__(self, logger: Logger, prefix=Pre.ERASERANGE):
+        super().__init__(logger, prefix)
+        self._erase_cmd = EraseCommand(self._logger, prefix=None)
 
     def execute(self, args: list[str]) -> bool:
         try:
             start_lba, size = self._parse_erase_range_args(args)
             self._execute_erase(start_lba, size)
-            self._logger.info(Msg.DONE)
+            self._logger.print_and_log(self._prefix, Msg.DONE)
         except ValueError:
-            self._logger.error(Msg.ERROR)
+            self._logger.print_and_log(self._prefix, Msg.ERROR)
         return True
 
     def parse(self, args: list[str]) -> list[str]:

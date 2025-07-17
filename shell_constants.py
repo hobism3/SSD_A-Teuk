@@ -58,12 +58,12 @@ class ShellPrefix:
     ERASE = '[Erase]'
     FULLREAD = '[Full Read]'
     FULLWRITE = '[Full Write]'
-    SCRIPT2 = '[2_PartialLBAWrite]'
     FULLWRITE = '[FullWrite]'
     FULLREAD = '[FullRead]'
     SCRIPT_1 = '[1_FullWriteAndReadCompare]'
     SCRIPT_2 = '[2_PartialLBAWrite]'
     SCRIPT_3 = '[3_WriteReadAging]'
+    SCRIPT_4 = '[4_EraseAndWriteAging]'
     ERASERANGE = '[Erase Range] '
 
 

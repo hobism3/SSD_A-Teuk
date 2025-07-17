@@ -1,5 +1,4 @@
-from commands.base import Command
-from commands.read import ReadCommand
+from commands.script import ScriptCommand
 from shell_constants import (
     LBA_RANGE,
 )
@@ -8,19 +7,17 @@ from shell_constants import ShellPrefix as Pre
 from shell_logger import Logger
 
 
-class FullReadCommand(Command):
+class FullReadCommand(ScriptCommand):
     def __init__(self, logger: Logger, prefix=Pre.FULLREAD):
         super().__init__(logger, prefix)
         self._lba = None
-        self._read = ReadCommand(self._logger, prefix=None)
 
     def execute(self, args=None) -> bool:
         try:
             self._logger.print_blank_line()
             self._logger.print_and_log(self._prefix, None)
             for index in LBA_RANGE:
-                args = [str(index)]
-                self._read.execute(args)
+                self.read(index)
         except ValueError:
             self._logger.print_and_log(self._prefix, Msg.ERROR)
         return True

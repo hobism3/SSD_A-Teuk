@@ -41,7 +41,7 @@ def test_shell_script2(capsys: pytest.CaptureFixture, mocker: MockerFixture, cas
 
     captured = capsys.readouterr()
     output = captured.out
-    assert Pre.SCRIPT2 + ' ' + Msg.PASS in output
+    assert Pre.SCRIPT_2 + ' ' + Msg.PASS in output
 
     for case in case_list:
         assert case in mock_run.call_args_list

@@ -8,8 +8,8 @@ from shell_logger import Logger
 
 
 class EraseCommand(Command):
-    def __init__(self):
-        self._logger = Logger(Pre.ERASE)
+    def __init__(self, logger: Logger, prefix=Pre.ERASE):
+        super().__init__(logger, prefix)
 
     def execute(self, args: list[str]) -> bool:
         try:
@@ -17,13 +17,13 @@ class EraseCommand(Command):
             self._execute_chunk_erase(erase_cmd, current_lba, remaining)
             self._check_output_file()
         except ValueError:
-            self._logger.error(Msg.ERROR)
+            self._logger.print_and_log(self._prefix, Msg.ERROR)
         return True
 
     def _check_output_file(self):
         with open(SSD_OUTPUT_FILE) as f:
             result = self.parse_result(f.read().strip())
-        self._logger.info(result)
+        self._logger.print_and_log(self._prefix, result)
 
     def _execute_chunk_erase(
         self, erase_cmd: str, current_lba: int, remaining: int

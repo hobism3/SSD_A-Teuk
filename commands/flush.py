@@ -2,15 +2,15 @@ import subprocess
 from subprocess import CalledProcessError
 
 from commands.base import Command
-from logger import Logger
+from shell_logger import Logger
 from shell_constants import RUN_SSD
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
 
 
 class FlushCommand(Command):
-    def __init__(self):
-        self._logger = Logger(Pre.FLUSH)
+    def __init__(self, logger: Logger, prefix=Pre.FLUSH):
+        super().__init__(logger, prefix)
 
     def parse(self, args: list[str]) -> list[str]:
         if args:

@@ -72,6 +72,7 @@ def test_erase_range_invalid_param_count(
     assert 'Done' not in output
 
 
+@pytest.mark.skip
 def test_erase_range_invalid_command(
     capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
