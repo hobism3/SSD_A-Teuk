@@ -36,7 +36,7 @@ class Buffer:
             self.logger.error(f'Creation of the directory {dir} failed')
 
     def buffer_file_read_as_list(self) -> list:
-        list = [file.split('_')[1:] for file in sorted(os.listdir('buffer'))]
+        list = [file.split('_')[1:] for file in sorted(os.listdir(BUFFER_DIR))]
         for i in range(len(list)):
             if list[i][0] == 'empty':
                 continue
@@ -47,7 +47,7 @@ class Buffer:
         return list
 
     def buffer_file_read(self) -> list:
-        return sorted(os.listdir('buffer'))
+        return sorted(os.listdir(BUFFER_DIR))
 
     def buffer_file_write(self):
         file_list = self.buffer_file_read()
