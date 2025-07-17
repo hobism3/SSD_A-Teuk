@@ -2,8 +2,14 @@ from abc import ABC, abstractmethod
 import subprocess
 from subprocess import CalledProcessError
 
-from shell_constants import LBA_RANGE, RUN_SSD, SSD_OUTPUT_FILE, Hex, ShellMsg
-from shell_logger import Logger
+from shell_tool.shell_constants import (
+    LBA_RANGE,
+    RUN_SSD,
+    SSD_OUTPUT_FILE,
+    Hex,
+    ShellMsg,
+)
+from shell_tool.shell_logger import Logger
 
 
 class Command(ABC):

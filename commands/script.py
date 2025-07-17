@@ -1,7 +1,7 @@
 from commands.base import Command
 from commands.read import ReadCommand
 from commands.write import WriteCommand
-from shell_logger import Logger
+from shell_tool.shell_logger import Logger
 
 
 class ScriptCommand(Command):

@@ -2,7 +2,7 @@ import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-from shell_constants import RUN_SSD
+from shell_tool.shell_constants import RUN_SSD
 
 
 def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):

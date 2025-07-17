@@ -1,10 +1,10 @@
 import subprocess
 
 from commands.base import Command
-from shell_constants import LBA_RANGE, RUN_SSD, SIZE_RANGE, SSD_OUTPUT_FILE
-from shell_constants import ShellMsg as Msg
-from shell_constants import ShellPrefix as Pre
-from shell_logger import Logger
+from shell_tool.shell_constants import LBA_RANGE, RUN_SSD, SIZE_RANGE, SSD_OUTPUT_FILE
+from shell_tool.shell_constants import ShellMsg as Msg
+from shell_tool.shell_constants import ShellPrefix as Pre
+from shell_tool.shell_logger import Logger
 
 
 class EraseCommand(Command):

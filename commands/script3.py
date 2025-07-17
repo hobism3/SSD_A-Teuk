@@ -1,8 +1,8 @@
 import random
 
 from commands.script import ScriptCommand
-from shell_constants import SCRIPT_3_ROTATE_CNT, ShellMsg, ShellPrefix
-from shell_logger import Logger
+from shell_tool.shell_constants import SCRIPT_3_ROTATE_CNT, ShellMsg, ShellPrefix
+from shell_tool.shell_logger import Logger
 
 
 class WriteReadAging(ScriptCommand):
