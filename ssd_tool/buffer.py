@@ -132,14 +132,12 @@ class Buffer:
             buf[2] = length - 1
             if buf[2] == 0:
                 self.logger.info(f'Erase is useless now. Remove buffer {i}')
-                self._remove_buffer(i)
                 return True
         elif start + length - 1 == param1:
             self.logger.info(f'Erase range(R) reduced {start}: {length}')
             buf[2] = length - 1
             if buf[2] == 0:
                 self.logger.info(f'Erase is useless now. Remove buffer {i}')
-                self._remove_buffer(i)
                 return True
         return False
 
@@ -149,28 +147,19 @@ class Buffer:
 
         self._remove_buffer(seq)
 
-        if mode == CMD_WRITE:
-            for i in range(seq, -1, -1):
-                buf = self._buffer_list[i]
+        for i in range(seq, -1, -1):
+            buf = self._buffer_list[i]
+            if mode == CMD_WRITE:
                 if buf[0] == CMD_WRITE and buf[1] == param1:
-                    self._remove_buffer(i)
-                    self._sort_buffer()
-                    seq -= 1
+                    seq = self._remove_and_sort_buffer(i, seq)
                     break
-                if buf[0] == CMD_ERASE:
-                    erased = self._reduce_erase_buffer(i, param1)
-                    if erased:
-                        self._sort_buffer()
-                        seq -= 1
-                        break
-        elif mode == CMD_ERASE:
-            for i in range(seq, -1, -1):
-                buf = self._buffer_list[i]
+                if buf[0] == CMD_ERASE and self._reduce_erase_buffer(i, param1):
+                    seq = self._remove_and_sort_buffer(i, seq)
+                    break
+            elif mode == CMD_ERASE:
                 if buf[0] == CMD_WRITE and param1 <= buf[1] < param1 + param2:
                     self.logger.info(f'Write is useless now. Remove buffer {i}')
-                    self._remove_buffer(i)
-                    self._sort_buffer()
-                    seq -= 1
+                    seq = self._remove_and_sort_buffer(i, seq)
                 elif buf[0] == CMD_ERASE:
                     can_merge, merged_range = self._can_merge_ranges(
                         buf[1], buf[2], param1, param2
@@ -200,6 +189,12 @@ class Buffer:
                 self._buffer_list[seq - 1][2],
                 seq - 1,
             )
+
+    def _remove_and_sort_buffer(self, i, seq):
+        self._remove_buffer(i)
+        self._sort_buffer()
+        seq -= 1
+        return seq
 
     def _sort_buffer(self):
         non_empty = [x for x in self._buffer_list if x != [EMPTY]]
