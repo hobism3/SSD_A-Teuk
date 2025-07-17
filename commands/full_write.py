@@ -18,7 +18,7 @@ class FullWriteCommand(Command):
         try:
             for index in LBA_RANGE:
                 self._execute_write(index, args[0])
-                self._logger.info(Msg.DONE)
+            self._logger.info(Msg.DONE)
             return True
         except ValueError:
             self._logger.error(Msg.ERROR)
