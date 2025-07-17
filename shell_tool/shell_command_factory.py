@@ -10,8 +10,8 @@ from commands.script2 import PartialLBAWriteCommand
 from commands.script3 import WriteReadAging
 from commands.script4 import EraseAndWriteAging
 from commands.write import WriteCommand
-from shell_constants import ShellCmd as Cmd
-from shell_logger import Logger
+from shell_tool.shell_constants import ShellCmd as Cmd
+from shell_tool.shell_logger import Logger
 
 
 class ShellCommandFactory:

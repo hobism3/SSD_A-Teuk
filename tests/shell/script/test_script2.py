@@ -4,9 +4,9 @@ import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-from shell_constants import RUN_SSD
-from shell_constants import ShellMsg as Msg
-from shell_constants import ShellPrefix as Pre
+from shell_tool.shell_constants import RUN_SSD
+from shell_tool.shell_constants import ShellMsg as Msg
+from shell_tool.shell_constants import ShellPrefix as Pre
 
 TEST_LBA = ['4', '0', '3', '1', '2']
 TEST_ARGS_LIST = [('W', index, '0x00000000') for index in TEST_LBA] + [

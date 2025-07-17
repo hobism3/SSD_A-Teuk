@@ -5,8 +5,8 @@ import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-from shell_constants import MAX_LBA, RUN_SSD, SCRIPT_1_STEP
-from shell_constants import ShellMsg as Msg
+from shell_tool.shell_constants import MAX_LBA, RUN_SSD, SCRIPT_1_STEP
+from shell_tool.shell_constants import ShellMsg as Msg
 
 
 @pytest.fixture

@@ -1,4 +1,4 @@
-from shell_constants import ShellCmd as Cmd
+from shell_tool.shell_constants import ShellCmd as Cmd
 
 # Test data constants
 TEST_LBA = '0'

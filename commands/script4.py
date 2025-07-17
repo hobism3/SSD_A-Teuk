@@ -3,11 +3,11 @@ import random
 from commands.base import Command
 from commands.erase import EraseCommand
 from commands.write import WriteCommand
-from shell_constants import MAX_LBA
-from shell_constants import Script as Const
-from shell_constants import ShellMsg as Msg
-from shell_constants import ShellPrefix as Pre
-from shell_logger import Logger
+from shell_tool.shell_constants import MAX_LBA
+from shell_tool.shell_constants import Script as Const
+from shell_tool.shell_constants import ShellMsg as Msg
+from shell_tool.shell_constants import ShellPrefix as Pre
+from shell_tool.shell_logger import Logger
 
 
 class EraseAndWriteAging(Command):

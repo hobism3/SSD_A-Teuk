@@ -3,8 +3,8 @@ from unittest.mock import patch
 
 import pytest
 
-from shell_constants import ShellMsg as Msg
-from shell_constants import ShellPrefix as Pre
+from shell_tool.shell_constants import ShellMsg as Msg
+from shell_tool.shell_constants import ShellPrefix as Pre
 from tests.shell.conftest import assert_command_called_once, run_shell_with_inputs
 from tests.shell.constants import (
     SHELL_ERROR_TEST_CASES,

@@ -2,9 +2,9 @@ import sys
 import threading
 import time
 
-from shell_command_factory import ShellCommandFactory
-from shell_constants import ShellMsg as Msg
-from shell_logger import Logger
+from shell_tool.shell_command_factory import ShellCommandFactory
+from shell_tool.shell_constants import ShellMsg as Msg
+from shell_tool.shell_logger import Logger
 
 
 class Shell:

@@ -6,7 +6,7 @@ import time
 
 from filelock import FileLock
 
-from shell_constants import LOG_LATEST, LOG_PATH
+from shell_tool.shell_constants import LOG_LATEST, LOG_PATH
 
 MAX_SIZE = 10 * 1024  # 10 KB
 

@@ -1,8 +1,8 @@
 from commands.script import ScriptCommand
-from shell_constants import LBA_RANGE
-from shell_constants import ShellMsg as Msg
-from shell_constants import ShellPrefix as Pre
-from shell_logger import Logger
+from shell_tool.shell_constants import LBA_RANGE
+from shell_tool.shell_constants import ShellMsg as Msg
+from shell_tool.shell_constants import ShellPrefix as Pre
+from shell_tool.shell_logger import Logger
 
 
 class FullWriteCommand(ScriptCommand):

@@ -4,9 +4,9 @@ import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-from shell_constants import RUN_SSD
-from shell_constants import ShellMsg as Msg
-from shell_constants import ShellPrefix as Pre
+from shell_tool.shell_constants import RUN_SSD
+from shell_tool.shell_constants import ShellMsg as Msg
+from shell_tool.shell_constants import ShellPrefix as Pre
 
 
 @pytest.fixture

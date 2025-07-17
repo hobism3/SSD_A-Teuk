@@ -2,9 +2,9 @@ import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-from shell_constants import ShellCmd as Cmd
-from shell_constants import ShellMsg as Msg
-from shell_constants import ShellPrefix as Pre
+from shell_tool.shell_constants import ShellCmd as Cmd
+from shell_tool.shell_constants import ShellMsg as Msg
+from shell_tool.shell_constants import ShellPrefix as Pre
 
 INPUT_FUNCTION = 'builtins.input'
 

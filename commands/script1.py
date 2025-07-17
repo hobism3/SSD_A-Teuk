@@ -1,8 +1,8 @@
 import random
 
 from commands.script import ScriptCommand
-from shell_constants import MAX_LBA, SCRIPT_1_STEP, ShellMsg, ShellPrefix
-from shell_logger import Logger
+from shell_tool.shell_constants import MAX_LBA, SCRIPT_1_STEP, ShellMsg, ShellPrefix
+from shell_tool.shell_logger import Logger
 
 
 class FullWriteAndReadCompare(ScriptCommand):
