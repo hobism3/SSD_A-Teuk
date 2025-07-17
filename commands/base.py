@@ -32,10 +32,14 @@ class Command(ABC):
             return True
         raise ValueError
 
+    def _run_sdd(self, args):
+        cmd = RUN_SSD + args
+        self._logger.log(' '.join(cmd))
+        subprocess.run(cmd, check=True)
+
     def execute(self, args: list[str] = None) -> bool:
         try:
-            ssd_args = self.parse(args)
-            subprocess.run(RUN_SSD + ssd_args, check=True)
+            self._run_sdd(self.parse(args))
             with open(SSD_OUTPUT_FILE) as f:
                 self.result = f.read().strip()
                 self._logger.print_and_log(self._prefix, self.parse_result(self.result))
