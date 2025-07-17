@@ -183,7 +183,8 @@ python .\shell.py .\path\to\shell_script.txt
 <br><br>
 
 - SSD UML
-<img width="1419" height="593" alt="image" src="https://github.com/user-attachments/assets/f44673c2-afae-4158-93be-fabd05e0954f" />
+<img width="1746" height="655" alt="image" src="https://github.com/user-attachments/assets/95f9f71d-d52e-42f1-8eb8-0c769a5aaa6d" />
+
 
 
 <br><br>
