@@ -8,6 +8,17 @@ RUN_SSD = [PYTHON, os.path.join(OUTPUT_DIR, 'ssd.py')]
 LOG_PATH = os.path.join(OUTPUT_DIR, 'log')
 LOG_LATEST = 'latest.log'
 
+LBA_RANGE = range(100)
+SIZE_RANGE = range(1, 101)
+MAX_LBA = 99
+RANGE_32BIT = range(0x100000000)
+
+
+class Hex:
+    RANGE = '0123456789abcdefABCDEF'
+    PREFIX = '0x'
+    LENGTH = 10
+
 
 class ShellMsg:
     PROMPT = 'Shell> '
@@ -72,19 +83,12 @@ class ShellPrefix:
     SCRIPT_4 = '[4_EraseAndWriteAging]'
 
 
-LBA_RANGE = range(100)
-SIZE_RANGE = range(1, 101)
-MAX_LBA = 99
 SCRIPT_1_STEP = 5
 SCRIPT_3_ROTATE_CNT = 200
 
 
-class Script:
+class Script4:
     DEFAULT_ERASE_SIZE = 3
     STEP_LBA = 2
-
-
-class Hex:
-    RANGE = '0123456789abcdefABCDEF'
-    PREFIX = '0x'
-    LENGTH = 10
+    LOOP1 = 30
+    LOOP2 = 49
