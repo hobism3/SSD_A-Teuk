@@ -16,7 +16,7 @@ class PartialLBAWriteCommand(ScriptCommand):
         try:
             sample_index = ['4', '0', '3', '1', '2']
             self._logger.print_blank_line()
-            self._logger.print_and_log(self._prefix, None)
+            self._logger.print_and_log(self._prefix)
             for _ in range(30):
                 hex_string = f'0x{self._random_value:08X}'
                 for index in sample_index:

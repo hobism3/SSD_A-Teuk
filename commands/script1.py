@@ -14,7 +14,7 @@ class FullWriteAndReadCompare(ScriptCommand):
     def execute(self, args=None):
         random_values = self._generate_random_value_lst()
         self._logger.print_blank_line()
-        self._logger.print_and_log(self._prefix, None)
+        self._logger.print_and_log(prefix=self._prefix)
         for chunk_index, current_value in enumerate(random_values):
             current_start = chunk_index * self.step
             current_end = min(current_start + self.step - 1, self.max_lba) + 1
