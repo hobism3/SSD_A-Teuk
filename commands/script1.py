@@ -12,8 +12,8 @@ class FullWriteAndReadCompare(Command):
         super().__init__(logger, prefix)
         self.max_lba = MAX_LBA
         self.step = SCRIPT_1_STEP
-        self.write_cmd = WriteCommand(self._logger, prefix=None)
-        self.read_cmd = ReadCommand(self._logger, prefix=None)
+        self._write_cmd = WriteCommand(self._logger, prefix=None)
+        self._read_cmd = ReadCommand(self._logger, prefix=None)
 
     def parse(self, args: list[str]) -> None:
         if len(args) != 0:
@@ -52,11 +52,11 @@ class FullWriteAndReadCompare(Command):
 
     def _execute_write(self, lba, current_value):
         cmd = f'{lba} {current_value}'
-        self.write_cmd.execute(cmd.split())
+        self._write_cmd.execute(cmd.split())
 
     def _execute_read_verify(self, lba, current_value):
-        self.read_cmd.execute([f'{lba}'])
-        read_value = self.read_cmd.result
+        self._read_cmd.execute([f'{lba}'])
+        read_value = self._read_cmd.result
         if read_value != current_value:
             self._logger.print_and_log(self._prefix, ShellMsg.FAIL)
             return False

@@ -10,8 +10,8 @@ from shell_logger import Logger
 class WriteReadAging(Command):
     def __init__(self, logger: Logger, prefix=ShellPrefix.SCRIPT_3):
         super().__init__(logger, prefix)
-        self.write_cmd = WriteCommand(self._logger, prefix=None)
-        self.read_cmd = ReadCommand(self._logger, prefix=None)
+        self._write_cmd = WriteCommand(self._logger, prefix=None)
+        self._read_cmd = ReadCommand(self._logger, prefix=None)
 
     def parse(self, args: list[str]) -> None:
         if len(args) != 0:

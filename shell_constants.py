@@ -22,6 +22,8 @@ class ShellMsg:
     SCRIPT_2_HELP = 'Invalid arguments. Usage: 2_PartialLBAWrite or 2_'
     SCRIPT_3_HELP = 'Invalid arguments. Usage: 3_WriteReadAging or 3_'
     SCRIPT_4_HELP = 'Invalid arguments. Usage: 4_EraseAndWriteAging or 4_'
+    ERASE_HELP = 'Invalid arguments. Usage: erase <start lba> <size>'
+    ERASE_RANGE_HELP = 'Invalid arguments. Usage: erase_range <start lba> <end lba>'
     ERROR = 'ERROR'
     INVALID = 'INVALID COMMAND'
     DONE = 'Done'
@@ -45,12 +47,15 @@ class ShellCmd:
     SCRIPT_3_SHORT = '3_'
     SCRIPT_4_SHORT = '4_'
     FLUSH = 'flush'
+    ERASE = 'erase'
+    ERASERANGE = 'erase_range'
 
 
 class ShellPrefix:
     READ = '[Read]'
     WRITE = '[Write]'
     FLUSH = '[Flush]'
+    ERASE = '[Erase]'
     FULLREAD = '[Full Read]'
     FULLWRITE = '[Full Write]'
     SCRIPT2 = '[2_PartialLBAWrite]'
@@ -59,9 +64,11 @@ class ShellPrefix:
     SCRIPT_1 = '[1_FullWriteAndReadCompare]'
     SCRIPT_2 = '[2_PartialLBAWrite]'
     SCRIPT_3 = '[3_WriteReadAging]'
+    ERASERANGE = '[Erase Range] '
 
 
 LBA_RANGE = range(100)
+SIZE_RANGE = range(1, 101)
 MAX_LBA = 99
 SCRIPT_1_STEP = 5
 SCRIPT_3_ROTATE_CNT = 200

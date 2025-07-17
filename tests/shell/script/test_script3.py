@@ -67,7 +67,7 @@ def test_script3_call_subprocess_and_file_with_shortname(mocker, mock_run):
 
 
 def test_script3_pass_with_no_include_any_error(
-    capsys: pytest.CaptureFixture, mocker: MockerFixture, case_list, mock_run
+    capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
     mocker.patch('builtins.input', side_effect=['3_', 'exit'])
 
