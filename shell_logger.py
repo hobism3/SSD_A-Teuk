@@ -17,11 +17,11 @@ class Logger:
         self._verbose = verbose
 
     def log(self, message: str):
-        self._rotate_log()
         caller = self._get_caller()
         timestamp = datetime.datetime.now().strftime('%y.%m.%d %H:%M')
         log_line = f'[{timestamp}] {caller:<30}: {message}\n'
         with self._lock:
+            self._rotate_log()
             with open(self.filename, 'a') as f:
                 f.write(log_line)
 
@@ -59,10 +59,9 @@ class Logger:
         if os.path.getsize(self.filename) < MAX_SIZE:
             return
 
-        now = datetime.datetime.now().strftime('until_%y%m%d_%Hh_%Mm_%Ss')
+        now = datetime.datetime.now().strftime('%y%m%d_%Hh_%Mm_%Ss')
         rotated_name = f'until_{now}.log'
-        with self._lock:
-            os.rename(self.filename, rotated_name)
+        os.rename(self.filename, rotated_name)
 
         old_logs = sorted(
             [
