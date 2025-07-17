@@ -1,6 +1,9 @@
 import os
 import sys
 from abc import ABC, abstractmethod
+from functools import wraps
+
+from filelock import FileLock
 
 from buffer import Buffer
 from logger import Logger
@@ -9,6 +12,24 @@ INITIAL_VALUE = '0x00000000'
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 SSD_OUTPUT_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_output.txt')
 SSD_NAND_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd_nand.txt')
+LOCK_FILE_PATH = os.path.join(OUTPUT_DIR, 'ssd.lock')
+
+
+def file_lock_decorator(lock_path):
+    lock = FileLock(lock_path)
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            with lock:
+                print(f'Lock acquired for {func.__name__}')
+                result = func(*args, **kwargs)
+                print(f'Lock released for {func.__name__}')
+                return result
+
+        return wrapper
+
+    return decorator
 
 
 class InvalidInputError(Exception):
@@ -130,9 +151,6 @@ class SSD:
         self.buffer.buffer_clear()
         self.logger.info('Flush complete')
 
-    def _buf_read(self, address):
-        self.buffer._read(address)
-
     def _buf_write(self, address, new_content):
         self.buffer._write(address, new_content)
         self.initialize_ssd_output()
@@ -183,6 +201,7 @@ class WriteCommand(Command):
         self.address = address
         self.value = value
 
+    @file_lock_decorator(LOCK_FILE_PATH)
     def execute(self):
         if not self.ssd.validate_address(self.address) or not self.ssd.validate_value(
             self.value
@@ -197,6 +216,7 @@ class EraseCommand(Command):
         self.address = address
         self.size = size
 
+    @file_lock_decorator(LOCK_FILE_PATH)
     def execute(self):
         if not self.ssd.validate_address(self.address) or not self.ssd.validate_size(
             self.address, self.size
@@ -209,6 +229,7 @@ class FlushCommand(Command):
     def __init__(self, ssd):
         self.ssd = ssd
 
+    @file_lock_decorator(LOCK_FILE_PATH)
     def execute(self):
         self.ssd._flush()
 
