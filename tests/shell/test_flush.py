@@ -24,7 +24,7 @@ def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
 
     assert Pre.FLUSH + ' ' + Msg.DONE in output
     mock_run.assert_called_with(
-        RUN_SSD + ['E'],
+        RUN_SSD + ['F'],
         check=True,
     )
 

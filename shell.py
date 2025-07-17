@@ -53,9 +53,9 @@ class Shell:
         def _dot_task():
             while not done_flag['done']:
                 logger.dot()
-                time.sleep(0.1)
+                time.sleep(1)
 
-        thread = threading.Thread(target=_dot_task, args=(done_flag,))
+        thread = threading.Thread(target=_dot_task)
         thread.start()
         try:
             result_flag['success'] = self.command(script)

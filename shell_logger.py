@@ -1,6 +1,7 @@
 import datetime
 import inspect
 import os
+from threading import Lock
 import time
 
 from filelock import FileLock
@@ -15,7 +16,7 @@ class Logger:
         os.makedirs(LOG_PATH, exist_ok=True)
         self.filename = os.path.join(LOG_PATH, LOG_LATEST)
         self._verbose = verbose
-        self._lock = FileLock(lock_file='.lock')
+        self._lock = [Lock(), FileLock(lock_file='.lock')]
 
     def set_verbose(self, verbose):
         self._verbose = verbose
@@ -24,10 +25,11 @@ class Logger:
         caller = self._get_caller()
         timestamp = datetime.datetime.now().strftime('%y.%m.%d %H:%M')
         log_line = f'[{timestamp}] {caller:<30}: {message}\n'
-        with self._lock:
-            self._rotate_log()
-            with open(self.filename, 'a') as f:
-                f.write(log_line)
+        with self._lock[0]:
+            with self._lock[1]:
+                self._rotate_log()
+                with open(self.filename, 'a') as f:
+                    f.write(log_line)
 
     def dot(self):
         self.print(message='.', end='', flush=True)
@@ -64,14 +66,26 @@ class Logger:
             return
         if os.path.getsize(self.filename) < MAX_SIZE:
             return
+        try:
+            original_stat = os.stat(self.filename)
+        except FileNotFoundError:
+            return
 
-        now = datetime.datetime.now().strftime('%y%m%d_%Hh_%Mm_%Ss')
-        rotated_name = f'until_{now}.log'
-        while os.path.exists(rotated_name):
-            time.sleep(0.1)
-            now = datetime.datetime.now().strftime('%y%m%d_%Hh_%Mm_%Ss')
-            rotated_name = f'until_{now}.log'
-        os.rename(self.filename, os.path.join(LOG_PATH, rotated_name))
+        for _ in range(5):
+            try:
+                current_stat = os.stat(self.filename)
+                if (
+                    current_stat.st_ino != original_stat.st_ino
+                    or current_stat.st_size != original_stat.st_size
+                ):
+                    return
+                now = datetime.datetime.now().strftime('%y%m%d_%Hh_%Mm_%Ss')
+                rotated_path = os.path.join(LOG_PATH, f'until_{now}.log')
+                os.rename(self.filename, rotated_path)
+                break
+            except (PermissionError, OSError, FileExistsError):
+                time.sleep(0.2)
+            return
 
         old_logs = sorted(
             [
