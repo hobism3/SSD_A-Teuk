@@ -1,3 +1,8 @@
 .venv
 .idea
+log
+ssd_nand.txt
+ssd_output.txt
 __pycache__
+buffer
+.coverage

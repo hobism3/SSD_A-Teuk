@@ -42,17 +42,17 @@ class ShellCmd:
 
 
 class ShellPrefix:
-    READ = '[Read] '
-    WRITE = '[Write] '
-    FULLREAD = '[Full Read] '
-    FULLWRITE = '[Full Write] '
-    SCRIPT2 = '[2_PartialLBAWrite] '
-    FULLWRITE = '[FullWrite] '
-    FULLREAD = '[FullRead] '
-    SCRIPT_1 = '[1_FullWriteAndReadCompare] '
-    SCRIPT_2 = '[2_PartialLBAWrite] '
-    SCRIPT_3 = '[3_WriteReadAging] '
-    ERASE = '[Erase] '
+    READ = '[Read]'
+    WRITE = '[Write]'
+    ERASE = '[Erase]'
+    FULLREAD = '[Full Read]'
+    FULLWRITE = '[Full Write]'
+    SCRIPT2 = '[2_PartialLBAWrite]'
+    FULLWRITE = '[FullWrite]'
+    FULLREAD = '[FullRead]'
+    SCRIPT_1 = '[1_FullWriteAndReadCompare]'
+    SCRIPT_2 = '[2_PartialLBAWrite]'
+    SCRIPT_3 = '[3_WriteReadAging]'
     ERASERANGE = '[Erase Range] '
 
 

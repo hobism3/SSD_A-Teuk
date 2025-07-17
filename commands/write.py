@@ -6,8 +6,8 @@ from shell_logger import Logger
 
 
 class WriteCommand(Command):
-    def __init__(self):
-        self._logger = Logger(Pre.WRITE)
+    def __init__(self, logger: Logger, prefix=Pre.WRITE):
+        super().__init__(logger, prefix)
 
     def parse(self, args: list[str]) -> list[str]:
         if len(args) != 2:
