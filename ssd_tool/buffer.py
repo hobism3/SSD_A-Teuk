@@ -25,12 +25,12 @@ class Buffer:
         print(BUFFER_DIR)
         if len(os.listdir(BUFFER_DIR)) < MAX_BUFFER_SIZE:
             self._create_file(BUFFER_DIR)
-        self.buffer = self._buffer_file_read_as_list()
-        self.logger.info(self.buffer)
+        self._buffer_list = self._buffer_file_read_as_list()
+        self.logger.info(self._buffer_list)
 
     @property
     def buffer_length(self):
-        non_empty = [x for x in self.buffer if x != ['empty']]
+        non_empty = [x for x in self._buffer_list if x != ['empty']]
         return len(non_empty)
 
     def _create_file(self, dir):
@@ -59,13 +59,13 @@ class Buffer:
 
     def buffer_file_write(self):
         file_list = self.buffer_file_read()
-        self.logger.info(f'write: {file_list}, self.buffer: {self.buffer}')
+        self.logger.info(f'write: {file_list}, self.buffer: {self._buffer_list}')
         for i in range(len(file_list)):
             before_file_path = rf'{BUFFER_DIR}\{file_list[i]}'
-            if self.buffer[i][0] == 'empty':
+            if self._buffer_list[i][0] == 'empty':
                 after_file_path = rf'{BUFFER_DIR}\{i + 1}_empty'
             else:
-                after_file_path = rf'{BUFFER_DIR}\{i + 1}_{self.buffer[i][0]}_{self.buffer[i][1]}_{self.buffer[i][2]}'
+                after_file_path = rf'{BUFFER_DIR}\{i + 1}_{self._buffer_list[i][0]}_{self._buffer_list[i][1]}_{self._buffer_list[i][2]}'
             try:
                 os.rename(before_file_path, after_file_path)
             except OSError:
@@ -80,14 +80,14 @@ class Buffer:
             after_file_path = rf'{BUFFER_DIR}\{i + 1}_empty'
             try:
                 os.rename(before_file_path, after_file_path)
-                self.buffer[i] = ['empty']
+                self._buffer_list[i] = ['empty']
             except OSError:
                 self.logger.error(
                     f'Error during changing buffer {before_file_path} to {after_file_path}'
                 )
 
     def read(self, address) -> (bool, str):
-        for buf in self.buffer:
+        for buf in self._buffer_list:
             if buf[0] == 'empty':
                 continue
             if buf[0] == 'W' and buf[1] == address:
@@ -97,11 +97,11 @@ class Buffer:
         return False, ''
 
     def _add_buffer(self, seq, mode, address, value):
-        self.buffer[seq] = [mode, address, value]
+        self._buffer_list[seq] = [mode, address, value]
 
     def _remove_buffer(self, seq):
         self.logger.info(f'Remove buffer {seq}')
-        self.buffer[seq] = ['empty']
+        self._buffer_list[seq] = ['empty']
 
     def _can_merge_ranges(self, addr1, len1, addr2, len2):
         self.logger.info(f'Can merge ranges?: {addr1} {len1} {addr2} {len2}')
@@ -121,7 +121,7 @@ class Buffer:
         return False, None
 
     def _reduce_erase_buffer(self, i, param1):
-        buf = self.buffer[i]
+        buf = self._buffer_list[i]
         start, length = int(buf[1]), int(buf[2])
 
         if start == param1:
@@ -149,7 +149,7 @@ class Buffer:
 
         if mode == 'W':
             for i in range(seq, -1, -1):
-                buf = self.buffer[i]
+                buf = self._buffer_list[i]
                 if buf[0] == 'W' and buf[1] == param1:
                     self._remove_buffer(i)
                     self._sort_buffer()
@@ -163,7 +163,7 @@ class Buffer:
                         break
         elif mode == 'E':
             for i in range(seq, -1, -1):
-                buf = self.buffer[i]
+                buf = self._buffer_list[i]
                 if buf[0] == 'W' and param1 <= buf[1] < param1 + param2:
                     self.logger.info(f'Write is useless now. Remove buffer {i}')
                     self._remove_buffer(i)
@@ -189,17 +189,17 @@ class Buffer:
             self.logger.info(f'Add buffer {seq} {mode} {param1} {param2}')
             self._add_buffer(seq, mode, param1, param2)
 
-        self.logger.info(self.buffer)
+        self.logger.info(self._buffer_list)
 
         if seq > 0:
             self.buffer_arrange(
-                self.buffer[seq - 1][0],
-                self.buffer[seq - 1][1],
-                self.buffer[seq - 1][2],
+                self._buffer_list[seq - 1][0],
+                self._buffer_list[seq - 1][1],
+                self._buffer_list[seq - 1][2],
                 seq - 1,
             )
 
     def _sort_buffer(self):
-        non_empty = [x for x in self.buffer if x != ['empty']]
-        empty = [x for x in self.buffer if x == ['empty']]
-        self.buffer = non_empty + empty
+        non_empty = [x for x in self._buffer_list if x != ['empty']]
+        empty = [x for x in self._buffer_list if x == ['empty']]
+        self._buffer_list = non_empty + empty
