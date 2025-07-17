@@ -7,6 +7,7 @@ from commands.validator import Validator
 from shell_tool.shell_constants import (
     LBA_RANGE,
     RUN_SSD,
+    SIZE_RANGE,
     SSD_OUTPUT_FILE,
     Hex,
     ShellMsg,
@@ -73,6 +74,16 @@ class Command(CommandInterface):
         self._logger.log(f'Invalid hex data: {data}')
         raise ValueError
 
+    def _check_size(self, size: str) -> bool:
+        if size.isdigit() and int(size) in SIZE_RANGE:
+            return True
+        raise ValueError(f'Invalid size: {size}')
+
+    def _check_boundary(self, lba: str, size: str) -> bool:
+        if int(lba) + int(size) - 1 <= max(LBA_RANGE):
+            return True
+        raise ValueError('Erase range exceeds device limit.')
+
     def _run_sdd(self, args):
         cmd = RUN_SSD + args
         self._logger.log('Executing command:' + ' '.join(cmd))
@@ -95,9 +106,3 @@ class Command(CommandInterface):
         except CalledProcessError:
             self._logger.print_and_log(self._prefix, ShellMsg.ERROR)
         return True
-
-    def _execute_chunks(self, start: int, total: int, chunk_size: int = 10):
-        end = start + total
-        for lba in range(start, end, chunk_size):
-            size = min(chunk_size, end - lba)
-            self._run_sdd([self.command, str(lba), str(size)])
