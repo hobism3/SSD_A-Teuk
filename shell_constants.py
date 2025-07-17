@@ -1,8 +1,12 @@
 import os
+import sys
 
-SSD_OUTPUT_FILE = os.path.join(os.path.dirname(__file__), 'ssd_output.txt')
-PYTHON = 'C:\\reviewer\\best-reviewer\\.venv\\Scripts\\python.exe'
-RUN_SSD = [PYTHON, os.path.join(os.path.dirname(__file__), 'ssd.py')]
+OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
+SSD_OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'ssd_output.txt')
+PYTHON = sys.executable
+RUN_SSD = [PYTHON, os.path.join(OUTPUT_DIR, 'ssd.py')]
+LOG_PATH = os.path.join(OUTPUT_DIR, 'log')
+LOG_LATEST = 'latest.log'
 
 
 class ShellMsg:
@@ -39,6 +43,9 @@ class ShellCmd:
     FULLREAD = 'fullread'
     EXIT = 'exit'
     HELP = 'help'
+    FLUSH = 'flush'
+    ERASE = 'erase'
+    ERASERANGE = 'erase_range'
     SCRIPT_1_FULL = '1_FullWriteAndReadCompare'
     SCRIPT_2_FULL = '2_PartialLBAWrite'
     SCRIPT_3_FULL = '3_WriteReadAging'
@@ -47,9 +54,6 @@ class ShellCmd:
     SCRIPT_2_SHORT = '2_'
     SCRIPT_3_SHORT = '3_'
     SCRIPT_4_SHORT = '4_'
-    FLUSH = 'flush'
-    ERASE = 'erase'
-    ERASERANGE = 'erase_range'
 
 
 class ShellPrefix:
@@ -57,6 +61,7 @@ class ShellPrefix:
     WRITE = '[Write]'
     FLUSH = '[Flush]'
     ERASE = '[Erase]'
+    ERASERANGE = '[Erase Range] '
     FULLREAD = '[Full Read]'
     FULLWRITE = '[Full Write]'
     FULLWRITE = '[FullWrite]'
@@ -65,7 +70,6 @@ class ShellPrefix:
     SCRIPT_2 = '[2_PartialLBAWrite]'
     SCRIPT_3 = '[3_WriteReadAging]'
     SCRIPT_4 = '[4_EraseAndWriteAging]'
-    ERASERANGE = '[Erase Range] '
 
 
 LBA_RANGE = range(100)

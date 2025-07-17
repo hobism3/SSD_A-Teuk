@@ -5,13 +5,15 @@ import time
 
 from filelock import FileLock
 
-LOG_FILE = 'latest.log'
+from shell_constants import LOG_LATEST, LOG_PATH
+
 MAX_SIZE = 10 * 1024  # 10 KB
 
 
 class Logger:
     def __init__(self, verbose=True):
-        self.filename = LOG_FILE
+        os.makedirs(LOG_PATH, exist_ok=True)
+        self.filename = os.path.join(LOG_PATH, LOG_LATEST)
         self._verbose = verbose
         self._lock = FileLock(lock_file='.lock')
 
@@ -73,8 +75,8 @@ class Logger:
 
         old_logs = sorted(
             [
-                f
-                for f in os.listdir('.')
+                os.path.join(LOG_PATH, f)
+                for f in os.listdir(LOG_PATH)
                 if f.startswith('until_') and f.endswith('.log')
             ]
         )
