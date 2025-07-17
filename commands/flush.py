@@ -17,7 +17,7 @@ class FlushCommand(Command):
             raise ValueError(Msg.FLUSH_HELP)
         return ['E']
 
-    def parse_result(self, result) -> str:
+    def parse_result(self, result: int) -> str:
         if result == 0:
             return Msg.DONE
         return Msg.ERROR

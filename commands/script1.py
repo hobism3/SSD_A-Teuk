@@ -17,14 +17,14 @@ class FullWriteAndReadCompare(Command):
         self.write_cmd = WriteCommand()
         self.read_cmd = ReadCommand()
 
-    def parse(self, args: list[str]) -> list[str]:
+    def parse(self, args: list[str]) -> None:
         if len(args) != 0:
             raise ValueError(Msg.SCRIPT_1_HELP)
 
     def parse_result(self, result) -> str:
         pass
 
-    def execute(self, args):
+    def execute(self, args: list[str]) -> None:
         try:
             self.parse(args)
             random_values = self._generate_random_value_lst()

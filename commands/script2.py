@@ -16,11 +16,11 @@ class PartialLBAWriteCommand(Command):
         self._write = WriteCommand()
         self._random_value = random.randint(0x00000000, 0xFFFFFFFF)
 
-    def parse(self, args: list[str]) -> list[str]:
+    def parse(self, args: list[str]) -> None:
         if len(args) != 0:
             raise ValueError(ShellMsg.SCRIPT_2_HELP)
 
-    def execute(self, args) -> bool:
+    def execute(self, args: list[str]) -> bool:
         try:
             self.parse(args)
             sample_index = ['4', '0', '3', '1', '2']

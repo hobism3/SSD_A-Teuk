@@ -11,14 +11,13 @@ from shell_constants import ShellPrefix as Pre
 class FullReadCommand(Command):
     def __init__(self):
         self._logger = Logger(Pre.FULLREAD)
-        self._lba = None
         self._read = ReadCommand()
 
-    def parse(self, args: list[str]) -> list[str]:
+    def parse(self, args: list[str]) -> None:
         if len(args) != 0:
             raise ValueError(Msg.FULLREAD_HELP)
 
-    def execute(self, args) -> bool:
+    def execute(self, args: list[str]) -> bool:
         try:
             self.parse(args)
             self._logger.info('')

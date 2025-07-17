@@ -12,7 +12,7 @@ class FullWriteCommand(Command):
         self._lba = None
         self._write = WriteCommand()
 
-    def parse(self, args: list[str]) -> list[str]:
+    def parse(self, args: list[str]) -> str:
         if len(args) != 1:
             raise ValueError(Msg.FULLWRITE_HELP)
         data = args[0]
