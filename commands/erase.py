@@ -2,7 +2,6 @@ import subprocess
 
 from commands.base import Command
 from commands.validator import Validator
-from shell_tool.shell_constants import LBA_RANGE, SIZE_RANGE
 from shell_tool.shell_constants import ShellMsg as Msg
 from shell_tool.shell_constants import ShellPrefix as Pre
 from shell_tool.shell_logger import Logger
@@ -22,6 +21,12 @@ class EraseCommand(Command):
             Validator(self._check_boundary, (0, 1)),
         ]
 
+    def _parse(self, args):
+        parsed_args = super()._parse(args)
+        self._lba = int(args[0])
+        self._size = int(args[1])
+        return parsed_args
+
     def _parse_result(self, result: str) -> str:
         return Msg.DONE if not result.strip() else Msg.ERROR
 
@@ -34,12 +39,8 @@ class EraseCommand(Command):
             self._logger.print_and_log(self._prefix, Msg.ERROR)
         return True
 
-    def _check_size(self, size: str) -> bool:
-        if size.isdigit() and int(size) in SIZE_RANGE:
-            return True
-        raise ValueError(f'Invalid size: {size}')
-
-    def _check_boundary(self, lba: str, size: str) -> bool:
-        if int(lba) + int(size) - 1 <= max(LBA_RANGE):
-            return True
-        raise ValueError('Erase range exceeds device limit.')
+    def _execute_chunks(self, start: int, total: int, chunk_size: int = 10):
+        end = start + total
+        for lba in range(start, end, chunk_size):
+            size = min(chunk_size, end - lba)
+            self._run_sdd([self.command, str(lba), str(size)])
