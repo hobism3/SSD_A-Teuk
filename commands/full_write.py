@@ -10,7 +10,7 @@ class FullWriteCommand(Command):
     def __init__(self, logger: Logger, prefix=Pre.FULLWRITE):
         super().__init__(logger, prefix)
         self._lba = None
-        self._read = WriteCommand(self._logger, prefix=None)
+        self._write = WriteCommand(self._logger, prefix=None)
 
     def execute(self, args=None) -> bool:
         try:
@@ -25,7 +25,7 @@ class FullWriteCommand(Command):
 
     def _execute_write(self, lba, current_value):
         args = [str(lba), current_value]
-        self._read.execute(args)
+        self._write.execute(args)
 
     def parse(self, args: list[str]) -> list[str]:
         return args
