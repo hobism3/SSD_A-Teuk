@@ -11,10 +11,10 @@ from shell_logger import Logger
 class FullWriteAndReadCompare(Command):
     def __init__(self):
         self._logger = Logger(Pre.SCRIPT_1)
-        self.max_lba = MAX_LBA
-        self.step = SCRIPT_1_STEP
-        self.write_cmd = WriteCommand()
-        self.read_cmd = ReadCommand()
+        self._max_lba = MAX_LBA
+        self._step = SCRIPT_1_STEP
+        self._write_cmd = WriteCommand()
+        self._read_cmd = ReadCommand()
 
     def parse(self, args: list[str]) -> list[str]:
         pass
@@ -27,8 +27,8 @@ class FullWriteAndReadCompare(Command):
         current_start = 0
         chunk_index = 0
 
-        while current_start <= self.max_lba:
-            current_end = min(current_start + self.step - 1, self.max_lba)
+        while current_start <= self._max_lba:
+            current_end = min(current_start + self._step - 1, self._max_lba)
             current_value = random_values[chunk_index]
 
             # Execute Write
@@ -46,7 +46,7 @@ class FullWriteAndReadCompare(Command):
         print('[1_FullWriteAndReadCompare] PASS')
 
     def _generate_random_value_lst(self):
-        num_chunks = (self.max_lba + self.step) // self.step
+        num_chunks = (self._max_lba + self._step) // self._step
         random_values = [
             f'0x{val:08X}' for val in random.sample(range(0x100000000), num_chunks)
         ]
@@ -54,10 +54,10 @@ class FullWriteAndReadCompare(Command):
 
     def _execute_write(self, lba, current_value):
         cmd = f'{lba} {current_value}'
-        self.write_cmd.execute(cmd.split())
+        self._write_cmd.execute(cmd.split())
 
     def _execute_read_verify(self, lba, current_value):
-        read_value = self.read_cmd.execute([f'{lba}'])
+        read_value = self._read_cmd.execute([f'{lba}'])
         if read_value != current_value:
             print('[1_FullWriteAndReadCompare] FAIL')
             return False

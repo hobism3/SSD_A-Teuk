@@ -1,5 +1,6 @@
 from commands.base import ExitCommand, HelpCommand
 from commands.erase import EraseCommand
+from commands.erase_range import EraseRangeCommand
 from commands.full_read import FullReadCommand
 from commands.full_write import FullWriteCommand
 from commands.read import ReadCommand
@@ -27,6 +28,7 @@ class Shell:
             Cmd.SCRIPT_3_FULL: WriteReadAging(),
             Cmd.SCRIPT_3_SHORT: WriteReadAging(),
             Cmd.ERASE: EraseCommand(),
+            Cmd.ERASERANGE: EraseRangeCommand(),
         }
 
     def run(self):

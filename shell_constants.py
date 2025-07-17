@@ -16,6 +16,7 @@ class ShellMsg:
     READ_HELP = 'Invalid arguments. Usage: read <lba>'
     WRITE_HELP = 'Invalid arguments. Usage: write <lba> <hex data>'
     ERASE_HELP = 'Invalid arguments. Usage: erase <start lba> <size>'
+    ERASE_RANGE_HELP = 'Invalid arguments. Usage: erase_range <start lba> <end lba>'
     ERROR = 'ERROR'
     INVALID = 'INVALID COMMAND'
     DONE = 'Done'
@@ -37,6 +38,7 @@ class ShellCmd:
     SCRIPT_2_SHORT = '2_'
     SCRIPT_3_SHORT = '3_'
     ERASE = 'erase'
+    ERASERANGE = 'erase_range'
 
 
 class ShellPrefix:
@@ -51,6 +53,7 @@ class ShellPrefix:
     SCRIPT_2 = '[2_PartialLBAWrite] '
     SCRIPT_3 = '[3_WriteReadAging] '
     ERASE = '[Erase] '
+    ERASERANGE = '[Erase Range] '
 
 
 LBA_RANGE = range(100)
