@@ -1,7 +1,7 @@
 import os
 import sys
 
-OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 SSD_OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'ssd_output.txt')
 PYTHON = sys.executable
 RUN_SSD = [PYTHON, os.path.join(OUTPUT_DIR, 'ssd.py')]
