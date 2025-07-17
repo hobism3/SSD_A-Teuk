@@ -63,6 +63,11 @@ SCRIPT_1_STEP = 5
 SCRIPT_3_ROTATE_CNT = 200
 
 
+class Script:
+    DEFAULT_ERASE_SIZE = 3
+    STEP_LBA = 2
+
+
 class Hex:
     RANGE = '0123456789abcdefABCDEF'
     PREFIX = '0x'
