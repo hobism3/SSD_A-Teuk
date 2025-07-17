@@ -22,13 +22,9 @@ def file_lock_decorator(lock_path):
         @wraps(func)
         def wrapper(*args, **kwargs):
             with lock:
-                print(f'Lock acquired for {func.__name__}')
                 result = func(*args, **kwargs)
-                print(f'Lock released for {func.__name__}')
                 return result
-
         return wrapper
-
     return decorator
 
 
