@@ -102,25 +102,25 @@ class SSD:
         self.logger.info(f'Read complete: {address:02d}: {ret_value}')
 
     def _write(self, address, new_content):
-        with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
+        with open(SSD_NAND_FILE_PATH, 'r+', encoding='utf-8') as f:
             lines = f.readlines()
-
-        lines[address] = f'{address:02d} {new_content}\n'
-        with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
+            lines[address] = f'{address:02d} {new_content}\n'
+            f.seek(0)
             f.writelines(lines)
+            f.truncate()
 
         self.initialize_ssd_output()
         self.logger.info(f'Write complete: {address:02d}: {new_content}')
 
     def _erase(self, address, size):
-        with open(SSD_NAND_FILE_PATH, encoding='utf-8') as f:
+        with open(SSD_NAND_FILE_PATH, 'r+', encoding='utf-8') as f:
             lines = f.readlines()
 
-        for i in range(address, address + size):
-            lines[i] = f'{i:02d} {INITIAL_VALUE}\n'
-
-        with open(SSD_NAND_FILE_PATH, 'w', encoding='utf-8') as f:
+            for i in range(address, address + size):
+                lines[i] = f'{i:02d} {INITIAL_VALUE}\n'
+            f.seek(0)
             f.writelines(lines)
+            f.truncate()
 
         self.initialize_ssd_output()
         self.logger.info(f'Erase complete: {address:02d} to {address + size:02d}')
