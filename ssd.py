@@ -43,6 +43,9 @@ class SSD:
     def __init__(self):
         self.logger = Logger()
         self.buffer = Buffer()
+        if self.buffer.buffer_length == 5:
+            self.logger.info('Buffer is full. Flush buffer.')
+            self._flush()
         if not os.path.exists(SSD_NAND_FILE_PATH):
             self.logger.info('Initialize ssd_nand.txt, ssd_output.txt')
             self.initialize_ssd_nand()
@@ -148,12 +151,14 @@ class SSD:
         self.logger.info('Flush complete')
 
     def _buf_write(self, address, new_content):
-        self.buffer._write(address, new_content)
+        self.buffer.buffer_arrange('W', address, new_content, self.buffer.buffer_length)
+        self.buffer.buffer_file_write()
         self.initialize_ssd_output()
         self.logger.info(f'Write complete: {address:02d}: {new_content}')
 
     def _buf_erase(self, address, size):
-        self.buffer._erase(address, size)
+        self.buffer.buffer_arrange('E', address, size, self.buffer.buffer_length)
+        self.buffer.buffer_file_write()
         self.initialize_ssd_output()
         self.logger.info(f'Erase complete: {address:02d}: {size:02d}')
 

@@ -25,6 +25,11 @@ class Buffer:
         self.buffer = self.buffer_file_read_as_list()
         self.logger.info(self.buffer)
 
+    @property
+    def buffer_length(self):
+        non_empty = [x for x in self.buffer if x != ['empty']]
+        return len(non_empty)
+
     def _create_file(self, dir):
         for i in range(MAX_BUFFER_SIZE):
             Path(f'{dir}/{i + 1}_empty').touch()
@@ -59,7 +64,6 @@ class Buffer:
             else:
                 after_file_path = rf'{BUFFER_DIR}\{i + 1}_{self.buffer[i][0]}_{self.buffer[i][1]}_{self.buffer[i][2]}'
             try:
-                print(before_file_path, after_file_path)
                 os.rename(before_file_path, after_file_path)
             except OSError:
                 self.logger.error(
@@ -73,13 +77,14 @@ class Buffer:
             after_file_path = rf'{BUFFER_DIR}\{i + 1}_empty'
             try:
                 os.rename(before_file_path, after_file_path)
+                self.buffer[i] = ['empty']
             except OSError:
                 self.logger.error(
                     f'Error during changing buffer {before_file_path} to {after_file_path}'
                 )
 
     def _write(self, address, new_content):
-        self.buffer_arrange('W', address, new_content, self._get_buffer_length())
+        self.buffer_arrange('W', address, new_content, self.buffer_length)
         self.buffer_file_write()
 
     def _read(self, address) -> (bool, str):
@@ -93,7 +98,7 @@ class Buffer:
         return False, ''
 
     def _erase(self, address, size):
-        self.buffer_arrange('E', address, size, self._get_buffer_length())
+        self.buffer_arrange('E', address, size, self.buffer_length)
         self.buffer_file_write()
 
     def _add_buffer(self, seq, mode, address, value):
@@ -203,7 +208,3 @@ class Buffer:
         non_empty = [x for x in self.buffer if x != ['empty']]
         empty = [x for x in self.buffer if x == ['empty']]
         self.buffer = non_empty + empty
-
-    def _get_buffer_length(self):
-        non_empty = [x for x in self.buffer if x != ['empty']]
-        return len(non_empty)
