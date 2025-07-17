@@ -10,6 +10,7 @@ from shell_constants import RUN_SSD
 from shell_constants import ShellCmd as Cmd
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
+from shell_logger import Logger
 from tests.shell.constants import *
 
 
@@ -25,6 +26,11 @@ def mock_subprocess_run():
 @pytest.fixture
 def shell(mock_subprocess_run):
     return Shell()
+
+
+@pytest.fixture
+def logger():
+    return Logger()
 
 
 @pytest.fixture
@@ -45,12 +51,12 @@ def mock_commands():
         }
 
 
-def run_command_with_args(command_cls, args, expected=''):
+def run_command_with_args(logger, command_cls, args, expected=''):
     with (
         patch('subprocess.run') as mock_run,
         patch('builtins.open', mock_open(read_data=expected)) as mock_file,
     ):
-        cmd = command_cls()
+        cmd = command_cls(logger)
         result = cmd.execute(args)
     return mock_run, mock_file, result
 
@@ -76,7 +82,7 @@ def shell_user_inputs():
         SHELL_UNKNOWN_THEN_EXIT: ['???', 'foo', 'blah', Cmd.EXIT],
         SHELL_KEYBOARD_INTERRUPT: KeyboardInterrupt(),
         SHELL_EOF: EOFError(),
-        SHELL_WHITESPACE_AND_CASE: [f'  wRiTe {TEST_LBA} {TEST_DATA_2}  ', Cmd.EXIT],
+        SHELL_WHITESPACE_AND_CASE: [f'  write {TEST_LBA} {TEST_DATA_2}  ', Cmd.EXIT],
         SHELL_EXIT_MID_LOOP: [Cmd.HELP, Cmd.EXIT, Cmd.HELP],
     }
 
@@ -123,7 +129,7 @@ def cmd_expected_msg():
     return {
         CMD_WRITE: f'{Pre.WRITE} {Msg.DONE}',
         CMD_WRITE_INVALID: f'{Pre.WRITE} {Msg.ERROR}',
-        CMD_READ: f'{Pre.READ} LBA {TEST_LBA}: {TEST_READ_OUTPUT}',
+        CMD_READ: f'{Pre.READ} LBA {TEST_LBA:02}: {TEST_READ_OUTPUT}',
         CMD_READ_INVALID: f'{Pre.READ} {Msg.ERROR}',
         CMD_HELP: Msg.HELP,
         CMD_EXIT: TEST_EMPTY_OUTPUT,

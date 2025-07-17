@@ -1,13 +1,13 @@
 from commands.base import Command
-from logger import Logger
 from shell_constants import LBA_RANGE
 from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
+from shell_logger import Logger
 
 
 class WriteCommand(Command):
-    def __init__(self):
-        self._logger = Logger(Pre.WRITE)
+    def __init__(self, logger: Logger, prefix=Pre.WRITE):
+        super().__init__(logger, prefix)
 
     def parse(self, args: list[str]) -> list[str]:
         if len(args) != 2:

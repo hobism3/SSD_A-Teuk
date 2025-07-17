@@ -48,18 +48,17 @@ class ShellCmd:
 
 
 class ShellPrefix:
-    READ = '[Read] '
-    WRITE = '[Write] '
-    FULLREAD = '[Full Read] '
-    FULLWRITE = '[Full Write] '
-    SCRIPT2 = '[2_PartialLBAWrite] '
-    FULLWRITE = '[FullWrite] '
-    FULLREAD = '[FullRead] '
-    SCRIPT_1 = '[1_FullWriteAndReadCompare] '
-    SCRIPT_2 = '[2_PartialLBAWrite] '
-    SCRIPT_3 = '[3_WriteReadAging] '
-    SCRIPT_4 = '[4_EraseAndWriteAging] '
-    FLUSH = '[Flush] '
+    READ = '[Read]'
+    WRITE = '[Write]'
+    FLUSH = '[Flush]'
+    FULLREAD = '[Full Read]'
+    FULLWRITE = '[Full Write]'
+    SCRIPT2 = '[2_PartialLBAWrite]'
+    FULLWRITE = '[FullWrite]'
+    FULLREAD = '[FullRead]'
+    SCRIPT_1 = '[1_FullWriteAndReadCompare]'
+    SCRIPT_2 = '[2_PartialLBAWrite]'
+    SCRIPT_3 = '[3_WriteReadAging]'
 
 
 LBA_RANGE = range(100)

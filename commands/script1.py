@@ -3,23 +3,21 @@ import random
 from commands.base import Command
 from commands.read import ReadCommand
 from commands.write import WriteCommand
-from logger import Logger
-from shell_constants import MAX_LBA, SCRIPT_1_STEP
-from shell_constants import ShellMsg as Msg
-from shell_constants import ShellPrefix as Pre
+from shell_constants import MAX_LBA, SCRIPT_1_STEP, ShellMsg, ShellPrefix
+from shell_logger import Logger
 
 
 class FullWriteAndReadCompare(Command):
-    def __init__(self):
-        self._logger = Logger(Pre.SCRIPT_1)
+    def __init__(self, logger: Logger, prefix=ShellPrefix.SCRIPT_1):
+        super().__init__(logger, prefix)
         self.max_lba = MAX_LBA
         self.step = SCRIPT_1_STEP
-        self.write_cmd = WriteCommand()
-        self.read_cmd = ReadCommand()
+        self.write_cmd = WriteCommand(self._logger, prefix=None)
+        self.read_cmd = ReadCommand(self._logger, prefix=None)
 
     def parse(self, args: list[str]) -> None:
         if len(args) != 0:
-            raise ValueError(Msg.SCRIPT_1_HELP)
+            raise ValueError(ShellMsg.SCRIPT_1_HELP)
 
     def parse_result(self, result) -> str:
         pass
@@ -30,6 +28,8 @@ class FullWriteAndReadCompare(Command):
             random_values = self._generate_random_value_lst()
             current_start = 0
             chunk_index = 0
+            self._logger.print_blank_line()
+            self._logger.print_and_log(self._prefix, None)
 
             while current_start <= self.max_lba:
                 current_end = min(current_start + self.step - 1, self.max_lba)
@@ -46,19 +46,19 @@ class FullWriteAndReadCompare(Command):
 
                 current_start = current_end + 1
                 chunk_index += 1
-
-            print('[1_FullWriteAndReadCompare] PASS')
+            self._logger.print_and_log(self._prefix, ShellMsg.PASS)
         except ValueError:
-            self._logger.error(Msg.ERROR)
+            self._logger.print_and_log(self._prefix, ShellMsg.ERROR)
 
     def _execute_write(self, lba, current_value):
         cmd = f'{lba} {current_value}'
         self.write_cmd.execute(cmd.split())
 
     def _execute_read_verify(self, lba, current_value):
-        read_value = self.read_cmd.execute([f'{lba}'])
+        self.read_cmd.execute([f'{lba}'])
+        read_value = self.read_cmd.result
         if read_value != current_value:
-            print('[1_FullWriteAndReadCompare] FAIL')
+            self._logger.print_and_log(self._prefix, ShellMsg.FAIL)
             return False
         return True
 
