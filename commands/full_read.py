@@ -16,7 +16,7 @@ class FullReadCommand(Command):
 
     def parse(self, args: list[str]) -> list[str]:
         if len(args) != 0:
-            raise ValueError(Msg.READ_HELP)
+            raise ValueError(Msg.FULLREAD_HELP)
 
     def execute(self, args) -> bool:
         try:

@@ -12,12 +12,19 @@ class FullWriteCommand(Command):
         self._lba = None
         self._write = WriteCommand()
 
-    def parse(self, args: list[str]) -> list[str]: ...
+    def parse(self, args: list[str]) -> list[str]:
+        if len(args) != 1:
+            raise ValueError(Msg.FULLWRITE_HELP)
+        data = args[0]
+        if not self._check_data(data):
+            raise ValueError('Data must be a hex string like 0x0129ABCF')
+        return data
 
     def execute(self, args) -> bool:
         try:
+            write_data = self.parse(args)
             for index in LBA_RANGE:
-                self._execute_write(index, args[0])
+                self._execute_write(index, write_data)
             self._logger.info(Msg.DONE)
             return True
         except ValueError:
