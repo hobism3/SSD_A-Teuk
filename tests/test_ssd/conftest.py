@@ -35,6 +35,22 @@ def run_cli(ssd_instance):
     return runner
 
 
+def run_direct_wo_flush(ssd_instance):
+    def runner(*args):
+        ssd_instance.execute_test(args)
+
+    return runner
+
+
+def run_cli_wo_flush(ssd_instance):
+    def runner(*args):
+        cli_args = [str(arg) for arg in args]
+        full_command = f'{COMMAND_PREFIX} {cli_args[0]} {" ".join(cli_args[1:])}'
+        subprocess.run(full_command, shell=True, check=True)
+
+    return runner
+
+
 @pytest.fixture
 def ssd():
     ssd = SSD()
@@ -71,6 +87,6 @@ def read_file_with_lines(file_path):
         return [line.strip() for line in f.readlines()]
 
 
-def read_buffer_with_lines():
+def read_buffer():
     ssd = SSD()
-    return ssd._buffer.buffer_file_read()
+    return ssd._buffer.buffer
