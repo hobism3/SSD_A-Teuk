@@ -1,7 +1,9 @@
 import datetime
 import inspect
 import os
-from threading import Lock
+import time
+
+from filelock import FileLock
 
 LOG_FILE = 'latest.log'
 MAX_SIZE = 10 * 1024  # 10 KB
@@ -11,7 +13,7 @@ class Logger:
     def __init__(self, verbose=True):
         self.filename = LOG_FILE
         self._verbose = verbose
-        self._lock = Lock()
+        self._lock = FileLock(lock_file='.lock')
 
     def set_verbose(self, verbose):
         self._verbose = verbose
@@ -63,6 +65,10 @@ class Logger:
 
         now = datetime.datetime.now().strftime('%y%m%d_%Hh_%Mm_%Ss')
         rotated_name = f'until_{now}.log'
+        while os.path.exists(rotated_name):
+            time.sleep(0.1)
+            now = datetime.datetime.now().strftime('%y%m%d_%Hh_%Mm_%Ss')
+            rotated_name = f'until_{now}.log'
         os.rename(self.filename, rotated_name)
 
         old_logs = sorted(
@@ -73,5 +79,5 @@ class Logger:
             ]
         )
         if len(old_logs) > 2:
-            oldest = old_logs[0]
-            os.rename(oldest, oldest.replace('.log', '.zip'))
+            for f in old_logs[:-1]:
+                os.rename(f, f.replace('.log', '.zip'))
