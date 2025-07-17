@@ -52,7 +52,7 @@ def test_ssd_auto_flush_operation_with_cli(ssd, runner_factory):
     for i in range(5):
         assert actual_value[int(i)] == f'{int(i):02d} {INITIAL_VALUE}'
 
-    runner('W', '0', '0x00000002')
+    runner('W', '0', str(int(VALID_VALUE, 16) + 0x00000001))
 
     actual_value = read_buffer()
     assert 'empty' not in actual_value
