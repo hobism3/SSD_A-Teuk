@@ -2,19 +2,7 @@ import sys
 import threading
 import time
 
-from commands.base import ExitCommand, HelpCommand
-from commands.flush import FlushCommand
-from commands.erase import EraseCommand
-from commands.erase_range import EraseRangeCommand
-from commands.full_read import FullReadCommand
-from commands.full_write import FullWriteCommand
-from commands.read import ReadCommand
-from commands.script1 import FullWriteAndReadCompare
-from commands.script2 import PartialLBAWriteCommand
-from commands.script3 import WriteReadAging
-from commands.script4 import EraseAndWriteAging
-from commands.write import WriteCommand
-from shell_constants import ShellCmd as Cmd
+from shell_command_factory import ShellCommandFactory
 from shell_constants import ShellMsg as Msg
 from shell_logger import Logger
 
@@ -23,27 +11,7 @@ class Shell:
     def __init__(self):
         self.logger = Logger()
         self._prefix = 'SHELL'
-        self._command_map = {
-            Cmd.WRITE: WriteCommand(self.logger),
-            Cmd.READ: ReadCommand(self.logger),
-            Cmd.EXIT: ExitCommand(self.logger),
-            Cmd.HELP: HelpCommand(self.logger),
-            Cmd.FLUSH: FlushCommand(self.logger),
-            Cmd.ERASE: EraseCommand(self.logger),
-        }
-        self._script_map = {
-            Cmd.FULLREAD: FullReadCommand(self.logger),
-            Cmd.FULLWRITE: FullWriteCommand(self.logger),
-            Cmd.SCRIPT_1_FULL: FullWriteAndReadCompare(self.logger),
-            Cmd.SCRIPT_1_SHORT: FullWriteAndReadCompare(self.logger),
-            Cmd.SCRIPT_2_FULL: PartialLBAWriteCommand(self.logger),
-            Cmd.SCRIPT_2_SHORT: PartialLBAWriteCommand(self.logger),
-            Cmd.SCRIPT_3_FULL: WriteReadAging(self.logger),
-            Cmd.SCRIPT_3_SHORT: WriteReadAging(self.logger),
-            Cmd.ERASERANGE: EraseRangeCommand(self.logger),
-            Cmd.SCRIPT_4_FULL: EraseAndWriteAging(self.logger),
-            Cmd.SCRIPT_4_SHORT: EraseAndWriteAging(self.logger),
-        }
+        self._factory = ShellCommandFactory(self.logger)
 
     def run(self, serial_path: str = None):
         if serial_path:
@@ -71,12 +39,12 @@ class Shell:
             return
         for script in scripts:
             script_name = script.split()[0]
-            if script_name not in self._script_map:
+            if not self._factory.is_script(script_name):
                 logger.log(f'{script_name} is not valid script')
                 continue
-            logger.print(None, f'{script:<30} ___   Run', end='', flush=True)
+            logger.print(message=f'{script:<30} ___   Run', end='', flush=True)
             success = self._run_with_dots(script, logger)
-            logger.print(None, 'Pass' if success else 'FAIL!')
+            logger.print(message='Pass' if success else 'FAIL!')
 
     def _run_with_dots(self, script: str, logger) -> bool:
         done_flag = {'done': False}
@@ -102,10 +70,8 @@ class Shell:
             return True
         parts = cmd.split()
         command_name = parts[0]
-        command_cls = self._script_map.get(command_name) or self._command_map.get(
-            command_name, self._command_map[Cmd.HELP]
-        )
-        return command_cls.execute(parts[1:])
+        command_instance = self._factory.get(command_name)
+        return command_instance.execute(parts[1:])
 
 
 if __name__ == '__main__':
