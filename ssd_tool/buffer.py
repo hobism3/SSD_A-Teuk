@@ -1,12 +1,14 @@
 import os
 from pathlib import Path
 
-from logger import Logger
+from ssd_tool.logger import Logger
 
 MAX_BUFFER_SIZE = 5
 ERASE_MAX_RANGE = 10
 BUFFER_DIR_NAME = 'buffer'
-BUFFER_DIR = f'{os.path.dirname(os.path.abspath(__file__))}/{BUFFER_DIR_NAME}'
+BUFFER_DIR = (
+    f'{os.path.dirname(os.path.dirname(os.path.abspath(__file__)))}/{BUFFER_DIR_NAME}'
+)
 
 
 class Buffer:
@@ -20,9 +22,10 @@ class Buffer:
     def __init__(self):
         self.logger = Logger()
         self._create_directory(BUFFER_DIR)
+        print(BUFFER_DIR)
         if len(os.listdir(BUFFER_DIR)) < MAX_BUFFER_SIZE:
             self._create_file(BUFFER_DIR)
-        self.buffer = self.buffer_file_read_as_list()
+        self.buffer = self._buffer_file_read_as_list()
         self.logger.info(self.buffer)
 
     @property
@@ -40,7 +43,7 @@ class Buffer:
         except OSError:
             self.logger.error(f'Creation of the directory {dir} failed')
 
-    def buffer_file_read_as_list(self) -> list:
+    def _buffer_file_read_as_list(self) -> list:
         list = [file.split('_')[1:] for file in sorted(os.listdir(BUFFER_DIR))]
         for i in range(len(list)):
             if list[i][0] == 'empty':
@@ -83,11 +86,7 @@ class Buffer:
                     f'Error during changing buffer {before_file_path} to {after_file_path}'
                 )
 
-    def _write(self, address, new_content):
-        self.buffer_arrange('W', address, new_content, self.buffer_length)
-        self.buffer_file_write()
-
-    def _read(self, address) -> (bool, str):
+    def read(self, address) -> (bool, str):
         for buf in self.buffer:
             if buf[0] == 'empty':
                 continue
@@ -96,10 +95,6 @@ class Buffer:
             if buf[0] == 'E' and buf[1] <= address < buf[1] + buf[2]:
                 return True, '0x00000000'
         return False, ''
-
-    def _erase(self, address, size):
-        self.buffer_arrange('E', address, size, self.buffer_length)
-        self.buffer_file_write()
 
     def _add_buffer(self, seq, mode, address, value):
         self.buffer[seq] = [mode, address, value]

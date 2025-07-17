@@ -37,7 +37,7 @@ def ssd():
     ssd = SSD()
     ssd.initialize_ssd_nand()
     ssd.initialize_ssd_output()
-    ssd.buffer.buffer_clear()
+    ssd._buffer.buffer_clear()
     return ssd
 
 
@@ -87,7 +87,7 @@ def test_ssd_invalid_mode_w_command(ssd, runner_factory):
 def test_ssd_write_pass(ssd, runner_factory, valid_address):
     runner = runner_factory(ssd)
     runner('W', valid_address, VALID_VALUE)
-    ssd._flush()
+    ssd.flush()
 
     actual_value = read_file_with_lines(SSD_OUTPUT_FILE_PATH)
     assert not actual_value
