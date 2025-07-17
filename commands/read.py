@@ -21,4 +21,4 @@ class ReadCommand(Command):
         return ['R', self._lba]
 
     def parse_result(self, result) -> str:
-        return f'LBA {self._lba:02}: {result}'
+        return f'LBA {int(self._lba):02}: {result}'

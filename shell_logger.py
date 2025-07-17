@@ -69,7 +69,7 @@ class Logger:
             time.sleep(0.1)
             now = datetime.datetime.now().strftime('%y%m%d_%Hh_%Mm_%Ss')
             rotated_name = f'until_{now}.log'
-        os.rename(self.filename, rotated_name)
+        os.rename(self.filename, os.path.join(LOG_PATH, rotated_name))
 
         old_logs = sorted(
             [

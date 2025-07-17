@@ -22,7 +22,6 @@ class Buffer:
     def __init__(self):
         self.logger = Logger()
         self._create_directory(BUFFER_DIR)
-        print(BUFFER_DIR)
         if len(os.listdir(BUFFER_DIR)) < MAX_BUFFER_SIZE:
             self._create_file(BUFFER_DIR)
         self._buffer_list = self._buffer_file_read_as_list()
