@@ -166,16 +166,20 @@ class SSD:
         self.initialize_ssd_output()
         self.logger.info(f'Erase complete: {address:02d}: {size:02d}')
 
-    def execute(self, mode, address, value=None):
-        self.logger.info(f'Excecute command: {mode} {address} {value}')
+    def execute_test(self, args):
+        self.execute_test_log(args)
         try:
-            command = CommandFactory.create_command(
-                [mode, address] + ([value] if value else [])
-            )
+            command = CommandFactory.create_command(args)
             command.execute()
         except InvalidInputError as e:
             self.report_error()
             self.logger.error(e)
+
+    def execute_test_log(self, args):
+        mode = args[0]
+        address = args[1] if len(args) > 1 and args[1] else ''
+        value = args[2] if len(args) > 2 and args[2] else ''
+        self.logger.info(f'Execute command: {mode} {address} {value}')
 
     @staticmethod
     def report_error():
