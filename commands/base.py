@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 import subprocess
 
 from logger import Logger
-from shell_constants import LBA_RANGE, RUN_SSD, SSD_OUTPUT_FILE, Hex, ShellMsg
+from shell_constants import LBA_RANGE, RUN_SSD, SSD_OUTPUT_FILE, Hex
+from shell_constants import ShellMsg as Msg
 
 
 class Command(ABC):
@@ -33,12 +34,12 @@ class Command(ABC):
             ssd_args = self.parse(args)
             return_code = subprocess.run(RUN_SSD + ssd_args, check=True)
             if return_code.returncode != 0:
-                self._logger.error(ShellMsg.ERROR)
+                self._logger.error(Msg.ERROR)
             with open(SSD_OUTPUT_FILE) as f:
                 result = self.parse_result(f.read().strip())
             self._logger.info(result)
         except ValueError:
-            self._logger.error(ShellMsg.ERROR)
+            self._logger.error(Msg.ERROR)
         return True
 
     @abstractmethod
@@ -64,10 +65,10 @@ class HelpCommand(Command):
     def parse(self, args: list[str]) -> list[str]:
         return []
 
-    def execute(self, args) -> bool:
+    def execute(self, args) -> str:
         result = self.parse_result()
         self._logger.info(result)
         return result
 
     def parse_result(self, result=None) -> str:
-        return ShellMsg.HELP
+        return Msg.HELP

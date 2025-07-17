@@ -4,7 +4,7 @@ from commands.base import Command
 from commands.read import ReadCommand
 from commands.write import WriteCommand
 from logger import Logger
-from shell_constants import ShellMsg
+from shell_constants import ShellMsg as Msg
 from shell_constants import ShellPrefix as Pre
 
 
@@ -18,7 +18,7 @@ class PartialLBAWriteCommand(Command):
 
     def parse(self, args: list[str]) -> None:
         if len(args) != 0:
-            raise ValueError(ShellMsg.SCRIPT_2_HELP)
+            raise ValueError(Msg.SCRIPT_2_HELP)
 
     def execute(self, args: list[str]) -> bool:
         try:
@@ -35,12 +35,12 @@ class PartialLBAWriteCommand(Command):
                     read_value = self._read.execute(ssd_args)
                     if read_value != hex_string:
                         if read_value != hex_string:
-                            self._logger.info(ShellMsg.FAIL)
+                            self._logger.info(Msg.FAIL)
                             return True
-                self._logger.info(ShellMsg.PASS)
+                self._logger.info(Msg.PASS)
             return True
         except ValueError:
-            self._logger.error(ShellMsg.ERROR)
+            self._logger.error(Msg.ERROR)
 
     def _execute_write(self, lba, current_value):
         cmd = f'{lba} {current_value}'
