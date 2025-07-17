@@ -180,6 +180,10 @@ python .\shell.py .\path\to\shell_script.txt
 ## UML
 - Shell UML
 <img width="1229" height="848" alt="image" src="https://github.com/user-attachments/assets/5e353dc1-e26f-4dfa-86f7-5cd5e8c8225c" />
+<br><br>
+
+- SSD UML
+<img width="1419" height="593" alt="image" src="https://github.com/user-attachments/assets/f44673c2-afae-4158-93be-fabd05e0954f" />
 
 
 <br><br>
