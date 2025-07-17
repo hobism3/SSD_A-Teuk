@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from commands.command_interface import CommandInterface
 import subprocess
 from subprocess import CalledProcessError
 
@@ -12,70 +13,82 @@ from shell_tool.shell_constants import (
 from shell_tool.shell_logger import Logger
 
 
-class Command(ABC):
+class Command(CommandInterface):
+    expected_num_args: int | None = None
+    help_msg: str = ShellMsg.HELP
+    command = ''
+
     def __init__(self, logger: Logger, prefix=None):
         self._logger = logger
-        self.result = None
+        self._result = None
         self._prefix = prefix
+        self._validators: list[callable] = []
+
+    @property
+    def result(self):
+        return self._result
+    
+    @result.setter
+    def result(self, result):
+        self._result = result
 
     @abstractmethod
-    def parse(self, args: list[str]) -> list[str]:
+    def _parse(self, args: list[str]) -> list[str]:...
+    
+    @abstractmethod
+    def _parse_result(self, result: str) -> str:
         raise NotImplementedError
 
-    @staticmethod
-    def _check_lba(lba: str) -> bool:
+    def _check_argument_count(self, args: list[str]):
+        if self.expected_num_args is not None:
+            if len(args) != self.expected_num_args:
+                self._logger.log(
+                    f'Invalid argument count: '
+                    f'expected {self.expected_num_args}, got {len(args)}'
+                )
+                raise ValueError(self.help_msg)
+
+    def _check_lba(self, lba: str) -> bool:
         if lba.isdigit() and int(lba) in LBA_RANGE:
             return True
+        self._logger.log(f'Invalid LBA: {lba}')
         raise ValueError
 
-    @staticmethod
-    def _check_data(data: str) -> bool:
+    def _check_data(self, data: str) -> bool:
         if (
             data.startswith(Hex.PREFIX)
             and len(data) == Hex.LENGTH
             and all(c in Hex.RANGE for c in data[2:])
         ):
             return True
+        self._logger.log(f'Invalid hex data: {data}')
         raise ValueError
 
     def _run_sdd(self, args):
         cmd = RUN_SSD + args
-        self._logger.log(' '.join(cmd))
+        self._logger.log('Executing command:' + ' '.join(cmd))
         subprocess.run(cmd, check=True)
+    
+    def _process_result(self):
+        """Reads result file and logs parsed result."""
+        with open(SSD_OUTPUT_FILE) as f:
+            self.result = f.read().strip()
+            parsed_result = self._parse_result(self.result)
+            self._logger.print_and_log(self._prefix, parsed_result)
 
     def execute(self, args: list[str] = None) -> bool:
         try:
-            self._run_sdd(self.parse(args))
-            with open(SSD_OUTPUT_FILE) as f:
-                self.result = f.read().strip()
-                self._logger.print_and_log(self._prefix, self.parse_result(self.result))
-        except (ValueError, CalledProcessError):
+            parsed_args = self._parse(args)
+            self._run_sdd(parsed_args)
+            self._process_result()
+        except ValueError:
+            self._logger.print(message=self.help_msg)
+        except CalledProcessError:
             self._logger.print_and_log(self._prefix, ShellMsg.ERROR)
         return True
-
-    @abstractmethod
-    def parse_result(self, result: str) -> str:
-        raise NotImplementedError
-
-
-class ExitCommand(Command):
-    def parse(self, args: list[str]) -> list[str]:
-        return []
-
-    def execute(self, args: list[str] = None) -> bool:
-        return False
-
-    def parse_result(self, result) -> str:
-        return ''
-
-
-class HelpCommand(Command):
-    def parse(self, args: list[str]) -> list[str]:
-        return []
-
-    def execute(self, args: list[str] = None) -> bool:
-        self._logger.print(self._prefix, self.parse_result())
-        return True
-
-    def parse_result(self, result=None) -> str:
-        return ShellMsg.HELP
+    
+    def _execute_chunks(self, start: int, total: int, chunk_size: int = 10):
+        end = start + total
+        for lba in range(start, end, chunk_size):
+            size = min(chunk_size, end - lba)
+            self._run_sdd([self.command, str(lba), str(size)])

@@ -6,22 +6,23 @@ from shell_tool.shell_logger import Logger
 
 
 class WriteCommand(Command):
+    expected_num_args = 2
+    help_msg = Msg.WRITE_HELP
+    command = 'W'
+
     def __init__(self, logger: Logger, prefix=Pre.WRITE):
         super().__init__(logger, prefix)
+        self._lba = None
+        self._data = None
+        self._validators = [self._check_lba, self._check_data]
 
-    def parse(self, args: list[str]) -> list[str]:
-        if len(args) != 2:
-            raise ValueError(Msg.WRITE_HELP)
-        lba, data = args
-        if not self._check_lba(lba):
-            raise ValueError(
-                f'LBA must be an integer between {LBA_RANGE[0]} and {LBA_RANGE[-1]}'
-            )
-        if not self._check_data(data):
-            raise ValueError('Data must be a hex string like 0x0129ABCF')
-        return ['W', lba, data]
+    def _parse(self, args: list[str]) -> list[str]:
+        args = args or []
+        self._check_argument_count(args)
+        self._lba, self._data = args
+        self._check_lba(self._lba)
+        self._check_data(self._data)
+        return [self.command] + args
 
-    def parse_result(self, result) -> str:
-        if not result:
-            return Msg.DONE
-        return Msg.ERROR
+    def _parse_result(self, result) -> str:
+        return Msg.DONE if not result.strip() else Msg.ERROR

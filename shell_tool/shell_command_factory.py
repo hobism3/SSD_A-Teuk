@@ -1,4 +1,4 @@
-from commands.base import ExitCommand, HelpCommand
+from commands.meta import ExitCommand, HelpCommand
 from commands.erase import EraseCommand
 from commands.erase_range import EraseRangeCommand
 from commands.flush import FlushCommand

@@ -7,25 +7,26 @@ from shell_tool.shell_logger import Logger
 
 
 class FlushCommand(Command):
+    expected_num_args = 0
+    help_msg = Msg.FLUSH_HELP
+    command = 'F'
+
     def __init__(self, logger: Logger, prefix=Pre.FLUSH):
         super().__init__(logger, prefix)
-        self._command = 'F'
 
-    def parse(self, args: list[str]) -> list[str]:
-        if args:
-            raise ValueError(Msg.FLUSH_HELP)
-        return [self._command]
+    def _parse(self, args: list[str]) -> list[str]:
+        args = args or []
+        self._check_argument_count(args)
+        return [self.command]
 
-    def parse_result(self, result: int) -> str:
-        if result == 0:
-            return Msg.DONE
-        return Msg.ERROR
+    def _parse_result(self, result: int) -> str:
+        return Msg.DONE if not result.strip() else Msg.ERROR
 
     def execute(self, args: list[str]) -> bool:
         try:
-            ssd_args = self.parse(args)
-            self._run_sdd(ssd_args)
+            parsed_args = self._parse(args)
+            self._run_sdd(parsed_args)
+            self._process_result()
         except (ValueError, CalledProcessError):
             self._logger.print_and_log(self._prefix, Msg.ERROR)
-        self._logger.print_and_log(self._prefix, Msg.DONE)
         return True
