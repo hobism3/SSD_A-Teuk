@@ -12,6 +12,37 @@ class EraseCommand(Command):
     def __init__(self):
         self._logger = Logger(Pre.ERASE)
 
+    def execute(self, args: list[str]) -> bool:
+        try:
+            erase_cmd, current_lba, remaining = self._parse_erase_args(args)
+            self._execute_chunk_erase(erase_cmd, current_lba, remaining)
+            self._check_output_file()
+        except ValueError:
+            self._logger.error(ShellMsg.ERROR)
+        return True
+
+    def _check_output_file(self):
+        with open(SSD_OUTPUT_FILE) as f:
+            result = self.parse_result(f.read().strip())
+        self._logger.info(result)
+
+    def _execute_chunk_erase(
+        self, erase_cmd: str, current_lba: int, remaining: int
+    ) -> None:
+        while remaining > 0:
+            chunk_size = min(10, remaining)
+            full_cmd = RUN_SSD + [erase_cmd] + [str(current_lba), str(chunk_size)]
+            return_code = subprocess.run(full_cmd, check=True)
+            if return_code.returncode != 0:
+                self._logger.error(ShellMsg.ERROR)
+                break
+            current_lba += chunk_size
+            remaining -= chunk_size
+
+    def _parse_erase_args(self, args: list[str]) -> tuple[str, int, int]:
+        ssd_args = self.parse(args)
+        return ssd_args[0], int(ssd_args[1]), int(ssd_args[2])
+
     def parse(self, args: list[str]) -> list[str]:
         if len(args) != 2:
             raise ValueError(Msg.ERASE_HELP)
@@ -24,32 +55,6 @@ class EraseCommand(Command):
         if not result:
             return Msg.DONE
         return Msg.ERROR
-
-    def execute(self, args: list[str]) -> bool:
-        try:
-            # ['E', lba, size]
-            ssd_args = self.parse(args)
-            current_lba = int(ssd_args[1])
-            remaining = int(ssd_args[2])
-
-            # Split into chunks of max size 10 if size > 10
-            while remaining > 0:
-                chunk_size = min(10, remaining)
-                full_cmd = RUN_SSD + [ssd_args[0]] + [str(current_lba), str(chunk_size)]
-                return_code = subprocess.run(full_cmd, check=True)
-                if return_code.returncode != 0:
-                    self._logger.error(ShellMsg.ERROR)
-                    break
-                current_lba += chunk_size
-                remaining -= chunk_size
-
-            with open(SSD_OUTPUT_FILE) as f:
-                result = self.parse_result(f.read().strip())
-            self._logger.info(result)
-
-        except ValueError:
-            self._logger.error(ShellMsg.ERROR)
-        return True
 
     def _check_validity(self, lba, size):
         if not self._check_lba(lba):
