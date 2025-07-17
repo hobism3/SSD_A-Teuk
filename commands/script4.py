@@ -11,7 +11,7 @@ from shell_constants import ShellPrefix as Pre
 
 
 class EraseAndWriteAging(ScriptCommand):
-    def __init__(self, logger: Logger, prefix=Pre.SCRIPT_4):
+    def __init__(self, logger: Logger, prefix: object = Pre.SCRIPT_4) -> None:
         super().__init__(logger, prefix)
         self._lba = 0
         self._erase = EraseCommand(self._logger, prefix=None)
