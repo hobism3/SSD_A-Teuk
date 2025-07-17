@@ -92,16 +92,11 @@ class SSD:
         return 1 <= int(input) <= 10
 
     def read(self, address):
-        ret_value = ''
-        if self._buffer.read(int(address))[0]:
-            ret_value = self._buffer.read(int(address))[1]
-        else:
+        is_read_buf, ret_value = self._buffer.read(int(address))
+        if not is_read_buf:
             with open(SSD_NAND_FILE_PATH) as f:
-                for line in f:
-                    data = line.strip().split(' ')
-                    ind = int(data[0])
-                    if int(address) == ind:
-                        ret_value = data[1]
+                lines = f.readlines()
+                ret_value = lines[int(address)].strip().split(' ')[1]
         with open(SSD_OUTPUT_FILE_PATH, 'w') as f:
             f.write(f'{ret_value}')
         self.logger.info(f'Read complete: {address:02d}: {ret_value}')
