@@ -14,8 +14,6 @@ class FullWriteCommand(Command):
 
     def execute(self, args=None) -> bool:
         try:
-            self._logger.print_blank_line()
-            self._logger.print_and_log(self._prefix, None)
             for index in LBA_RANGE:
                 self._execute_write(index, args[0])
                 self._logger.print_and_log(self._prefix, Msg.DONE)
