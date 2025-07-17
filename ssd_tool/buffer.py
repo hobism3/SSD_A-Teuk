@@ -24,7 +24,7 @@ class Buffer:
         self._create_directory(BUFFER_DIR)
         if len(os.listdir(BUFFER_DIR)) < MAX_BUFFER_SIZE:
             self._create_file(BUFFER_DIR)
-        self._buffer_list = self._buffer_file_read_as_list()
+        self._buffer_list = self.buffer_file_read_as_list()
         self.logger.info(self._buffer_list)
 
     @property
@@ -42,7 +42,7 @@ class Buffer:
         except OSError:
             self.logger.error(f'Creation of the directory {dir} failed')
 
-    def _buffer_file_read_as_list(self) -> list:
+    def buffer_file_read_as_list(self) -> list:
         list = [file.split('_')[1:] for file in sorted(os.listdir(BUFFER_DIR))]
         for i in range(len(list)):
             if list[i][0] == 'empty':
