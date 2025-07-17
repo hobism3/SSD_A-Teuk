@@ -40,7 +40,7 @@ def ssd():
     ssd = SSD()
     ssd.initialize_ssd_nand()
     ssd.initialize_ssd_output()
-    ssd.buffer.buffer_clear()
+    ssd._buffer.buffer_clear()
     return ssd
 
 
@@ -69,3 +69,8 @@ def read_file_with_lines(file_path):
         return []
     with open(file_path) as f:
         return [line.strip() for line in f.readlines()]
+
+
+def read_buffer_with_lines():
+    ssd = SSD()
+    return ssd._buffer.buffer_file_read()
