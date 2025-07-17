@@ -21,9 +21,7 @@ class EraseAndWriteAging(Command):
         if args:
             raise ValueError(Msg.SCRIPT_4_HELP)
 
-    def get_lba_and_size_to_erase(self) -> list[str]:
-        size_erase = min(Const.DEFAULT_ERASE_SIZE, MAX_LBA - self._lba + 1)
-        return [str(self._lba), str(size_erase)]
+    def parse_result(self, result) -> str: ...
 
     def execute(self, args: list[str]) -> bool:
         try:
@@ -42,9 +40,6 @@ class EraseAndWriteAging(Command):
         self._execute_write(str(self._lba))
         self._execute_write(str(self._lba))
 
-    def get_random_hex_string(self):
-        return f'0x{random.randint(0x00000000, 0xFFFFFFFF):08X}'
-
     def _execute_erase(self):
         ssd_args = self.get_lba_and_size_to_erase()
         self._erase.execute(ssd_args)
@@ -55,4 +50,9 @@ class EraseAndWriteAging(Command):
         cmd = f'{lba} {hex_string}'
         self._write.execute(cmd.split())
 
-    def parse_result(self, result) -> str: ...
+    def get_random_hex_string(self):
+        return f'0x{random.randint(0x00000000, 0xFFFFFFFF):08X}'
+
+    def get_lba_and_size_to_erase(self) -> list[str]:
+        size_erase = min(Const.DEFAULT_ERASE_SIZE, MAX_LBA - self._lba + 1)
+        return [str(self._lba), str(size_erase)]

@@ -20,6 +20,8 @@ class PartialLBAWriteCommand(Command):
         if len(args) != 0:
             raise ValueError(Msg.SCRIPT_2_HELP)
 
+    def parse_result(self, result) -> str: ...
+
     def execute(self, args: list[str]) -> bool:
         try:
             self.parse(args)
@@ -45,5 +47,3 @@ class PartialLBAWriteCommand(Command):
     def _execute_write(self, lba, current_value):
         cmd = f'{lba} {current_value}'
         self._write.execute(cmd.split())
-
-    def parse_result(self, result) -> str: ...

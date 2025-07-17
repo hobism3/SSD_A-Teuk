@@ -51,13 +51,6 @@ class FullWriteAndReadCompare(Command):
         except ValueError:
             self._logger.error(Msg.ERROR)
 
-    def _generate_random_value_lst(self):
-        num_chunks = (self.max_lba + self.step) // self.step
-        random_values = [
-            f'0x{val:08X}' for val in random.sample(range(0x100000000), num_chunks)
-        ]
-        return random_values
-
     def _execute_write(self, lba, current_value):
         cmd = f'{lba} {current_value}'
         self.write_cmd.execute(cmd.split())
@@ -68,3 +61,10 @@ class FullWriteAndReadCompare(Command):
             print('[1_FullWriteAndReadCompare] FAIL')
             return False
         return True
+
+    def _generate_random_value_lst(self):
+        num_chunks = (self.max_lba + self.step) // self.step
+        random_values = [
+            f'0x{val:08X}' for val in random.sample(range(0x100000000), num_chunks)
+        ]
+        return random_values

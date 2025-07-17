@@ -20,6 +20,11 @@ class FullWriteCommand(Command):
             raise ValueError('Data must be a hex string like 0x0129ABCF')
         return data
 
+    def parse_result(self, result) -> str:
+        if not result:
+            return Msg.DONE
+        return Msg.ERROR
+
     def execute(self, args) -> bool:
         try:
             write_data = self.parse(args)
@@ -29,11 +34,6 @@ class FullWriteCommand(Command):
             return True
         except ValueError:
             self._logger.error(Msg.ERROR)
-
-    def parse_result(self, result) -> str:
-        if not result:
-            return Msg.DONE
-        return Msg.ERROR
 
     def _execute_write(self, lba, current_value):
         cmd = f'{lba} {current_value}'
