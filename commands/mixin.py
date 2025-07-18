@@ -1,10 +1,11 @@
-from commands.erase import EraseCommand
-from commands.read import ReadCommand
-from commands.flush import FlushCommand
-from shell_tool.shell_constants import ShellPrefix as Pre
-from commands.write import WriteCommand
-from shell_tool.shell_constants import RANGE_32BIT, MAX_LBA
 import random
+
+from commands.erase import EraseCommand
+from commands.flush import FlushCommand
+from commands.read import ReadCommand
+from commands.write import WriteCommand
+from shell_tool.shell_constants import RANGE_32BIT
+
 
 class CommandSupportMixin:
     def _get_command(self, attr_name, command_cls):
@@ -21,9 +22,10 @@ class CommandSupportMixin:
             command.execute(args)
         finally:
             self._logger.verbose = original_verbose
-    
+
     def _parse_result(self, result):
         return ''
+
 
 class WriteSupportMixin(CommandSupportMixin):
     @property
@@ -32,6 +34,7 @@ class WriteSupportMixin(CommandSupportMixin):
 
     def write(self, lba, value, quiet=False):
         self._run_command(self.write_cmd, [str(lba), str(value)], quiet=quiet)
+
 
 class WritePatternMixin(CommandSupportMixin):
     def write_random_n(self, lba: int, n: int, value_fn: callable = None):
@@ -65,7 +68,7 @@ class EraseSupportMixin(CommandSupportMixin):
         if isinstance(size, int):
             size = str(size)
         self._run_command(self.erase_cmd, [start_lba, size], quiet=quiet)
-    
+
     def erase_range(self, start_lba, end_lba, quiet=False):
         if isinstance(start_lba, str):
             start_lba = int(start_lba)
@@ -83,16 +86,17 @@ class FlushSupportMixin(CommandSupportMixin):
     def flush(self, quiet=False):
         self._run_command(self.flush_cmd, quiet=quiet)
 
+
 class RandomValueGenerateMixin:
     def rand32(self) -> str:
         return f'0x{random.getrandbits(32):08X}'
-    
+
     def randvals(self, max_lba, step, unique=True) -> list[str]:
         num_chunks = (max_lba + step) // step
 
         if unique:
             if num_chunks > len(RANGE_32BIT):
-                raise ValueError("Too many unique values requested.")
+                raise ValueError('Too many unique values requested.')
             values = random.sample(RANGE_32BIT, num_chunks)
         else:
             values = [random.choice(RANGE_32BIT) for _ in range(num_chunks)]

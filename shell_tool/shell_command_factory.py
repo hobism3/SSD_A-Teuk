@@ -1,9 +1,9 @@
-from commands.meta import ExitCommand, HelpCommand
 from commands.erase import EraseCommand
 from commands.erase_range import EraseRangeCommand
 from commands.flush import FlushCommand
 from commands.full_read import FullReadCommand
 from commands.full_write import FullWriteCommand
+from commands.meta import ExitCommand, HelpCommand
 from commands.read import ReadCommand
 from commands.script1 import FullWriteAndReadCompare
 from commands.script2 import PartialLBAWriteCommand

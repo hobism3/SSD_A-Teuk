@@ -1,7 +1,6 @@
-from abc import ABC, abstractmethod
 from commands.command_interface import CommandInterface
-from shell_tool.shell_logger import Logger
 from shell_tool.shell_constants import ShellMsg
+from shell_tool.shell_logger import Logger
 
 
 class MetaCommand(CommandInterface):
@@ -12,7 +11,7 @@ class MetaCommand(CommandInterface):
 class ExitCommand(MetaCommand):
     def execute(self, args: list[str] = None) -> bool:
         self._logger.print(message='bye bye')
-        self._logger.log("User exited the shell.")
+        self._logger.log('User exited the shell.')
         return False
 
 
