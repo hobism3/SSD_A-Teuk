@@ -5,7 +5,7 @@ import sys
 
 from filelock import FileLock
 
-from ssd_tool.buffer import Buffer, EMPTY
+from ssd_tool.buffer import EMPTY, Buffer
 from ssd_tool.logger import Logger
 
 INITIAL_VALUE = '0x00000000'
