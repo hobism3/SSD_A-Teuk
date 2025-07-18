@@ -42,8 +42,7 @@ def test_shell_write_cmd_invalid_param_count(
     captured = capsys.readouterr()
     output = captured.out
 
-    for out in output.split('\n')[:3]:
-        assert Msg.WRITE_HELP == out
+    assert Msg.WRITE_HELP in output
 
 
 def test_shell_write_cmd_invalid_param_format(

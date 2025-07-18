@@ -37,12 +37,9 @@ class Command(CommandInterface):
 
     def _parse(self, args: list[str]) -> list[str]:
         args = args or []
-        try:
-            self._check_argument_count(args)
-            for validator in self._validators:
-                validator.validate(args)
-        except ValueError:
-            raise
+        self._check_argument_count(args)
+        for validator in self._validators:
+            validator.validate(args)
         return [self.command] + args
 
     @abstractmethod
@@ -104,6 +101,7 @@ class Command(CommandInterface):
                 prefix=self.error_prefix,
                 message=f'Invalid range: start({start}) > end({end})',
             )
+            raise ValueError
         return True
 
     def _run_sdd(self, args):
