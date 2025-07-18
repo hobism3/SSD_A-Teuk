@@ -19,6 +19,7 @@ class Command(CommandInterface):
     expected_num_args: int | None = None
     help_msg: str = ShellMsg.HELP
     command = ''
+    error_prefix = '[ERROR]'
 
     def __init__(self, logger: Logger, prefix=None):
         self._logger = logger
@@ -36,12 +37,11 @@ class Command(CommandInterface):
 
     def _parse(self, args: list[str]) -> list[str]:
         args = args or []
-        self._check_argument_count(args)
         try:
+            self._check_argument_count(args)
             for validator in self._validators:
                 validator.validate(args)
-        except ValueError as e:
-            self._logger.print(prefix='[ERROR]', message=str(e))
+        except ValueError:
             raise
         return [self.command] + args
 
@@ -52,16 +52,18 @@ class Command(CommandInterface):
     def _check_argument_count(self, args: list[str]):
         if self.expected_num_args is not None:
             if len(args) != self.expected_num_args:
-                self._logger.log(
-                    f'Invalid argument count: '
-                    f'expected {self.expected_num_args}, got {len(args)}'
+                self._logger.print_and_log(
+                    prefix=self.error_prefix,
+                    message=f'Invalid argument count: expected {self.expected_num_args}, got {len(args)}',
                 )
-                raise ValueError(self.help_msg)
+                raise ValueError
 
     def _check_lba(self, lba: str) -> bool:
         if lba.isdigit() and int(lba) in LBA_RANGE:
             return True
-        self._logger.log(f'Invalid LBA: {lba}')
+        self._logger.print_and_log(
+            prefix=self.error_prefix, message=f'Invalid LBA: {lba}'
+        )
         raise ValueError
 
     def _check_data(self, data: str) -> bool:
@@ -71,24 +73,37 @@ class Command(CommandInterface):
             and all(c in Hex.RANGE for c in data[2:])
         ):
             return True
-        self._logger.log(f'Invalid hex data: {data}')
+        self._logger.print_and_log(
+            prefix=self.error_prefix, message=f'Invalid hex data: {data}'
+        )
         raise ValueError
 
     def _check_size(self, size: str) -> bool:
         if size.isdigit() and int(size) in SIZE_RANGE:
             return True
-        raise ValueError(f'Invalid size: {size}')
+        self._logger.print_and_log(
+            prefix=self.error_prefix, message=f'Invalid size: {size}'
+        )
+        raise ValueError
 
     def _check_boundary(self, lba: str, size: str) -> bool:
-        if int(lba) + int(size) - 1 <= max(LBA_RANGE):
+        boundary = int(lba) + int(size) - 1
+        if boundary <= max(LBA_RANGE):
             return True
-        raise ValueError('Erase range exceeds device limit.')
+        self._logger.print_and_log(
+            prefix=self.error_prefix,
+            message=f'Invalid range: lba({lba})+size({size}) > {max(LBA_RANGE)}',
+        )
+        raise ValueError
 
     def _check_lba_range(self, start: str, end: str):
         start_lba = int(start)
         end_lba = int(end)
         if start_lba > end_lba:
-            raise ValueError(f"Invalid range: {start} <= {end}")
+            self._logger.print_and_log(
+                prefix=self.error_prefix,
+                message=f'Invalid range: start({start}) > end({end})',
+            )
         return True
 
     def _run_sdd(self, args):
