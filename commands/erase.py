@@ -1,5 +1,5 @@
 from commands.base import Command, command_handler
-from commands.validator import Validator
+from commands.validator import Validator, check_boundary, check_lba, check_size
 from shell_tool.shell_constants import ShellMsg as Msg
 from shell_tool.shell_constants import ShellPrefix as Pre
 from shell_tool.shell_logger import Logger
@@ -14,9 +14,9 @@ class EraseCommand(Command):
         super().__init__(logger, prefix)
         self._chunk_size = 10
         self._validators: list[Validator] = [
-            Validator(self._check_lba, (0,)),
-            Validator(self._check_size, (1,)),
-            Validator(self._check_boundary, (0, 1)),
+            Validator(check_lba, (0,)),
+            Validator(check_size, (1,)),
+            Validator(check_boundary, (0, 1)),
         ]
 
     def _parse(self, args):
@@ -39,4 +39,4 @@ class EraseCommand(Command):
         end = start + size
         for lba in range(start, end, chunk_size):
             size = min(chunk_size, end - lba)
-            self._run_sdd([self.command, str(lba), str(size)])
+            self._run_ssd([self.command, str(lba), str(size)])

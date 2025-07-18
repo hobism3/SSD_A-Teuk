@@ -1,5 +1,5 @@
 from commands.base import Command
-from commands.validator import Validator
+from commands.validator import Validator, check_lba
 from shell_tool.shell_constants import ShellMsg as Msg
 from shell_tool.shell_constants import ShellPrefix as Pre
 from shell_tool.shell_logger import Logger
@@ -13,7 +13,7 @@ class ReadCommand(Command):
     def __init__(self, logger: Logger, prefix=Pre.READ):
         super().__init__(logger, prefix)
         self._lba = None
-        self._validators: list[Validator] = [Validator(self._check_lba, (0,))]
+        self._validators: list[Validator] = [Validator(check_lba, (0,))]
 
     def _parse(self, args):
         parsed_args = super()._parse(args)

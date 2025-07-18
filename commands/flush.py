@@ -23,6 +23,6 @@ class FlushCommand(Command):
     @command_handler
     def execute(self, args: list[str]) -> bool:
         parsed_args = self._parse(args)
-        self._run_sdd(parsed_args)
+        self._run_ssd(parsed_args)
         self._process_result()
         return True

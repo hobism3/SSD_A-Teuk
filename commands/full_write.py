@@ -1,6 +1,6 @@
 from commands.base import Command, command_handler
 from commands.mixin import WriteSupportMixin
-from commands.validator import Validator
+from commands.validator import Validator, check_data
 from shell_tool.shell_constants import LBA_RANGE
 from shell_tool.shell_constants import ShellMsg as Msg
 from shell_tool.shell_constants import ShellPrefix as Pre
@@ -13,7 +13,7 @@ class FullWriteCommand(WriteSupportMixin, Command):
 
     def __init__(self, logger: Logger, prefix=Pre.FULLWRITE):
         super().__init__(logger, prefix)
-        self._validators: list[Validator] = [Validator(self._check_data, (0,))]
+        self._validators: list[Validator] = [Validator(check_data, (0,))]
 
     @command_handler
     def execute(self, args=None) -> bool:

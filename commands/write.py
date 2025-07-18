@@ -1,5 +1,5 @@
 from commands.base import Command
-from commands.validator import Validator
+from commands.validator import Validator, check_data, check_lba
 from shell_tool.shell_constants import ShellMsg as Msg
 from shell_tool.shell_constants import ShellPrefix as Pre
 from shell_tool.shell_logger import Logger
@@ -15,8 +15,8 @@ class WriteCommand(Command):
         self._lba = None
         self._data = None
         self._validators: list[Validator] = [
-            Validator(self._check_lba, (0,)),
-            Validator(self._check_data, (1,)),
+            Validator(check_lba, (0,)),
+            Validator(check_data, (1,)),
         ]
 
     def _parse_result(self, result) -> str:
