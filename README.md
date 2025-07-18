@@ -25,11 +25,11 @@ The A-Team(A-특공대)라는 의미로 Code Review 전문가들의 팀이라는
 
 | 팀원       | 역할                      | 메일                       |
 |------------|---------------------------|----------------------------|
-| 황웅범님   | 👑팀장👑 SSD Feature Developer <br> 슈퍼 긍정으로 항상 팀의 분위기를 밝게 만들어 주는 리더십 마스터 | hobism3@gmail.com          |
+| 👑황웅범님👑   | SSD Feature Developer <br> 슈퍼 긍정으로 항상 팀의 분위기를 밝게 만들어 주는 리더십 마스터(팀장) | hobism3@gmail.com          |
 | 이민호님   | SSD Feature Developer <br> Clean Code의 아버지로 항상 Clean한 코드만 작성하는 LGTM 수집가, Clean Code 마스터   | oz101@naver.com           |
 | 최새롬님   | Shell Feature Developer <br> Refactoring 마스터로 Feature 구현 & Refactoring 모두 훌륭한 실력을 가진 코딩 마스터 | develope.nerd@gmail.com          |
 | 박소정님   | SSD Feature Developer <br> Design Pattern 마스터로 SW의 확장성을 고려해 적합한 Pattern을 적용하는 디자인 마스터 | ssjjjjjpppp@gmail.com          |
-| 홍승표님   | Shell Feature Developer <br> Code Review 마스터로 팀원들에게 항상 새로운 관점을 제시하는 CR 마스터 | robin5544@nave.com      |
+| 홍승표님   | Shell Feature Developer <br> Code Review 마스터로 팀원들에게 항상 새로운 관점을 제시하는 CR 마스터 | robin5544@naver.com      |
 | 이준태님   | Shell Feature Developer <br> TDD 마스터로 조기 버그 발견과 높은 Code Coverage를 유지하는 Test 마스터                 | dlwnsxo98@naver.com       |
 
 ---
@@ -44,7 +44,7 @@ The A-Team(A-특공대)라는 의미로 Code Review 전문가들의 팀이라는
 - 아침/퇴근 인사하기
 - 2시간 안에 리뷰하기
 - 점심식사 준수: 11시~12시30분
-- git hook(black) 사용해서 코딩(commit 하기 전에 검열 해주는 친구들)
+- git hook(pre-commit) 사용해서 코딩(commit 하기 전에 검열 해주는 친구들)
 - Merge 할 때, rebase로 합치기
 
 
@@ -177,16 +177,24 @@ python .\shell.py .\path\to\shell_script.txt
   - 무조건 10자리, 0x로 시작, 8자리는 0123456789ABCDEF
 - address와 value는 ' '(space)로 분리
 
-<br><br>
+<br>
 
 ## UML
 - Top View Structure
 <img width="793" height="787" alt="image" src="https://github.com/user-attachments/assets/f95358ee-9986-4abd-8d33-35eeb88938ca" />
 <br><br>
 
+---
+
 - Shell UML
 <img width="1229" height="848" alt="image" src="https://github.com/user-attachments/assets/5e353dc1-e26f-4dfa-86f7-5cd5e8c8225c" />
 <br><br>
+
+- Shell Mixin Structure
+<img width="1860" height="643" alt="image" src="https://github.com/user-attachments/assets/cc93a2db-4151-43ad-884f-72d67a0af95c" />
+<br><br>
+
+---
 
 - SSD UML
 <img width="1746" height="655" alt="image" src="https://github.com/user-attachments/assets/95f9f71d-d52e-42f1-8eb8-0c769a5aaa6d" />
@@ -196,10 +204,10 @@ python .\shell.py .\path\to\shell_script.txt
 <img width="1966" height="755" alt="image" src="https://github.com/user-attachments/assets/8051196a-b143-4781-acaa-809b71d5ddf9" />
 <br><br>
 
+---
 
 
-
-<br><br>
+<br>
 
 ## 실행 방법
 
@@ -236,4 +244,11 @@ flush                     -   executes and clears all buffered commands (run wit
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ```
 
+<br>
+
+
+## Test Coverage
+###### UT Coverage 98%
+
+<img width="599" height="509" alt="image" src="https://github.com/user-attachments/assets/c29b1b2a-ba40-41f7-99dc-2b0c3d225c70" />
 <br><br>
