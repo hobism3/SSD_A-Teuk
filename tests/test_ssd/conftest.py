@@ -5,7 +5,10 @@ import pytest
 
 from ssd import SSD, SSD_NAND_FILE_PATH, SSD_OUTPUT_FILE_PATH
 
-COMMAND_PREFIX = 'python ../../ssd.py'
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+SSD_PATH = os.path.abspath(os.path.join(CURRENT_DIR, '..', '..', 'ssd.py'))
+
+COMMAND_PREFIX = f'python {SSD_PATH}'
 
 ERROR = 'ERROR'
 SSD_NAND_FILE_PATH = SSD_NAND_FILE_PATH
