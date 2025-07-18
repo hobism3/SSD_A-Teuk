@@ -45,6 +45,9 @@ class ShellCommandFactory:
     def is_script(self, cmd_name: str):
         return cmd_name in self._script_creators
 
+    def is_valid(self, cmd_name: str):
+        return self.is_command(cmd_name) or self.is_script(cmd_name)
+
     def get(self, cmd_name: str):
         if self.is_command(cmd_name):
             return self._command_creators[cmd_name]()
