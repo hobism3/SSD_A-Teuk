@@ -23,14 +23,14 @@ The A-Team(A-특공대)라는 의미로 Code Review 전문가들의 팀이라는
 
 ### 팀원 소개 및 역할 할당
 
-| 팀원       | 역할                      | 메일                       |
-|------------|---------------------------|----------------------------|
-| 👑황웅범님👑   | SSD Feature Developer <br> 슈퍼 긍정으로 항상 팀의 분위기를 밝게 만들어 주는 리더십 마스터(팀장) | hobism3@gmail.com          |
-| 이민호님   | SSD Feature Developer <br> Clean Code의 아버지로 항상 Clean한 코드만 작성하는 LGTM 수집가, Clean Code 마스터   | oz101@naver.com           |
-| 최새롬님   | Shell Feature Developer <br> Refactoring 마스터로 Feature 구현 & Refactoring 모두 훌륭한 실력을 가진 코딩 마스터 | develope.nerd@gmail.com          |
-| 박소정님   | SSD Feature Developer <br> Design Pattern 마스터로 SW의 확장성을 고려해 적합한 Pattern을 적용하는 디자인 마스터 | ssjjjjjpppp@gmail.com          |
-| 홍승표님   | Shell Feature Developer <br> Code Review 마스터로 팀원들에게 항상 새로운 관점을 제시하는 CR 마스터 | robin5544@naver.com      |
-| 이준태님   | Shell Feature Developer <br> TDD 마스터로 조기 버그 발견과 높은 Code Coverage를 유지하는 Test 마스터                 | dlwnsxo98@naver.com       |
+| 팀원         | 역할                      | 메일                       |
+|--------------|---------------------------|----------------------------|
+| 황웅범님     | SSD Feature Developer <br> (팀장)👑슈퍼 긍정으로 항상 팀의 분위기를 밝게 만들어 주는 리더십 마스터 | hobism3@gmail.com          |
+| 이민호님     | SSD Feature Developer <br> Clean Code의 아버지로 항상 Clean한 코드만 작성하는 LGTM 수집가, Clean Code 마스터   | oz101@naver.com           |
+| 최새롬님     | Shell Feature Developer <br> Refactoring 마스터로 Feature 구현 & Refactoring 모두 훌륭한 실력을 가진 코딩 마스터 | develope.nerd@gmail.com          |
+| 박소정님     | SSD Feature Developer <br> Design Pattern 마스터로 SW의 확장성을 고려해 적합한 Pattern을 적용하는 디자인 마스터 | ssjjjjjpppp@gmail.com          |
+| 홍승표님     | Shell Feature Developer <br> Code Review 마스터로 팀원들에게 항상 새로운 관점을 제시하는 CR 마스터 | robin5544@naver.com      |
+| 이준태님     | Shell Feature Developer <br> TDD 마스터로 조기 버그 발견과 높은 Code Coverage를 유지하는 Test 마스터                 | dlwnsxo98@naver.com       |
 
 ---
 
