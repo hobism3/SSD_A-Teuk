@@ -18,6 +18,7 @@ def mock_run(mocker):
     mocker.patch('random.getrandbits', return_value=0xAAAABBBB)
     mocker.patch('builtins.open', mocker.mock_open(read_data='0xAAAABBBB'))
     mocker.patch('commands.write.WriteCommand._parse_result', return_value=Msg.DONE)
+    mocker.patch('commands.script3.range', return_value=range(1))
 
     return mock_run
 

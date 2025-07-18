@@ -36,6 +36,8 @@ def test_shell_script2(capsys: pytest.CaptureFixture, mocker: MockerFixture, cas
     mocker.patch('builtins.open', mocker.mock_open(read_data='0x00000000'))
     mocker.patch('random.getrandbits', return_value=0x00000000)
     mocker.patch('commands.write.WriteCommand._parse_result', return_value=Msg.DONE)
+    mocker.patch('commands.script2.range', return_value=range(1))
+
     shell = Shell()
     shell.run()
 

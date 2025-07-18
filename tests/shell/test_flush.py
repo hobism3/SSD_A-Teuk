@@ -16,6 +16,7 @@ def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
 
     mock_run = mocker.patch('subprocess.run', return_value=mock_process)
     mocker.patch('builtins.input', side_effect=['flush', 'exit'])
+    mocker.patch('builtins.open', mocker.mock_open(read_data=''))
 
     shell = Shell()
     shell.run()
