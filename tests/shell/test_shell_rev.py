@@ -2,7 +2,9 @@ from subprocess import CalledProcessError
 from unittest.mock import patch
 
 import pytest
+from pytest_mock import MockerFixture
 
+from shell import Shell
 from shell_tool.shell_constants import ShellMsg as Msg
 from shell_tool.shell_constants import ShellPrefix as Pre
 from tests.shell.conftest import assert_command_called_once, run_shell_with_inputs
@@ -51,12 +53,15 @@ def test_subprocess_error_logged(shell, mock_subprocess_run, shell_user_inputs, 
     assert Pre.READ in output
 
 
-def test_shell_run_serial_script_success(tmp_path, capsys):
-    from shell import Shell
+def test_shell_run_serial_script_success(tmp_path, capsys, mocker: MockerFixture):
+    mock_process = mocker.Mock()
+    mock_process.returncode = 0
+    mocker.patch('subprocess.run', return_value=mock_process)
+    mocker.patch('commands.script3.range', return_value=range(1))
 
     script_path = tmp_path / 'script.txt'
     with open(script_path, 'w') as f:
-        f.write('1_FullWriteAndReadCompare\n')
+        f.write('3_WriteReadAging\n')
 
     shell = Shell()
     shell.run_serial_script(str(script_path))
@@ -76,7 +81,6 @@ def test_shell_serial_script_file_not_found(capsys):
     assert 'Script file not found' in output
 
 
-@pytest.mark.skip
 def test_shell_dot_task_runs_briefly(mocker, tmp_path, capsys):
     import time
 
