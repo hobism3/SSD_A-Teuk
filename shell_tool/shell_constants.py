@@ -23,12 +23,27 @@ class Hex:
 class ShellMsg:
     PROMPT = 'Shell> '
     HELP = """Documented commands (type help <topic>):
-  write\tWrite data to an LBA
-  read\tRead data from an LBA
-  fullwrite\tWrite data to all LBAs
-  fullread\tRead data from all LBAs
-  help\tShow help for commands
-  exit\tExit the shell"""
+▷ Basic Commands
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+write [lba] [val]         -   writes a val on lba (ex. write 10 0x1234ABCD)
+read [lba]                -   reads the val written on lba (ex. read 10)
+exit                      -   exits program
+help                      -   prints manual to stdout
+fullwrite [val]           -   writes val to all lbas ranging from 0 to 99
+fullread                  -   reads all vals written on each lba ranging from 0 to 99 and prints to stdout
+erase [lba] [size]        -   wipes ssd 'size' amount of lbas starting from lba
+erase_range [slba] [elba] -   wipes ssd lbas in range [slba, elba]
+flush                     -   executes and clears all buffered commands (run with "flush" or "F")
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+▶ Script Commands
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+1_FullWriteAndReadCompare  -  writes/verifies random vals in 5-LBA blocks across full range; PASS/FAIL (run "1_")
+2_PartialLBAWrite          -  writes/verifies same val to LBAs 0-4, 30 times; PASS/FAIL (run "2_")
+3_WriteReadAging           -  writes/verifies same val to LBAs 0 and 99, 200 times; PASS/FAIL (run "3_")
+4_EraseAndWriteAging       -  erases/writes vals in overlapping LBA ranges, 30 times; PASS/FAIL (run "4_")
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+  """
     READ_HELP = 'Invalid arguments. Usage: read <lba>'
     WRITE_HELP = 'Invalid arguments. Usage: write <lba> <hex data>'
     FLUSH_HELP = 'Invalid arguments. Usage: flush'
