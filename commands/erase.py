@@ -1,6 +1,4 @@
-import subprocess
-
-from commands.base import Command
+from commands.base import Command, command_handler
 from commands.validator import Validator
 from shell_tool.shell_constants import ShellMsg as Msg
 from shell_tool.shell_constants import ShellPrefix as Pre
@@ -30,15 +28,11 @@ class EraseCommand(Command):
     def _parse_result(self, result: str) -> str:
         return Msg.DONE if not result.strip() else Msg.ERROR
 
+    @command_handler
     def execute(self, args: list[str] = None) -> bool:
-        try:
-            self._parse(args)
-            self._execute_chunks(self._lba, self._size, self._chunk_size)
-            self._process_result()
-        except ValueError:
-            self._logger.print(message=self.help_msg)
-        except subprocess.CalledProcessError:
-            self._logger.print_and_log(self._prefix, Msg.ERROR)
+        self._parse(args)
+        self._execute_chunks(self._lba, self._size, self._chunk_size)
+        self._process_result()
         return True
 
     def _execute_chunks(self, start: int, size: int, chunk_size: int = 10):

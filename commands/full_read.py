@@ -1,6 +1,4 @@
-from subprocess import CalledProcessError
-
-from commands.base import Command
+from commands.base import Command, command_handler
 from commands.mixin import ReadSupportMixin
 from shell_tool.shell_constants import LBA_RANGE
 from shell_tool.shell_constants import ShellMsg as Msg
@@ -15,17 +13,13 @@ class FullReadCommand(ReadSupportMixin, Command):
     def __init__(self, logger: Logger, prefix=Pre.FULLREAD):
         super().__init__(logger, prefix)
 
+    @command_handler
     def execute(self, args=None) -> bool:
-        try:
-            self._parse(args)
-            self._logger.print_and_log(self._prefix)
-            for index in LBA_RANGE:
-                self.read(index)
-            self._logger.print_and_log(self._prefix, Msg.DONE)
-        except ValueError:
-            self._logger.print(message=self.help_msg)
-        except CalledProcessError:
-            self._logger.print_and_log(self._prefix, Msg.ERROR)
+        self._parse(args)
+        self._logger.print_and_log(self._prefix)
+        for index in LBA_RANGE:
+            self.read(index)
+        self._logger.print_and_log(self._prefix, Msg.DONE)
         return True
 
     def _parse(self, args: list[str]) -> list[str]:

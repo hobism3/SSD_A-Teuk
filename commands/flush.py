@@ -1,6 +1,4 @@
-from subprocess import CalledProcessError
-
-from commands.base import Command
+from commands.base import Command, command_handler
 from shell_tool.shell_constants import ShellMsg as Msg
 from shell_tool.shell_constants import ShellPrefix as Pre
 from shell_tool.shell_logger import Logger
@@ -22,13 +20,9 @@ class FlushCommand(Command):
     def _parse_result(self, result: int) -> str:
         return Msg.DONE if not result.strip() else Msg.ERROR
 
+    @command_handler
     def execute(self, args: list[str]) -> bool:
-        try:
-            parsed_args = self._parse(args)
-            self._run_sdd(parsed_args)
-            self._process_result()
-        except ValueError:
-            self._logger.print(message=self.help_msg)
-        except CalledProcessError:
-            self._logger.print_and_log(self._prefix, Msg.ERROR)
+        parsed_args = self._parse(args)
+        self._run_sdd(parsed_args)
+        self._process_result()
         return True
