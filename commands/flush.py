@@ -27,6 +27,8 @@ class FlushCommand(Command):
             parsed_args = self._parse(args)
             self._run_sdd(parsed_args)
             self._process_result()
-        except (ValueError, CalledProcessError):
+        except ValueError:
+            self._logger.print(message=self.help_msg)
+        except CalledProcessError:
             self._logger.print_and_log(self._prefix, Msg.ERROR)
         return True

@@ -49,4 +49,4 @@ def test_shell_fullread_exception(capsys: pytest.CaptureFixture, mocker: MockerF
     captured = capsys.readouterr()
     output = captured.out
 
-    assert Pre.FULLREAD + ' ' + Msg.ERROR in output
+    assert Msg.FULLREAD_HELP in output

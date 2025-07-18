@@ -5,6 +5,7 @@ from pytest_mock import MockerFixture
 
 from shell import Shell
 from shell_tool.shell_constants import RUN_SSD
+from shell_tool.shell_constants import ShellMsg
 from shell_tool.shell_constants import ShellMsg as Msg
 from shell_tool.shell_constants import ShellPrefix as Pre
 
@@ -58,4 +59,4 @@ def test_shell_read_exception_value_error(
     captured = capsys.readouterr()
     output = captured.out
 
-    assert Pre.FLUSH + ' ' + Msg.ERROR in output
+    assert ShellMsg.FLUSH_HELP in output

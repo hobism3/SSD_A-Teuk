@@ -60,4 +60,4 @@ def test_shell_fullwrite_invalid_input(
     captured = capsys.readouterr()
     output = captured.out
 
-    assert Pre.FULLWRITE + ' ' + Msg.ERROR in output
+    assert Msg.FULLWRITE_HELP in output
