@@ -21,6 +21,3 @@ class FullReadCommand(ReadSupportMixin, Command):
             self.read(index)
         self._logger.print_and_log(self._prefix, Msg.DONE)
         return True
-
-    def _parse(self, args: list[str]) -> list[str]:
-        return args
