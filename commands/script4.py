@@ -1,9 +1,12 @@
-import random
+from subprocess import CalledProcessError
 
 from commands.base import Command
-from commands.erase import EraseCommand
-from commands.write import WriteCommand
-from commands.mixin import WriteSupportMixin, RandomValueGenerateMixin, EraseSupportMixin, WritePatternMixin
+from commands.mixin import (
+    EraseSupportMixin,
+    RandomValueGenerateMixin,
+    WritePatternMixin,
+    WriteSupportMixin,
+)
 from shell_tool.shell_constants import MAX_LBA
 from shell_tool.shell_constants import Script4 as Const
 from shell_tool.shell_constants import ShellMsg as Msg
@@ -12,11 +15,11 @@ from shell_tool.shell_logger import Logger
 
 
 class EraseAndWriteAging(
-    WriteSupportMixin, 
+    WriteSupportMixin,
     WritePatternMixin,
     EraseSupportMixin,
     RandomValueGenerateMixin,
-    Command
+    Command,
 ):
     expected_num_args = 0
     help_msg = Msg.SCRIPT_4_HELP
@@ -24,7 +27,7 @@ class EraseAndWriteAging(
     def __init__(self, logger: Logger, prefix=Pre.SCRIPT_4):
         super().__init__(logger, prefix)
         self._lba = 0
-    
+
     def execute(self, args: list[str] = None) -> bool:
         try:
             self._parse(args)
@@ -35,6 +38,8 @@ class EraseAndWriteAging(
                     self._erase_once_move_lba()
             self._logger.print_and_log(self._prefix, Msg.PASS)
         except ValueError:
+            self._logger.print(message=self.help_msg)
+        except CalledProcessError:
             self._logger.print_and_log(self._prefix, Msg.ERROR)
         return True
 

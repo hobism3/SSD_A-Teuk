@@ -1,7 +1,7 @@
-import random
+from subprocess import CalledProcessError
 
-from commands.mixin import WriteSupportMixin, ReadSupportMixin, RandomValueGenerateMixin
 from commands.base import Command
+from commands.mixin import RandomValueGenerateMixin, ReadSupportMixin, WriteSupportMixin
 from shell_tool.shell_constants import MAX_LBA, SCRIPT_1_STEP, ShellMsg, ShellPrefix
 from shell_tool.shell_logger import Logger
 
@@ -40,5 +40,7 @@ class FullWriteAndReadCompare(
                         return True
             self._logger.print_and_log(self._prefix, ShellMsg.PASS)
         except ValueError:
+            self._logger.print(message=self.help_msg)
+        except CalledProcessError:
             self._logger.print_and_log(self._prefix, ShellMsg.ERROR)
         return True

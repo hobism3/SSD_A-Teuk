@@ -2,7 +2,7 @@ import pytest
 from pytest_mock import MockerFixture
 
 from shell import Shell
-from shell_tool.shell_constants import RUN_SSD
+from shell_tool.shell_constants import RUN_SSD, ShellMsg
 
 
 def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
@@ -39,4 +39,4 @@ def test_shell_read_exception(capsys: pytest.CaptureFixture, mocker: MockerFixtu
     captured = capsys.readouterr()
     output = captured.out
 
-    assert '[Read] ERROR' in output
+    assert ShellMsg.READ_HELP in output

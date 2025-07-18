@@ -15,9 +15,9 @@ def mock_run(mocker):
     mock_process.returncode = 0
     mock_run = mocker.patch('subprocess.run', return_value=mock_process)
     mocker.patch('builtins.open', mocker.mock_open(read_data='0xAAAABBBB'))
-    mocker.patch('commands.write.WriteCommand.parse_result', return_value=Msg.DONE)
+    mocker.patch('commands.write.WriteCommand._parse_result', return_value=Msg.DONE)
     mocker.patch(
-        'commands.script1.FullWriteAndReadCompare._generate_random_value_lst',
+        'commands.script1.FullWriteAndReadCompare.randvals',
         return_value=[
             '0xAAAABBBB' for _ in range(MAX_LBA + SCRIPT_1_STEP // SCRIPT_1_STEP)
         ],
