@@ -1,6 +1,4 @@
-from subprocess import CalledProcessError
-
-from commands.base import Command
+from commands.base import Command, command_handler
 from commands.mixin import WriteSupportMixin
 from commands.validator import Validator
 from shell_tool.shell_constants import LBA_RANGE
@@ -17,15 +15,10 @@ class FullWriteCommand(WriteSupportMixin, Command):
         super().__init__(logger, prefix)
         self._validators: list[Validator] = [Validator(self._check_data, (0,))]
 
+    @command_handler
     def execute(self, args=None) -> bool:
-        try:
-            self._parse(args)
-            self.logger_verbose = False
-            for lba in LBA_RANGE:
-                self.write(lba, args[0], True)
-            self._logger.print_and_log(self._prefix, Msg.DONE)
-        except ValueError:
-            self._logger.print(message=self.help_msg)
-        except CalledProcessError:
-            self._logger.print_and_log(self._prefix, Msg.ERROR)
+        self._parse(args)
+        for lba in LBA_RANGE:
+            self.write(lba, args[0], True)
+        self._logger.print_and_log(self._prefix, Msg.DONE)
         return True

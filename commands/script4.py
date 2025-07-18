@@ -1,6 +1,4 @@
-from subprocess import CalledProcessError
-
-from commands.base import Command
+from commands.base import Command, command_handler
 from commands.mixin import (
     EraseSupportMixin,
     RandomValueGenerateMixin,
@@ -28,19 +26,15 @@ class EraseAndWriteAging(
         super().__init__(logger, prefix)
         self._lba = 0
 
+    @command_handler
     def execute(self, args: list[str] = None) -> bool:
-        try:
-            self._parse(args)
-            self._erase_once_move_lba()
-            for _ in range(Const.LOOP1):
-                for _ in range(Const.LOOP2):
-                    self.write_random_n(self._lba, 2)
-                    self._erase_once_move_lba()
-            self._logger.print_and_log(self._prefix, Msg.PASS)
-        except ValueError:
-            self._logger.print(message=self.help_msg)
-        except CalledProcessError:
-            self._logger.print_and_log(self._prefix, Msg.ERROR)
+        self._parse(args)
+        self._erase_once_move_lba()
+        for _ in range(Const.LOOP1):
+            for _ in range(Const.LOOP2):
+                self.write_random_n(self._lba, 2)
+                self._erase_once_move_lba()
+        self._logger.print_and_log(self._prefix, Msg.PASS)
         return True
 
     def _erase_once_move_lba(self):

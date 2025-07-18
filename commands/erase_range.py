@@ -1,6 +1,4 @@
-from subprocess import CalledProcessError
-
-from commands.base import Command
+from commands.base import Command, command_handler
 from commands.mixin import EraseSupportMixin
 from commands.validator import Validator
 from shell_tool.shell_constants import ShellMsg as Msg
@@ -20,13 +18,9 @@ class EraseRangeCommand(EraseSupportMixin, Command):
             Validator(self._check_lba_range, (0, 1)),
         ]
 
+    @command_handler
     def execute(self, args: list[str]) -> bool:
-        try:
-            parsed_args = self._parse(args)
-            self.erase_range(*parsed_args[1:])
-            self._logger.print_and_log(self._prefix, Msg.DONE)
-        except ValueError:
-            self._logger.print(message=self.help_msg)
-        except CalledProcessError:
-            self._logger.print_and_log(self._prefix, Msg.ERROR)
+        parsed_args = self._parse(args)
+        self.erase_range(*parsed_args[1:])
+        self._logger.print_and_log(self._prefix, Msg.DONE)
         return True

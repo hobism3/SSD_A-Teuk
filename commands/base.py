@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from functools import wraps
 import subprocess
 from subprocess import CalledProcessError
 
@@ -13,6 +14,20 @@ from shell_tool.shell_constants import (
     ShellMsg,
 )
 from shell_tool.shell_logger import Logger
+
+
+def command_handler(func):
+    @wraps(func)
+    def wrapper(self, args=None):
+        try:
+            return func(self, args)
+        except ValueError:
+            self._logger.print(message=self.help_msg)
+        except CalledProcessError:
+            self._logger.print_and_log(self._prefix, ShellMsg.ERROR)
+        return True
+
+    return wrapper
 
 
 class Command(CommandInterface):
@@ -116,13 +131,9 @@ class Command(CommandInterface):
             parsed_result = self._parse_result(self.result)
             self._logger.print_and_log(self._prefix, parsed_result)
 
+    @command_handler
     def execute(self, args: list[str] = None) -> bool:
-        try:
-            parsed_args = self._parse(args)
-            self._run_sdd(parsed_args)
-            self._process_result()
-        except ValueError:
-            self._logger.print(message=self.help_msg)
-        except CalledProcessError:
-            self._logger.print_and_log(self._prefix, ShellMsg.ERROR)
+        parsed_args = self._parse(args)
+        self._run_sdd(parsed_args)
+        self._process_result()
         return True
