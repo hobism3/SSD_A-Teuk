@@ -1,12 +1,14 @@
+from subprocess import CalledProcessError
+
 from commands.base import Command
-from commands.mixin import WriteSupportMixin, RandomValueGenerateMixin, ReadSupportMixin
-from shell_tool.shell_constants import ShellMsg
-from shell_tool.shell_constants import ShellPrefix
+from commands.mixin import RandomValueGenerateMixin, ReadSupportMixin, WriteSupportMixin
+from shell_tool.shell_constants import ShellMsg, ShellPrefix
 from shell_tool.shell_logger import Logger
 
 
-class PartialLBAWriteCommand(WriteSupportMixin, RandomValueGenerateMixin, ReadSupportMixin,
-    Command):
+class PartialLBAWriteCommand(
+    WriteSupportMixin, RandomValueGenerateMixin, ReadSupportMixin, Command
+):
     expected_num_args = 0
     help_msg = ShellMsg.SCRIPT_2_HELP
 
@@ -28,7 +30,9 @@ class PartialLBAWriteCommand(WriteSupportMixin, RandomValueGenerateMixin, ReadSu
                     if not success:
                         self._logger.print_and_log(self._prefix, ShellMsg.FAIL)
                         return True
-            self._logger.log(ShellMsg.PASS)
+            self._logger.print_and_log(self._prefix, ShellMsg.PASS)
         except ValueError:
+            self._logger.print(message=self.help_msg)
+        except CalledProcessError:
             self._logger.print_and_log(self._prefix, ShellMsg.ERROR)
         return True

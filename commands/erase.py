@@ -35,7 +35,9 @@ class EraseCommand(Command):
             self._parse(args)
             self._execute_chunks(self._lba, self._size, self._chunk_size)
             self._process_result()
-        except (ValueError, subprocess.CalledProcessError):
+        except ValueError:
+            self._logger.print(message=self.help_msg)
+        except subprocess.CalledProcessError:
             self._logger.print_and_log(self._prefix, Msg.ERROR)
         return True
 

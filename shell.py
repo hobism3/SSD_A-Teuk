@@ -29,7 +29,7 @@ class Shell:
 
     def run_serial_script(self, path: str):
         prefix = '[Runner]'
-        self.logger.verbose(False)
+        self.logger.verbose = False
         logger = Logger(verbose=True)
         try:
             with open(path) as f:

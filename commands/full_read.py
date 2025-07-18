@@ -1,3 +1,5 @@
+from subprocess import CalledProcessError
+
 from commands.base import Command
 from commands.mixin import ReadSupportMixin
 from shell_tool.shell_constants import LBA_RANGE
@@ -21,6 +23,8 @@ class FullReadCommand(ReadSupportMixin, Command):
                 self.read(index)
             self._logger.print_and_log(self._prefix, Msg.DONE)
         except ValueError:
+            self._logger.print(message=self.help_msg)
+        except CalledProcessError:
             self._logger.print_and_log(self._prefix, Msg.ERROR)
         return True
 

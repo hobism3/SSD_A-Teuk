@@ -6,6 +6,7 @@ from pytest_mock import MockerFixture
 from shell import Shell
 from shell_tool.shell_constants import RUN_SSD
 from shell_tool.shell_constants import ShellCmd as Cmd
+from shell_tool.shell_constants import ShellMsg
 
 
 @pytest.fixture
@@ -68,11 +69,10 @@ def test_erase_invalid_param_count(
 
     captured = capsys.readouterr()
     output = captured.out
-    assert 'ERROR' in output
+    assert ShellMsg.ERASE_HELP in output
     assert 'Done' not in output
 
 
-@pytest.mark.skip
 def test_erase_invalid_command(
     capsys: pytest.CaptureFixture, mocker: MockerFixture, mock_run
 ):
@@ -83,7 +83,7 @@ def test_erase_invalid_command(
 
     captured = capsys.readouterr()
     output = captured.out
-    assert 'INVALID COMMAND' in output
+    assert ShellMsg.HELP in output
     assert 'Done' not in output
 
 
