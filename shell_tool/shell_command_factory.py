@@ -1,9 +1,9 @@
-from commands.meta import ExitCommand, HelpCommand
 from commands.erase import EraseCommand
 from commands.erase_range import EraseRangeCommand
 from commands.flush import FlushCommand
 from commands.full_read import FullReadCommand
 from commands.full_write import FullWriteCommand
+from commands.meta import ExitCommand, HelpCommand
 from commands.read import ReadCommand
 from commands.script1 import FullWriteAndReadCompare
 from commands.script2 import PartialLBAWriteCommand
@@ -44,6 +44,9 @@ class ShellCommandFactory:
 
     def is_script(self, cmd_name: str):
         return cmd_name in self._script_creators
+
+    def is_valid(self, cmd_name: str):
+        return self.is_command(cmd_name) or self.is_script(cmd_name)
 
     def get(self, cmd_name: str):
         if self.is_command(cmd_name):

@@ -1,6 +1,5 @@
-import unittest
-from pytest import CaptureFixture
 import pytest
+from pytest import CaptureFixture
 
 from tests.shell.conftest import run_command_with_args
 from tests.shell.constants import (

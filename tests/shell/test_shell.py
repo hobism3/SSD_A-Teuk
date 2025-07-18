@@ -42,8 +42,7 @@ def test_shell_write_cmd_invalid_param_count(
     captured = capsys.readouterr()
     output = captured.out
 
-    assert Msg.ERROR in output
-    assert Pre.WRITE in output
+    assert Msg.WRITE_HELP in output
 
 
 def test_shell_write_cmd_invalid_param_format(
@@ -63,8 +62,7 @@ def test_shell_write_cmd_invalid_param_format(
 
     captured = capsys.readouterr()
     output = captured.out
-    assert Msg.ERROR in output
-    assert Pre.WRITE in output
+    assert Msg.WRITE_HELP in output
 
 
 def test_shell_invalid_cmd(capsys: pytest.CaptureFixture, mocker: MockerFixture):

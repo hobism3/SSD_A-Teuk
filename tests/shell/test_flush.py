@@ -5,6 +5,7 @@ from pytest_mock import MockerFixture
 
 from shell import Shell
 from shell_tool.shell_constants import RUN_SSD
+from shell_tool.shell_constants import ShellMsg
 from shell_tool.shell_constants import ShellMsg as Msg
 from shell_tool.shell_constants import ShellPrefix as Pre
 
@@ -15,6 +16,7 @@ def test_shell_read(capsys: pytest.CaptureFixture, mocker: MockerFixture):
 
     mock_run = mocker.patch('subprocess.run', return_value=mock_process)
     mocker.patch('builtins.input', side_effect=['flush', 'exit'])
+    mocker.patch('builtins.open', mocker.mock_open(read_data=''))
 
     shell = Shell()
     shell.run()
@@ -58,4 +60,4 @@ def test_shell_read_exception_value_error(
     captured = capsys.readouterr()
     output = captured.out
 
-    assert Pre.FLUSH + ' ' + Msg.ERROR in output
+    assert ShellMsg.FLUSH_HELP in output

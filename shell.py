@@ -3,6 +3,7 @@ import threading
 import time
 
 from shell_tool.shell_command_factory import ShellCommandFactory
+from shell_tool.shell_constants import ShellMsg
 from shell_tool.shell_constants import ShellMsg as Msg
 from shell_tool.shell_logger import Logger
 
@@ -29,7 +30,7 @@ class Shell:
 
     def run_serial_script(self, path: str):
         prefix = '[Runner]'
-        self.logger.set_verbose(False)
+        self.logger.verbose = False
         logger = Logger(verbose=True)
         try:
             with open(path) as f:
@@ -53,7 +54,7 @@ class Shell:
         def _dot_task():
             while not done_flag['done']:
                 logger.dot()
-                time.sleep(1)
+                time.sleep(5)
 
         thread = threading.Thread(target=_dot_task)
         thread.start()
@@ -70,6 +71,8 @@ class Shell:
             return True
         parts = cmd.split()
         command_name = parts[0]
+        if not self._factory.is_valid(command_name):
+            self.logger.print(ShellMsg.INVALID)
         command_instance = self._factory.get(command_name)
         return command_instance.execute(parts[1:])
 

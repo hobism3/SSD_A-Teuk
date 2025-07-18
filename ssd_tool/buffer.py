@@ -175,7 +175,9 @@ class Buffer:
                         self.logger.info(
                             f'Buffer Rearranged. merged_range: {merged_range}'
                         )
-                        self._add_buffer(i, CMD_ERASE, merged_range[0][0], merged_range[0][1])
+                        self._add_buffer(
+                            i, CMD_ERASE, merged_range[0][0], merged_range[0][1]
+                        )
                         param1, param2 = merged_range[1][0], merged_range[1][1]
 
         if flag_add_buffer:

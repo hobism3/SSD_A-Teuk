@@ -2,7 +2,7 @@ from unittest.mock import mock_open, patch
 
 import pytest
 
-from commands.base import ExitCommand, HelpCommand
+from commands.meta import ExitCommand, HelpCommand
 from commands.read import ReadCommand
 from commands.write import WriteCommand
 from shell import Shell
@@ -39,8 +39,8 @@ def mock_commands():
             'commands.write.WriteCommand.execute', return_value=True
         ) as execute_write,
         patch('commands.read.ReadCommand.execute', return_value=True) as execute_read,
-        patch('commands.base.HelpCommand.execute', return_value=True) as execute_help,
-        patch('commands.base.ExitCommand.execute', return_value=False) as execute_exit,
+        patch('commands.meta.HelpCommand.execute', return_value=True) as execute_help,
+        patch('commands.meta.ExitCommand.execute', return_value=False) as execute_exit,
     ):
         yield {
             'write': execute_write,
@@ -127,9 +127,9 @@ def cmd_input_args():
 def cmd_expected_msg():
     return {
         CMD_WRITE: f'{Pre.WRITE} {Msg.DONE}',
-        CMD_WRITE_INVALID: f'{Pre.WRITE} {Msg.ERROR}',
+        CMD_WRITE_INVALID: Msg.WRITE_HELP,
         CMD_READ: f'{Pre.READ} LBA {TEST_LBA:02}: {TEST_READ_OUTPUT}',
-        CMD_READ_INVALID: f'{Pre.READ} {Msg.ERROR}',
+        CMD_READ_INVALID: Msg.READ_HELP,
         CMD_HELP: Msg.HELP,
         CMD_EXIT: TEST_EMPTY_OUTPUT,
     }

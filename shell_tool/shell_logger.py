@@ -18,7 +18,12 @@ class Logger:
         self._verbose = verbose
         self._lock = [Lock(), FileLock(lock_file='.lock')]
 
-    def set_verbose(self, verbose):
+    @property
+    def verbose(self):
+        return self._verbose
+
+    @verbose.setter
+    def verbose(self, verbose):
         self._verbose = verbose
 
     def log(self, message: str):
