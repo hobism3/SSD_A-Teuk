@@ -72,7 +72,7 @@ The A-Team(A-특공대)라는 의미로 Code Review 전문가들의 팀이라는
   - 에러 발생 시 `ssd_output.txt`에 `ERROR` 기록  
 - **명령어 실행 후 프로그램 종료**  
 - **추가 명령어**  
-  - Erase(E): 지정 LBA부터 SIZE 만큼 `0x00000000`으로 초기화 (삭제 효과)  
+  - Erase(E): 지정 LBA부터 SIZE 만큼 `0x00000000`으로 초기화
     - `E [LBA] [SIZE]` (1 ≤ SIZE ≤ 10)
 - **Flush(F)**: 버퍼에 저장된 명령 모두 실행, 버퍼 초기화
 - **Buffer**: 버퍼 파일을 활용한 SSD 성능 최적화 방안 적용
@@ -97,6 +97,8 @@ The A-Team(A-특공대)라는 의미로 Code Review 전문가들의 팀이라는
 - **예외처리**  
   - 없는 Command 입력 시 `INVALID COMMAND` 출력  
   - Parameter 갯수/Type 오류 및 범위 벗어남 시 에러 메시지 처리
+
+
 
 ---
 
@@ -178,16 +180,22 @@ python .\shell.py .\path\to\shell_script.txt
 <br><br>
 
 ## UML
+- Top View Structure
+<img width="793" height="787" alt="image" src="https://github.com/user-attachments/assets/f95358ee-9986-4abd-8d33-35eeb88938ca" />
+<br><br>
+
 - Shell UML
 <img width="1229" height="848" alt="image" src="https://github.com/user-attachments/assets/5e353dc1-e26f-4dfa-86f7-5cd5e8c8225c" />
 <br><br>
 
 - SSD UML
 <img width="1746" height="655" alt="image" src="https://github.com/user-attachments/assets/95f9f71d-d52e-42f1-8eb8-0c769a5aaa6d" />
-
 <br><br>
-- Top View Structure
-<img width="793" height="787" alt="image" src="https://github.com/user-attachments/assets/f95358ee-9986-4abd-8d33-35eeb88938ca" />
+
+- Buffer Algorithm
+<img width="1966" height="755" alt="image" src="https://github.com/user-attachments/assets/8051196a-b143-4781-acaa-809b71d5ddf9" />
+<br><br>
+
 
 
 
@@ -204,4 +212,28 @@ python ./ssd.py W 0 0xAAAABBBB
 ```
 python ./shell.py
 ```
+
+- Help Document
+```
+▷ Basic Commands
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+write [lba] [val]         -   writes a val on lba (ex. write 10 0x1234ABCD)
+read [lba]                -   reads the val written on lba (ex. read 10)
+exit                      -   exits program
+help                      -   prints manual to stdout
+fullwrite [val]           -   writes val to all lbas ranging from 0 to 99
+fullread                  -   reads all vals written on each lba ranging from 0 to 99 and prints to stdout
+erase [lba] [size]        -   wipes ssd 'size' amount of lbas starting from lba
+erase_range [slba] [elba] -   wipes ssd lbas in range [slba, elba]
+flush                     -   executes and clears all buffered commands (run with "flush" or "F")
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+▶ Script Commands
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+1_FullWriteAndReadCompare  -  writes/verifies random vals in 5-LBA blocks across full range; PASS/FAIL (run "1_")
+2_PartialLBAWrite          -  writes/verifies same val to LBAs 0-4, 30 times; PASS/FAIL (run "2_")
+3_WriteReadAging           -  writes/verifies same val to LBAs 0 and 99, 200 times; PASS/FAIL (run "3_")
+4_EraseAndWriteAging       -  erases/writes vals in overlapping LBA ranges, 30 times; PASS/FAIL (run "4_")
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+```
+
 <br><br>
